@@ -13,7 +13,7 @@ Hover over the gene names below to see the library in action. This isn't a scree
 
 <script setup>
 import { onMounted } from 'vue'
-import GeneTooltip from '../dist/gene-tooltip.umd.js' // Import directly from source for the demo!
+import GeneTooltip from '../../dist/gene-tooltip.umd.js' // Import directly from source for the demo!
 onMounted(() => {
   GeneTooltip.init();
 })
