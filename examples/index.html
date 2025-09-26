@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Gene Tooltip Demo</title>
+    <link rel="stylesheet" href="../dist/css/main.css">
+</head>
+<body>
+    <h1>Gene Tooltip Library Test</h1>
+    <p>
+        Here is a human gene: <span class="gene-tooltip" data-species="human">TP53</span>.
+        And here is a mouse gene: <span class="gene-tooltip" data-species="mouse">Trp53</span>.
+    </p>
+
+    <p>
+        Here are a bunch of human genes:
+        <div class="gene-tooltip" data-species="human">TP53, GADD45A, BRCA1, BRCA2, RAD51, ATM, XPA, NOTAGENE</div>
+    </p>
+
+    <!-- Load the library -->
+    <script src="../dist/gene-tooltip.umd.js"></script>
+
+    <!-- Initialize the library -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            GeneTooltip.init();
+        });
+    </script>
+</body>
+</html>
