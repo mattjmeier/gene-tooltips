@@ -11,10 +11,9 @@ Hover over the gene names below to see the library in action. This isn't a scree
   Here is one from yeast: <span class="gene-tooltip" data-species="559292">STE2</span>.
 </p>
 
-<script setup>
-import { onMounted } from 'vue'
-import GeneTooltip from '../../dist/gene-tooltip.umd.js' // Import directly from source for the demo!
-onMounted(() => {
-  GeneTooltip.init();
-})
+<script src="../dist/gene-tooltip.umd.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            GeneTooltip.init();
+        });
 </script>
