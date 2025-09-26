@@ -17,7 +17,7 @@ VitePress will process this script tag correctly.
 -->
 <script setup>
 import { onMounted } from 'vue'
-import GeneTooltip from '../src/index.js' // Import directly from source for the demo!
+import GeneTooltip from '../dist/gene-tooltip.umd.js' // Import directly from source for the demo!
 onMounted(() => {
   GeneTooltip.init();
 })
