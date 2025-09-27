@@ -7,6 +7,7 @@ import { fetchMyGeneBatch } from './api.js';
 import { renderTooltipHTML } from './renderer.js';
 import { findGeneElements, getGeneInfoFromElement } from './parser.js';
 import { runPrefetch } from './prefetch.js';
+import { enableSummaryExpand } from './ui/summaryExpand.js';
 
 // The init function accepts a partial configuration
 function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
@@ -24,7 +25,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   tippy(geneElements, {
     ...config.tippyOptions,
     content: 'Loading...',
-    onShow(instance: Instance) { // <-- Use the Instance type
+    onShow(instance: Instance) {
       const info = getGeneInfoFromElement(instance.reference as HTMLElement);
       if (!info) {
         instance.setContent('Invalid gene element');
@@ -34,21 +35,22 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       const { symbol, species } = info;
 
       const cachedData = cache.get(symbol, species);
-      if (typeof cachedData !== 'undefined') { // Check if it's in the cache (even if null)
-        instance.setContent(renderTooltipHTML(cachedData));
+      if (typeof cachedData !== 'undefined') {
+        instance.setContent(renderTooltipHTML(cachedData, { truncate: config.truncateSummary }));
         return;
       }
 
       fetchMyGeneBatch([symbol], species).then(resultsMap => {
         const data = resultsMap.get(symbol) || null; // Use null if not found
         cache.set(symbol, species, data);
-        instance.setContent(renderTooltipHTML(data));
+        instance.setContent(renderTooltipHTML(data, { truncate: config.truncateSummary }));
       }).catch(error => {
         console.error(`Failed to fetch data for ${symbol}`, error);
         instance.setContent('Error loading data.');
       });
     }
   });
+  enableSummaryExpand();
 }
 
 export default {
@@ -63,3 +65,4 @@ declare global {
     };
   }
 }
+

@@ -17,6 +17,12 @@ export interface GeneTooltipConfig {
   api: 'mygene';
   prefetch: 'smart' | 'all' | 'none';
   prefetchThreshold: number;
+    /**
+   * The maximum number of lines to show for a gene summary before truncating.
+   * Set to 0 to disable truncation.
+   * @default 3
+   */
+  truncateSummary: number;
   tippyOptions: Partial<Props>;
 }
 
@@ -25,6 +31,7 @@ export const defaultConfig: GeneTooltipConfig = {
   api: 'mygene',
   prefetch: 'smart',
   prefetchThreshold: 15,
+  truncateSummary: 3,
   tippyOptions: {
     allowHTML: true,
     interactive: true,

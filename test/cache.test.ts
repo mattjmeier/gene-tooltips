@@ -7,7 +7,8 @@ const mockGeneData: MyGeneInfoResult = {
   query: 'TP53',
   symbol: 'TP53',
   name: 'tumor protein p53',
-  summary: 'A summary.'
+  summary: 'A summary.',
+  taxid: 9606
 };
 
 describe('cache', () => {

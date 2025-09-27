@@ -1,159 +1,4 @@
-# Live Demo
-
-Hover over the gene names below to see the library in action. This isn't a screenshot—it's the actual library running on this page.
-
-## Example Genes
-
-<p style="font-size: 1.2em; line-height: 1.8;">
-  The protein encoded by <span class="gene-tooltip" data-species="human">TP53</span> is a tumor suppressor.
-  In mice, the ortholog is <span class="gene-tooltip" data-species="mouse">Trp53</span>.
-  This is a well-known gene from the fruit fly: <span class="gene-tooltip" data-species="7227">Dop2</span>.
-  Here is one from yeast: <span class="gene-tooltip" data-species="559292">STE2</span>.
-</p>
-
-<!--
-This is the key! We load and run YOUR library directly in the documentation.
-VitePress will process this script tag correctly.
--->
-<script setup>
-import { onMounted } from 'vue'
-import GeneTooltip from '../../src/index.js' // Import directly from source for the demo!
-onMounted(() => {
-  GeneTooltip.init();
-})
-</script># Getting Started
-
-This guide will walk you through installing and configuring Gene Tooltip JS.
-
-## Installation
-
-You can install the package via npm:
-
-```bash
-npm install gene-tooltip
-```
-
-Or include it directly in your HTML from a CDN like unpkg:
-
-```html
-<script src="https://unpkg.com/gene-tooltip/dist/gene-tooltip.umd.js"></script>
-```
-
-# Basic Usage
-
-Once the script is loaded, you can initialize it. Add the class `gene-tooltip` and a `data-species` attribute to any `<span>` element.
-
-```html
-<p>
-  Here is a human gene: <span class="gene-tooltip" data-species="human">TP53</span>.
-  And here is a mouse gene: <span class="gene-tooltip" data-species="mouse">Trp53</span>.
-</p>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        GeneTooltip.init({
-            // Your optional configuration here
-        });
-    });
-</script>
-```---
-layout: home
-hero:
-  name: Gene Tooltip JS
-  text: The flexible, backend-agnostic tooltip library.
-  tagline: Add rich, contextual tooltips for gene names to any webpage with a few lines of code.
-  actions:
-    - theme: brand
-      text: Get Started
-      link: /guide
-    - theme: alt
-      text: View Demo
-      link: /demo
----<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Gene Tooltip Demo</title>
-    <link rel="stylesheet" href="../dist/css/main.css">
-</head>
-<body>
-    <h1>Gene Tooltip Library Test</h1>
-    <p>
-        Here is a human gene: <span class="gene-tooltip" data-species="human">TP53</span>.
-        And here is a mouse gene: <span class="gene-tooltip" data-species="mouse">Trp53</span>.
-    </p>
-
-    <p>
-        Here are a bunch of human genes:
-        <div class="gene-tooltip" data-species="human">TP53, GADD45A, BRCA1, BRCA2, RAD51, ATM, XPA, NOTAGENE</div>
-    </p>
-
-    <!-- Load the library -->
-    <script src="../dist/gene-tooltip.umd.js"></script>
-
-    <!-- Initialize the library -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            GeneTooltip.init();
-        });
-    </script>
-</body>
-</html>{
-  "name": "gene-tooltips",
-  "version": "0.1.0",
-  "description": "A framework-agnostic library for showing gene information as a tooltip",
-  "keywords": [
-    "genetics",
-    "bioinformatics",
-    "gene",
-    "genomics"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mattjmeier/gene-tooltips.git"
-  },
-  "main": "dist/gene-tooltip.cjs.js",
-  "module": "dist/gene-tooltip.esm.js",
-  "browser": "dist/gene-tooltip.umd.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/gene-tooltip.esm.js",
-      "require": "./dist/gene-tooltip.cjs.js"
-    },
-    "./dist/css/main.css": "./dist/css/main.css",
-    "./dist/css/base.css": "./dist/css/base.css",
-    "./dist/css/light.css": "./dist/css/light.css"
-  },
-  "license": "MIT",
-  "author": "Matthew J. Meier",
-  "type": "module",
-  "scripts": {
-    "dev": "esbuild src/index.ts --bundle --outfile=dist/gene-tooltip.umd.js --watch",
-    "build:css": "esbuild src/css/*.css --bundle --outdir=dist/css",
-    "build:js": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/gene-tooltip.cjs.js && esbuild src/index.ts --bundle --platform=browser --format=esm --outfile=dist/gene-tooltip.esm.js && esbuild src/index.ts --bundle --global-name=GeneTooltip --format=iife --outfile=dist/gene-tooltip.umd.js --minify --footer:js=\"window.GeneTooltip = window.GeneTooltip.default\"",
-    "build": "npm run build:js && npm run build:css && tsc --emitDeclarationOnly",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs",
-    "test": "vitest",
-    "test:watch": "vitest --watch"
-  },
-  "devDependencies": {
-    "@types/node": "^20.14.12",
-    "@types/tippy.js": "^6.0.0",
-    "typescript": "^5.5.4",
-    "esbuild": "^0.23.0",
-    "glob": "^11.0.3",
-    "jsdom": "^24.1.1",
-    "tippy.js": "^6.3.7",
-    "vitepress": "^1.2.3",
-    "vitest": "^2.0.4"
-  }
-}// src/api.ts
+/src/api.ts
 import type { MyGeneInfoResult } from './config';
 
 /**
@@ -195,7 +40,7 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
     console.error('Batch fetch failed:', error);
     return new Map(); // Return empty map on failure
   }
-}// src/cache.ts
+}./src/cache.ts
 import type { MyGeneInfoResult } from './config';
 
 const cache = new Map<string, MyGeneInfoResult | null>();
@@ -214,7 +59,7 @@ export const setBatch = (resultsMap: Map<string, MyGeneInfoResult>, species: str
   resultsMap.forEach((data, symbol) => {
     set(symbol, species, data);
   });
-};// src/config.ts
+};./src/config.ts
 import type { Props } from 'tippy.js';
 
 // Define the shape of the data we expect from mygene.info
@@ -224,6 +69,7 @@ export interface MyGeneInfoResult {
   symbol: string;
   name: string;
   summary?: string;
+  taxid: number;
   // Add other fields you might use from the API
 }
 
@@ -247,7 +93,35 @@ export const defaultConfig: GeneTooltipConfig = {
     placement: 'bottom',
     theme: 'light',
   },
-};// src/index.ts
+};./src/constants.ts
+/**
+ * External gene reference sources.
+ * Each source can build its URL from an ID or symbol.
+ */
+export const SOURCES = [
+  {
+    key: "ncbi",
+    name: "NCBI",
+    url: (id: string) => `https://www.ncbi.nlm.nih.gov/gene/${id}`,
+    requires: "id" as const,
+  },
+  {
+    key: "ensembl",
+    name: "Ensembl",
+    url: (id: string) => `https://www.ensembl.org/id/${id}`,
+    requires: "id" as const,
+  },
+  {
+    key: "genecards",
+    name: "GeneCards",
+    url: (symbol: string) =>
+      `https://www.genecards.org/cgi-bin/carddisp.pl?gene=${symbol}`,
+    requires: "symbol" as const,
+  },
+];
+
+
+./src/index.ts
 import tippy, { type Instance } from 'tippy.js'; // Import the 'Instance' type
 import 'tippy.js/dist/tippy.css';
 
@@ -257,6 +131,7 @@ import { fetchMyGeneBatch } from './api.js';
 import { renderTooltipHTML } from './renderer.js';
 import { findGeneElements, getGeneInfoFromElement } from './parser.js';
 import { runPrefetch } from './prefetch.js';
+import { enableSummaryExpand } from './ui/summaryExpand.js';
 
 // The init function accepts a partial configuration
 function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
@@ -299,6 +174,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       });
     }
   });
+  enableSummaryExpand();
 }
 
 export default {
@@ -312,8 +188,9 @@ declare global {
       init: (userConfig?: Partial<GeneTooltipConfig>) => void;
     };
   }
-}// src/parser.ts
+}
 
+./src/parser.ts
 /**
  * Defines the structure for gene information extracted from an element.
  */
@@ -381,7 +258,7 @@ export function getGeneInfoFromElement(el: HTMLElement): GeneInfo | null {
         return null;
     }
     return { symbol, species };
-}// src/prefetch.ts
+}./src/prefetch.ts
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
 import { getGeneInfoFromElement } from './parser.js';
@@ -449,19 +326,191 @@ export function runPrefetch(strategy: 'smart' | 'all' | 'none', elements: HTMLEl
         console.log("Using 'smart' prefetch strategy with IntersectionObserver.");
         prefetchSmart(elements);
     }
-}// src/renderer.ts
+}./src/renderer.ts
+// ./src/renderer.ts
 import type { MyGeneInfoResult } from './config';
+import { SOURCES } from './constants';
 
-export function renderTooltipHTML(data: MyGeneInfoResult | null | undefined): string {
+interface RenderOptions {
+  sources?: string[];        // which sources to show
+  truncateSummary?: number;  // character limit for summary
+  showSpecies?: boolean;     // show species icon or not
+}
+
+// species lookup table
+interface SpeciesInfo {
+  common: string;
+  genus: string;
+  icon: string;
+}
+
+const speciesMap: Record<number, SpeciesInfo> = {
+  9606: { common: "Human", genus: "Homo sapiens", icon: "🧑" },
+  10090: { common: "Mouse", genus: "Mus musculus", icon: "🐭" },
+  10116: { common: "Rat", genus: "Rattus norvegicus", icon: "🐀" },
+  7227: { common: "Fruitfly", genus: "Drosophila melanogaster", icon: "🪰" },
+  6239: { common: "Nematode", genus: "Caenorhabditis elegans", icon: "🪱" },
+  7955: { common: "Zebrafish", genus: "Danio rerio", icon: "🐟" },
+  3702: { common: "Thale-cress", genus: "Arabidopsis thaliana", icon: "🌱" },
+  8364: { common: "Frog", genus: "Xenopus tropicalis", icon: "🐸" },
+  9823: { common: "Pig", genus: "Sus scrofa", icon: "🐖" },
+};
+
+export function renderTooltipHTML(
+  data: MyGeneInfoResult | null | undefined,
+  options: RenderOptions = {}
+): string {
   if (!data) return '<p>Gene not found.</p>';
 
+  const { sources = ["ncbi"], truncateSummary = 200, showSpecies = true } = options;
+
+  // Species info
+  const species = showSpecies && data.taxid
+    ? speciesMap[data.taxid] ?? { common: "Unknown", genus: "", icon: "❓" }
+    : null;
+
+  // External links
+  const links = SOURCES.filter(src => sources.includes(src.key))
+    .map(src => {
+      if (src.requires === "id" && !data._id) return "";
+      if (src.requires === "symbol" && !data.symbol) return "";
+      return `<a href="${src.url(data._id || data.symbol)}"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                ${src.name}
+              </a>`;
+    })
+    .filter(Boolean)
+    .join(" | ");
+
+  // Summary truncation
+  let summary = data.summary || "No summary available.";
+  if (truncateSummary && summary.length > truncateSummary) {
+    summary = summary.slice(0, truncateSummary) + "…";
+  }
+
   return `
-    <div style="text-align: left;">
-        <strong>${data.symbol}</strong> (${data.name})
-        <p>${data.summary || 'No summary available.'}</p>
+    <div class="gene-tooltip-content" style="text-align: left; max-width: 300px;">
+      <div class="gene-tooltip-header">
+        ${
+          species
+            ? `<span class="gene-tooltip-species">${species.icon}</span>`
+            : ""
+        }
+        <strong>
+          <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}" 
+             target="_blank" 
+             rel="noopener noreferrer"
+             class="gene-tooltip-link">
+            ${data.symbol}
+          </a>
+        </strong>
+        <span class="gene-tooltip-name">(${data.name})</span>
+      </div>
+      ${
+        species
+          ? `<div class="gene-tooltip-species-label">${species.common} <em>${species.genus}</em></div>`
+          : ""
+      }
+      <p class="gene-tooltip-summary" tabindex="0">${summary}</p>
+      ${links ? `<div class="gene-tooltip-links">${links}</div>` : ""}
     </div>
   `;
-}{
+}
+./src/ui/summaryExpand.ts
+/**
+ * Enables click/keyboard expand/collapse on .gene-tooltip-summary elements.
+ */
+export function enableSummaryExpand(): void {
+  document.addEventListener("click", e => {
+    const target = e.target as HTMLElement;
+    if (target.classList.contains("gene-tooltip-summary")) {
+      target.classList.toggle("expanded");
+    }
+  });
+
+    document.addEventListener("keydown", e => {
+    const target = e.target as HTMLElement | null;
+    if (!target?.classList.contains("gene-tooltip-summary")) return;
+
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        target.classList.toggle("expanded");
+    }
+    });
+}
+./package.json
+{
+  "name": "gene-tooltips",
+  "version": "0.1.0",
+  "description": "A framework-agnostic library for showing gene information as a tooltip",
+  "keywords": [
+    "genetics",
+    "bioinformatics",
+    "gene",
+    "genomics"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattjmeier/gene-tooltips.git"
+  },
+  "main": "dist/gene-tooltip.cjs.js",
+  "module": "dist/gene-tooltip.esm.js",
+  "browser": "dist/gene-tooltip.umd.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/gene-tooltip.esm.js",
+      "require": "./dist/gene-tooltip.cjs.js"
+    },
+    "./dist/css/main.css": "./dist/css/main.css",
+    "./dist/css/base.css": "./dist/css/base.css",
+    "./dist/css/light.css": "./dist/css/light.css"
+  },
+  "license": "MIT",
+  "author": "Matthew J. Meier",
+  "type": "module",
+  "scripts": {
+    "dev": "npm-run-all --parallel watch:*",
+
+    "watch:js": "esbuild src/index.ts --bundle --global-name=GeneTooltip --format=iife --outfile=dist/gene-tooltip.umd.js --footer:js=\"window.GeneTooltip = window.GeneTooltip.default\" --watch",
+    "watch:js:esm": "esbuild src/index.ts --bundle --platform=browser --format=esm --outfile=dist/gene-tooltip.esm.js --minify",
+    "watch:css": "esbuild src/css/*.css --bundle --outdir=dist/css --watch",
+    
+    "build": "npm-run-all build:js build:css && tsc --emitDeclarationOnly",
+
+    "build:js": "npm-run-all build:js:*",
+    "build:js:cjs": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/gene-tooltip.cjs.js --minify",
+    "build:js:esm": "esbuild src/index.ts --bundle --platform=browser --format=esm --outfile=dist/gene-tooltip.esm.js --minify",
+    "build:js:umd": "esbuild src/index.ts --bundle --global-name=GeneTooltip --format=iife --outfile=dist/gene-tooltip.umd.js --footer:js=\"window.GeneTooltip = window.GeneTooltip.default\" --minify",
+    
+    "build:css": "esbuild src/css/*.css --bundle --outdir=dist/css --minify",
+
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "@types/tippy.js": "^6.0.0",
+    "esbuild": "^0.23.0",
+    "glob": "^11.0.3",
+    "jsdom": "^24.1.1",
+    "npm-run-all": "^4.1.5",
+    "tippy.js": "^6.3.7",
+    "typescript": "^5.5.4",
+    "vitepress": "^1.2.3",
+    "vitest": "^2.0.4"
+  }
+}
+./tsconfig.json
+{
   "compilerOptions": {
     /* Base Options */
     "target": "ES2020",
@@ -491,7 +540,7 @@ export function renderTooltipHTML(data: MyGeneInfoResult | null | undefined): st
     "types": ["vitest/globals"]
   },
   "include": ["src", "test"]
-}// vitest.config.js
+}./vitest.config.js
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -499,4 +548,49 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
   },
-});
+});./src/css/base.css
+/* src/css/base.css */
+@import 'tippy.js/dist/tippy.css';./src/css/light.css
+/* src/css/light.css */
+@import 'tippy.js/themes/light.css';
+./src/css/main.css
+/* src/css/main.css */
+@import './base.css';
+@import './light.css';
+
+.gene-tooltip-summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3; /* Chrome, Safari */
+  line-clamp: 3;         /* Future-proof / spec */
+  overflow: hidden;
+  position: relative;
+}
+
+.gene-tooltip-summary::after {
+  content: "… more";
+  font-size: 0.9em;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding-left: 0.5em;
+  background: linear-gradient(to right, transparent, white 50%);
+}
+
+/* Hover (desktop) */
+.gene-tooltip-summary:hover {
+  max-height: none;
+}
+.gene-tooltip-summary:hover::after {
+  display: none;
+}
+
+/* Expanded (click/touch or keyboard) */
+.gene-tooltip-summary.expanded {
+  max-height: none;
+}
+.gene-tooltip-summary.expanded::after {
+  display: none;
+}
+
+.gene-tooltip-summary { cursor: pointer; }

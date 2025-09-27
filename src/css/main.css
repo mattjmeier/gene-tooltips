@@ -1,3 +1,43 @@
 /* src/css/main.css */
 @import './base.css';
 @import './light.css';
+
+/* This class is applied when truncation is ENABLED */
+.gene-tooltip-summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  /* Use the custom property from the inline style */
+  -webkit-line-clamp: var(--line-clamp, 3);
+  line-clamp: var(--line-clamp, 3);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  margin: 1em 0; /* Add standard paragraph margin */
+}
+
+/* This class is for the untruncated version */
+.gene-tooltip-summary-full {
+  margin: 1em 0; /* Add standard paragraph margin */
+}
+
+.gene-tooltip-summary::after {
+  content: "… more";
+  font-size: 0.9em;
+  font-weight: bold;
+  color: #007bff;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding-left: 1em;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), white 50%);
+}
+
+.gene-tooltip-summary.expanded {
+  display: block; 
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+}
+
+.gene-tooltip-summary.expanded::after {
+  display: none;
+}

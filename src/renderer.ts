@@ -4,8 +4,8 @@ import { SOURCES } from './constants';
 
 interface RenderOptions {
   sources?: string[];        // which sources to show
-  truncateSummary?: number;  // character limit for summary
   showSpecies?: boolean;     // show species icon or not
+  truncate?: number;
 }
 
 // species lookup table
@@ -33,7 +33,7 @@ export function renderTooltipHTML(
 ): string {
   if (!data) return '<p>Gene not found.</p>';
 
-  const { sources = ["ncbi"], truncateSummary = 200, showSpecies = true } = options;
+  const { sources = ["ncbi"], showSpecies = true, truncate = 3 } = options;
 
   // Species info
   const species = showSpecies && data.taxid
@@ -54,12 +54,14 @@ export function renderTooltipHTML(
     .filter(Boolean)
     .join(" | ");
 
-  // Summary truncation
-  let summary = data.summary || "No summary available.";
-  if (truncateSummary && summary.length > truncateSummary) {
-    summary = summary.slice(0, truncateSummary) + "…";
-  }
+  const summary = data.summary || "No summary available.";
+  const summaryClass = truncate && summary.length > 0 ? 'gene-tooltip-summary' : 'gene-tooltip-summary-full';
+  const tabIndex = truncate ? 'tabindex="0"' : '';
 
+  // Use a dynamic style variable to set the line-clamp value from our config.
+  const summaryStyle = truncate ? `style="--line-clamp: ${truncate};"` : '';
+
+  // The 'summary' variable holds the FULL text, and CSS will truncate visually
   return `
     <div class="gene-tooltip-content" style="text-align: left; max-width: 300px;">
       <div class="gene-tooltip-header">
@@ -83,8 +85,21 @@ export function renderTooltipHTML(
           ? `<div class="gene-tooltip-species-label">${species.common} <em>${species.genus}</em></div>`
           : ""
       }
-      <p class="gene-tooltip-summary">${summary}</p>
+      <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
       ${links ? `<div class="gene-tooltip-links">${links}</div>` : ""}
     </div>
   `;
 }
+
+
+
+
+// To add:
+// - arrange the species info and icon on one line (second line) instead, with the format like "[ICON] Human, <i>Homo sapiens</i>"
+// - ideogram showing location (using CSS/SVG?) (this is tricky because the API call doesn't innately have the information about the whole chromosome... where to get that? store a file in constants.ts?)
+// - below ideogram, text showing chromosomal location (e.g., chr1:10,000,000-10,010,248)
+// - top pathways (configurable to pick which source? e.g., KEGG as default, but allow reactome, Wikipathways etc.)
+// - mini exon map (using CSS/SVG? Other tools in JS that we can leverage?)
+// - top protein domains (expandable to show them?)
+
+// - finally, ideally, we could make each component optional at the user-level
