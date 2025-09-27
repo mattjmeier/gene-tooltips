@@ -19,8 +19,8 @@ import { onMounted } from 'vue';
 // Vite will handle bundling them correctly.
 // Make sure the paths are correct relative to this .vue file.
 // Let's assume your '.vitepress' directory is at the root of your docs.
-import GeneTooltip from 'gene-tooltips';
-import 'gene-tooltips/dist/css/main.css';
+import GeneTooltip from '../../../../dist/gene-tooltip.esm.js';
+import '../../../../dist/css/main.css';
 onMounted(() => {
   // Now, use the imported module directly instead of the window object.
   if (GeneTooltip) {

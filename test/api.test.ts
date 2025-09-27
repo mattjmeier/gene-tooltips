@@ -36,7 +36,7 @@ describe('fetchMyGeneBatch', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
 
     // Use mockImplementation to create a DYNAMIC mock
-    vi.spyOn(global, 'fetch').mockImplementation(async (url, options) => {
+    vi.spyOn(global, 'fetch').mockImplementation(async (_url, options) => {
       // The request body is a string like "q=TP53,BRCA1&species=human..."
       const body = options?.body?.toString() || '';
       // Parse the body to find which genes were requested
