@@ -23,6 +23,7 @@ jobs:
       - name: Install dependencies & Build
         run: |
           npm ci
+          npm run build
           npm run docs:build
 
       # 4. Configure GitHub Pages for the deployment
