@@ -32,6 +32,7 @@ jobs:
 
     # Grant GITHUB_TOKEN the permissions it needs to deploy to GitHub Pages
     permissions:
+      contents: read
       pages: write
       id-token: write
 
