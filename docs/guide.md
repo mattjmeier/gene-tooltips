@@ -34,3 +34,7 @@ Once the script is loaded, you can initialize it. Add the class `gene-tooltip` a
     });
 </script>
 ```
+
+
+TODO: add examples for Vue, React, Django, Node.js, RMarkdown, MyST, Jupyter?
+Document CSS options

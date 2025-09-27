@@ -1,7 +1,7 @@
 export default {
   title: 'Gene Tooltip JS',
   description: 'A lightweight library for creating gene information tooltips.',
-  base: '/gene-tooltip/', // IMPORTANT: Set this to your repo name
+  base: '/gene-tooltips/', // IMPORTANT: Set this to your repo name
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide' },
