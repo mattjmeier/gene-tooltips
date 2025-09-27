@@ -7,6 +7,7 @@ export interface MyGeneInfoResult {
   symbol: string;
   name: string;
   summary?: string;
+  taxid: number;
   // Add other fields you might use from the API
 }
 

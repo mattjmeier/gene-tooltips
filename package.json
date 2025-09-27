@@ -36,6 +36,7 @@
     "dev": "npm-run-all --parallel watch:*",
 
     "watch:js": "esbuild src/index.ts --bundle --global-name=GeneTooltip --format=iife --outfile=dist/gene-tooltip.umd.js --footer:js=\"window.GeneTooltip = window.GeneTooltip.default\" --watch",
+    "watch:js:esm": "esbuild src/index.ts --bundle --platform=browser --format=esm --outfile=dist/gene-tooltip.esm.js --minify",
     "watch:css": "esbuild src/css/*.css --bundle --outdir=dist/css --watch",
     
     "build": "npm-run-all build:js build:css && tsc --emitDeclarationOnly",
