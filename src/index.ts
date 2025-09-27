@@ -14,6 +14,8 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   const config: GeneTooltipConfig = {
     ...defaultConfig,
     ...userConfig,
+    // Deep merge the nested objects
+    display: { ...defaultConfig.display, ...userConfig.display },
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
 
@@ -33,17 +35,21 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       }
 
       const { symbol, species } = info;
+      const renderOptions = {
+          truncate: config.truncateSummary,
+          display: config.display
+      };
 
       const cachedData = cache.get(symbol, species);
       if (typeof cachedData !== 'undefined') {
-        instance.setContent(renderTooltipHTML(cachedData, { truncate: config.truncateSummary }));
+        instance.setContent(renderTooltipHTML(cachedData, renderOptions));
         return;
       }
 
       fetchMyGeneBatch([symbol], species).then(resultsMap => {
         const data = resultsMap.get(symbol) || null; // Use null if not found
         cache.set(symbol, species, data);
-        instance.setContent(renderTooltipHTML(data, { truncate: config.truncateSummary }));
+        instance.setContent(renderTooltipHTML(data, renderOptions));
       }).catch(error => {
         console.error(`Failed to fetch data for ${symbol}`, error);
         instance.setContent('Error loading data.');
@@ -65,4 +71,3 @@ declare global {
     };
   }
 }
-

@@ -41,3 +41,21 @@
 .gene-tooltip-summary.expanded::after {
   display: none;
 }
+
+/* New styles for tooltip sections */
+.gene-tooltip-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  font-size: 0.9em;
+  color: #555;
+  margin-top: 0.5em;
+}
+
+.gene-tooltip-species-icon {
+  font-size: 1.2em;
+}
+
+.gene-tooltip-location-label {
+  font-weight: bold;
+}

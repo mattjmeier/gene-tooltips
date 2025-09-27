@@ -15,12 +15,23 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
 
   const url = 'https://mygene.info/v3/query';
   const query = geneSymbols.join(',');
+  
+  // Explicitly list only the fields we use in the application.
+  const fields = [
+    '_id', 
+    'query', 
+    'symbol', 
+    'name', 
+    'summary', 
+    'taxid', 
+    'genomic_pos'
+  ].join(',');
 
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `q=${query}&species=${species}&scopes=symbol&fields=all`,
+      body: `q=${query}&species=${species}&scopes=symbol&fields=${fields}`,
     });
 
     if (!response.ok) {

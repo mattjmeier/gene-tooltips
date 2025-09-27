@@ -1,11 +1,11 @@
 // ./src/renderer.ts
-import type { MyGeneInfoResult } from './config';
+import type { MyGeneInfoResult, GenomicPosition, TooltipDisplayConfig } from './config';
 import { SOURCES } from './constants';
 
 interface RenderOptions {
-  sources?: string[];        // which sources to show
-  showSpecies?: boolean;     // show species icon or not
+  sources?: string[];
   truncate?: number;
+  display?: Partial<TooltipDisplayConfig>;
 }
 
 // species lookup table
@@ -27,18 +27,42 @@ const speciesMap: Record<number, SpeciesInfo> = {
   9823: { common: "Pig", genus: "Sus scrofa", icon: "🐖" },
 };
 
+function renderSpecies(taxid: number): string {
+  const species = speciesMap[taxid] ?? { common: "Unknown", genus: "", icon: "❓" };
+  return `
+    <div class="gene-tooltip-section gene-tooltip-species">
+      <span class="gene-tooltip-species-icon">${species.icon}</span>
+      <span>${species.common}, <em>${species.genus}</em></span>
+    </div>
+  `;
+}
+
+function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined): string {
+    if (!genomic_pos) return '';
+
+    // If it's an array, just use the first one for simplicity
+    const pos = Array.isArray(genomic_pos) ? genomic_pos[0] : genomic_pos;
+    if (!pos) return '';
+    
+    // Format large numbers with commas
+    const start = pos.start.toLocaleString();
+    const end = pos.end.toLocaleString();
+
+    return `
+      <div class="gene-tooltip-section gene-tooltip-location">
+        <span class="gene-tooltip-location-label">Location:</span>
+        <span>chr${pos.chr}:${start}-${end}</span>
+      </div>
+    `;
+}
+
 export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,
   options: RenderOptions = {}
 ): string {
   if (!data) return '<p>Gene not found.</p>';
 
-  const { sources = ["ncbi"], showSpecies = true, truncate = 3 } = options;
-
-  // Species info
-  const species = showSpecies && data.taxid
-    ? speciesMap[data.taxid] ?? { common: "Unknown", genus: "", icon: "❓" }
-    : null;
+  const { sources = ["ncbi"], truncate = 3, display = { species: true, location: true } } = options;
 
   // External links
   const links = SOURCES.filter(src => sources.includes(src.key))
@@ -57,19 +81,11 @@ export function renderTooltipHTML(
   const summary = data.summary || "No summary available.";
   const summaryClass = truncate && summary.length > 0 ? 'gene-tooltip-summary' : 'gene-tooltip-summary-full';
   const tabIndex = truncate ? 'tabindex="0"' : '';
-
-  // Use a dynamic style variable to set the line-clamp value from our config.
   const summaryStyle = truncate ? `style="--line-clamp: ${truncate};"` : '';
 
-  // The 'summary' variable holds the FULL text, and CSS will truncate visually
   return `
     <div class="gene-tooltip-content" style="text-align: left; max-width: 300px;">
       <div class="gene-tooltip-header">
-        ${
-          species
-            ? `<span class="gene-tooltip-species">${species.icon}</span>`
-            : ""
-        }
         <strong>
           <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}" 
              target="_blank" 
@@ -80,22 +96,21 @@ export function renderTooltipHTML(
         </strong>
         <span class="gene-tooltip-name">(${data.name})</span>
       </div>
-      ${
-        species
-          ? `<div class="gene-tooltip-species-label">${species.common} <em>${species.genus}</em></div>`
-          : ""
-      }
+
+      ${display.species && data.taxid ? renderSpecies(data.taxid) : ''}
+      ${display.location ? renderLocation(data.genomic_pos) : ''}
+      
       <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
+      
       ${links ? `<div class="gene-tooltip-links">${links}</div>` : ""}
     </div>
   `;
 }
 
-
-
-
-// To add:
-// - arrange the species info and icon on one line (second line) instead, with the format like "[ICON] Human, <i>Homo sapiens</i>"
+        
+        
+        // To add:
+        // - arrange the species info and icon on one line (second line) instead, with the format like "[ICON] Human, <i>Homo sapiens</i>"
 // - ideogram showing location (using CSS/SVG?) (this is tricky because the API call doesn't innately have the information about the whole chromosome... where to get that? store a file in constants.ts?)
 // - below ideogram, text showing chromosomal location (e.g., chr1:10,000,000-10,010,248)
 // - top pathways (configurable to pick which source? e.g., KEGG as default, but allow reactome, Wikipathways etc.)
@@ -103,3 +118,4 @@ export function renderTooltipHTML(
 // - top protein domains (expandable to show them?)
 
 // - finally, ideally, we could make each component optional at the user-level
+// { common: "Yeast", genus: "Saccharomyces", icon: "🧫"},

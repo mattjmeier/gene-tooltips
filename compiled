@@ -1,4 +1,4 @@
-/src/api.ts
+]633;E;for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./*.js* | grep -v lock && ls ./src/css/*.css)\x3b do echo $i\x3b cat $i\x3b done > compiled;4fc3ae08-fc06-4e8a-b0a4-b34ac9a82a48]633;C./src/api.ts
 import type { MyGeneInfoResult } from './config';
 
 /**
@@ -79,6 +79,12 @@ export interface GeneTooltipConfig {
   api: 'mygene';
   prefetch: 'smart' | 'all' | 'none';
   prefetchThreshold: number;
+    /**
+   * The maximum number of lines to show for a gene summary before truncating.
+   * Set to 0 to disable truncation.
+   * @default 3
+   */
+  truncateSummary: number;
   tippyOptions: Partial<Props>;
 }
 
@@ -87,6 +93,7 @@ export const defaultConfig: GeneTooltipConfig = {
   api: 'mygene',
   prefetch: 'smart',
   prefetchThreshold: 15,
+  truncateSummary: 3,
   tippyOptions: {
     allowHTML: true,
     interactive: true,
@@ -149,7 +156,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   tippy(geneElements, {
     ...config.tippyOptions,
     content: 'Loading...',
-    onShow(instance: Instance) { // <-- Use the Instance type
+    onShow(instance: Instance) {
       const info = getGeneInfoFromElement(instance.reference as HTMLElement);
       if (!info) {
         instance.setContent('Invalid gene element');
@@ -159,15 +166,15 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       const { symbol, species } = info;
 
       const cachedData = cache.get(symbol, species);
-      if (typeof cachedData !== 'undefined') { // Check if it's in the cache (even if null)
-        instance.setContent(renderTooltipHTML(cachedData));
+      if (typeof cachedData !== 'undefined') {
+        instance.setContent(renderTooltipHTML(cachedData, { truncate: config.truncateSummary }));
         return;
       }
 
       fetchMyGeneBatch([symbol], species).then(resultsMap => {
         const data = resultsMap.get(symbol) || null; // Use null if not found
         cache.set(symbol, species, data);
-        instance.setContent(renderTooltipHTML(data));
+        instance.setContent(renderTooltipHTML(data, { truncate: config.truncateSummary }));
       }).catch(error => {
         console.error(`Failed to fetch data for ${symbol}`, error);
         instance.setContent('Error loading data.');
@@ -333,8 +340,8 @@ import { SOURCES } from './constants';
 
 interface RenderOptions {
   sources?: string[];        // which sources to show
-  truncateSummary?: number;  // character limit for summary
   showSpecies?: boolean;     // show species icon or not
+  truncate?: number;
 }
 
 // species lookup table
@@ -362,7 +369,7 @@ export function renderTooltipHTML(
 ): string {
   if (!data) return '<p>Gene not found.</p>';
 
-  const { sources = ["ncbi"], truncateSummary = 200, showSpecies = true } = options;
+  const { sources = ["ncbi"], showSpecies = true, truncate = 3 } = options;
 
   // Species info
   const species = showSpecies && data.taxid
@@ -383,12 +390,14 @@ export function renderTooltipHTML(
     .filter(Boolean)
     .join(" | ");
 
-  // Summary truncation
-  let summary = data.summary || "No summary available.";
-  if (truncateSummary && summary.length > truncateSummary) {
-    summary = summary.slice(0, truncateSummary) + "…";
-  }
+  const summary = data.summary || "No summary available.";
+  const summaryClass = truncate && summary.length > 0 ? 'gene-tooltip-summary' : 'gene-tooltip-summary-full';
+  const tabIndex = truncate ? 'tabindex="0"' : '';
 
+  // Use a dynamic style variable to set the line-clamp value from our config.
+  const summaryStyle = truncate ? `style="--line-clamp: ${truncate};"` : '';
+
+  // The 'summary' variable holds the FULL text, and CSS will truncate visually
   return `
     <div class="gene-tooltip-content" style="text-align: left; max-width: 300px;">
       <div class="gene-tooltip-header">
@@ -412,12 +421,24 @@ export function renderTooltipHTML(
           ? `<div class="gene-tooltip-species-label">${species.common} <em>${species.genus}</em></div>`
           : ""
       }
-      <p class="gene-tooltip-summary" tabindex="0">${summary}</p>
+      <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
       ${links ? `<div class="gene-tooltip-links">${links}</div>` : ""}
     </div>
   `;
 }
-./src/ui/summaryExpand.ts
+
+
+
+
+// To add:
+// - arrange the species info and icon on one line (second line) instead, with the format like "[ICON] Human, <i>Homo sapiens</i>"
+// - ideogram showing location (using CSS/SVG?) (this is tricky because the API call doesn't innately have the information about the whole chromosome... where to get that? store a file in constants.ts?)
+// - below ideogram, text showing chromosomal location (e.g., chr1:10,000,000-10,010,248)
+// - top pathways (configurable to pick which source? e.g., KEGG as default, but allow reactome, Wikipathways etc.)
+// - mini exon map (using CSS/SVG? Other tools in JS that we can leverage?)
+// - top protein domains (expandable to show them?)
+
+// - finally, ideally, we could make each component optional at the user-level./src/ui/summaryExpand.ts
 /**
  * Enables click/keyboard expand/collapse on .gene-tooltip-summary elements.
  */
@@ -558,39 +579,42 @@ export default defineConfig({
 @import './base.css';
 @import './light.css';
 
+/* This class is applied when truncation is ENABLED */
 .gene-tooltip-summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3; /* Chrome, Safari */
-  line-clamp: 3;         /* Future-proof / spec */
+  /* Use the custom property from the inline style */
+  -webkit-line-clamp: var(--line-clamp, 3);
+  line-clamp: var(--line-clamp, 3);
   overflow: hidden;
   position: relative;
+  cursor: pointer;
+  margin: 1em 0; /* Add standard paragraph margin */
+}
+
+/* This class is for the untruncated version */
+.gene-tooltip-summary-full {
+  margin: 1em 0; /* Add standard paragraph margin */
 }
 
 .gene-tooltip-summary::after {
   content: "… more";
   font-size: 0.9em;
+  font-weight: bold;
+  color: #007bff;
   position: absolute;
   bottom: 0;
   right: 0;
-  padding-left: 0.5em;
-  background: linear-gradient(to right, transparent, white 50%);
+  padding-left: 1em;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), white 50%);
 }
 
-/* Hover (desktop) */
-.gene-tooltip-summary:hover {
-  max-height: none;
-}
-.gene-tooltip-summary:hover::after {
-  display: none;
-}
-
-/* Expanded (click/touch or keyboard) */
 .gene-tooltip-summary.expanded {
-  max-height: none;
+  display: block; 
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
 }
+
 .gene-tooltip-summary.expanded::after {
   display: none;
 }
-
-.gene-tooltip-summary { cursor: pointer; }
