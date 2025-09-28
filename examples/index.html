@@ -18,14 +18,43 @@
 
     <!-- Load the library -->
     <script src="../dist/gene-tooltip.umd.js"></script>
+    <!-- If you're using ideogram, load it too -->
+    <script src="../node_modules/ideogram/dist/js/ideogram.min.js"></script>
 
     <!-- Initialize the library -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             GeneTooltip.init({
-                truncateSummary: 5
+                truncateSummary: 5,
+                display: {
+                    ideogram: true
+                },
+                ideogram: {
+                    enabled: true,
+                    height: 50
+                }
             });
         });
     </script>
+
+
+<script type="text/javascript">
+
+    var config = {
+      organism: 'human',
+      chromosome: '17',
+      chrHeight: 100,
+      orientation: 'horizontal',
+      annotations: [{
+        name: 'BRCA1',
+        chr: '17',
+        start: 43044294,
+        stop: 43125482
+      }]
+    };
+
+    var ideogram = new Ideogram(config);
+
+  </script>
 </body>
 </html>

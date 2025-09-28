@@ -8,16 +8,17 @@ import { renderTooltipHTML } from './renderer.js';
 import { findGeneElements, getGeneInfoFromElement } from './parser.js';
 import { runPrefetch } from './prefetch.js';
 import { enableSummaryExpand } from './ui/summaryExpand.js';
-
+import { renderIdeogram } from './ideogram.js'; 
 // The init function accepts a partial configuration
 function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   const config: GeneTooltipConfig = {
     ...defaultConfig,
     ...userConfig,
-    // Deep merge the nested objects
     display: { ...defaultConfig.display, ...userConfig.display },
+    ideogram: { ...defaultConfig.ideogram, ...userConfig.ideogram },
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
+
 
   const geneElements = findGeneElements(config.selector);
   if (geneElements.length === 0) return;
@@ -36,20 +37,39 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
 
       const { symbol, species } = info;
       const renderOptions = {
-          truncate: config.truncateSummary,
-          display: config.display
+        truncate: config.truncateSummary,
+        display: {
+          ...config.display,
+          ideogram: config.ideogram?.enabled ?? false
+        }
       };
 
       const cachedData = cache.get(symbol, species);
       if (typeof cachedData !== 'undefined') {
         instance.setContent(renderTooltipHTML(cachedData, renderOptions));
+        
+        // Also handle ideogram for cached data
+        if (config.ideogram?.enabled && cachedData?.genomic_pos) {
+          // Use setTimeout to wait for the DOM to update
+          setTimeout(() => {
+            renderIdeogram(instance, cachedData, config.ideogram);
+          }, 0);
+        }
         return;
       }
 
       fetchMyGeneBatch([symbol], species).then(resultsMap => {
-        const data = resultsMap.get(symbol) || null; // Use null if not found
+        const data = resultsMap.get(symbol) || null;
         cache.set(symbol, species, data);
         instance.setContent(renderTooltipHTML(data, renderOptions));
+
+        // Handle ideogram rendering
+        if (config.ideogram?.enabled && data?.genomic_pos) {
+          // Use setTimeout to wait for the DOM to update
+          setTimeout(() => {
+            renderIdeogram(instance, data, config.ideogram);
+          }, 0);
+        }
       }).catch(error => {
         console.error(`Failed to fetch data for ${symbol}`, error);
         instance.setContent('Error loading data.');
@@ -57,6 +77,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
     }
   });
   enableSummaryExpand();
+
 }
 
 export default {

@@ -37,21 +37,22 @@ function renderSpecies(taxid: number): string {
   `;
 }
 
-function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined): string {
+function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined, showIdeogram: boolean = false, geneId: string = ''): string {
     if (!genomic_pos) return '';
 
-    // If it's an array, just use the first one for simplicity
     const pos = Array.isArray(genomic_pos) ? genomic_pos[0] : genomic_pos;
     if (!pos) return '';
     
-    // Format large numbers with commas
     const start = pos.start.toLocaleString();
     const end = pos.end.toLocaleString();
 
     return `
       <div class="gene-tooltip-section gene-tooltip-location">
-        <span class="gene-tooltip-location-label">Location:</span>
-        <span>chr${pos.chr}:${start}-${end}</span>
+        <div>
+          <span class="gene-tooltip-location-label">Location:</span>
+          <span>chr${pos.chr}:${start}-${end}</span>
+        </div>
+        ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${geneId}"></div>` : ""}
       </div>
     `;
 }
@@ -62,7 +63,7 @@ export function renderTooltipHTML(
 ): string {
   if (!data) return '<p>Gene not found.</p>';
 
-  const { sources = ["ncbi"], truncate = 3, display = { species: true, location: true } } = options;
+  const { sources = ["ncbi"], truncate = 3, display = { species: true, location: true, ideogram: false } } = options;
 
   // External links
   const links = SOURCES.filter(src => sources.includes(src.key))
@@ -98,7 +99,7 @@ export function renderTooltipHTML(
       </div>
 
       ${display.species && data.taxid ? renderSpecies(data.taxid) : ''}
-      ${display.location ? renderLocation(data.genomic_pos) : ''}
+      ${display.location ? renderLocation(data.genomic_pos, display.ideogram, data._id) : ''}
       
       <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
       
@@ -106,6 +107,7 @@ export function renderTooltipHTML(
     </div>
   `;
 }
+
 
         
         

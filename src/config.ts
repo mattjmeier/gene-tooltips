@@ -12,18 +12,28 @@ export interface MyGeneInfoResult {
   _id: string;
   query: string;
   symbol: string;
-  name:string;
+  name: string;
   summary?: string;
   taxid: number;
   genomic_pos?: GenomicPosition | GenomicPosition[];
-  // Add other fields you might use from the API
 }
 
 // Define the components that can be shown or hidden
 export interface TooltipDisplayConfig {
   species: boolean;
   location: boolean;
+  ideogram: boolean;
 }
+
+// Ideogram configuration
+export interface IdeogramConfig {
+  enabled: boolean;
+  width: number;
+  height: number;
+  showLabels: boolean;
+  // assetPath?: string;
+}
+
 
 // Define the shape of our library's configuration object
 export interface GeneTooltipConfig {
@@ -31,16 +41,9 @@ export interface GeneTooltipConfig {
   api: 'mygene';
   prefetch: 'smart' | 'all' | 'none';
   prefetchThreshold: number;
-    /**
-   * The maximum number of lines to show for a gene summary before truncating.
-   * Set to 0 to disable truncation.
-   * @default 3
-   */
   truncateSummary: number;
-  /**
-   * Control which informational components are displayed in the tooltip.
-   */
   display: Partial<TooltipDisplayConfig>;
+  ideogram: Partial<IdeogramConfig>;
   tippyOptions: Partial<Props>;
 }
 
@@ -53,6 +56,17 @@ export const defaultConfig: GeneTooltipConfig = {
   display: {
     species: true,
     location: true,
+    ideogram: true,
+  },
+  ideogram: {
+    enabled: true,
+    height: 100,
+    showLabels: false,
+    // Default assetPath is the vendor folder.
+    // Can also provide a custom local version here instead.
+    // Or, you can use a CDN:
+    // 'https://unpkg.com/ideogram@1.53.0/dist/js/ideogram.min.js'
+    // assetPath: '/dist/vendor/ideogram.min.js', 
   },
   tippyOptions: {
     allowHTML: true,
