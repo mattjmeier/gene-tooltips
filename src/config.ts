@@ -8,6 +8,17 @@ export interface GenomicPosition {
   strand: number;
 }
 
+export interface MyGenePathway {
+  name: string;
+  id: string;
+}
+
+export interface MyGeneInterproDomain {
+  desc: string;
+  id: string;
+  short_desc: string;
+}
+
 export interface MyGeneInfoResult {
   _id: string;
   query: string;
@@ -16,13 +27,22 @@ export interface MyGeneInfoResult {
   summary?: string;
   taxid: number;
   genomic_pos?: GenomicPosition | GenomicPosition[];
+  pathway?: {
+    reactome?: MyGenePathway[] | MyGenePathway;
+    kegg?: MyGenePathway[] | MyGenePathway;
+    wikipathways?: MyGenePathway[] | MyGenePathway;
+  };
+  interpro?: MyGeneInterproDomain[] | MyGeneInterproDomain;
 }
+
 
 // Define the components that can be shown or hidden
 export interface TooltipDisplayConfig {
   species: boolean;
   location: boolean;
   ideogram: boolean;
+  pathways: boolean;
+  domains: boolean;
 }
 
 // Ideogram configuration
@@ -45,29 +65,33 @@ export interface GeneTooltipConfig {
   display: Partial<TooltipDisplayConfig>;
   ideogram: Partial<IdeogramConfig>;
   tippyOptions: Partial<Props>;
+  pathwaySource: 'reactome' | 'kegg' | 'wikipathways';
+  pathwayCount: number; // Number of pathways to show before "more"
+  domainCount: number; // Number of domains to show before "more"
 }
+
 
 export const defaultConfig: GeneTooltipConfig = {
   selector: '.gene-tooltip',
   api: 'mygene',
   prefetch: 'smart',
   prefetchThreshold: 15,
-  truncateSummary: 3,
+  truncateSummary: 4,
   display: {
     species: true,
     location: true,
     ideogram: true,
+    pathways: true,
+    domains: true,
   },
   ideogram: {
     enabled: true,
     height: 100,
     showLabels: false,
-    // Default assetPath is the vendor folder.
-    // Can also provide a custom local version here instead.
-    // Or, you can use a CDN:
-    // 'https://unpkg.com/ideogram@1.53.0/dist/js/ideogram.min.js'
-    // assetPath: '/dist/vendor/ideogram.min.js', 
   },
+  pathwaySource: 'reactome',
+  pathwayCount: 3,
+  domainCount: 3,
   tippyOptions: {
     allowHTML: true,
     interactive: true,

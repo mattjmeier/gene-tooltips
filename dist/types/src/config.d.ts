@@ -5,6 +5,15 @@ export interface GenomicPosition {
     end: number;
     strand: number;
 }
+export interface MyGenePathway {
+    name: string;
+    id: string;
+}
+export interface MyGeneInterproDomain {
+    desc: string;
+    id: string;
+    short_desc: string;
+}
 export interface MyGeneInfoResult {
     _id: string;
     query: string;
@@ -13,11 +22,19 @@ export interface MyGeneInfoResult {
     summary?: string;
     taxid: number;
     genomic_pos?: GenomicPosition | GenomicPosition[];
+    pathway?: {
+        reactome?: MyGenePathway[] | MyGenePathway;
+        kegg?: MyGenePathway[] | MyGenePathway;
+        wikipathways?: MyGenePathway[] | MyGenePathway;
+    };
+    interpro?: MyGeneInterproDomain[] | MyGeneInterproDomain;
 }
 export interface TooltipDisplayConfig {
     species: boolean;
     location: boolean;
     ideogram: boolean;
+    pathways: boolean;
+    domains: boolean;
 }
 export interface IdeogramConfig {
     enabled: boolean;
@@ -34,6 +51,9 @@ export interface GeneTooltipConfig {
     display: Partial<TooltipDisplayConfig>;
     ideogram: Partial<IdeogramConfig>;
     tippyOptions: Partial<Props>;
+    pathwaySource: 'reactome' | 'kegg' | 'wikipathways';
+    pathwayCount: number;
+    domainCount: number;
 }
 export declare const defaultConfig: GeneTooltipConfig;
 //# sourceMappingURL=config.d.ts.map

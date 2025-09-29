@@ -1,11 +1,13 @@
-// ./src/renderer.ts
-import type { MyGeneInfoResult, GenomicPosition, TooltipDisplayConfig } from './config';
+import type { MyGeneInfoResult, GenomicPosition, TooltipDisplayConfig, MyGenePathway, MyGeneInterproDomain } from './config';
 import { SOURCES } from './constants';
 
 interface RenderOptions {
   sources?: string[];
   truncate?: number;
   display?: Partial<TooltipDisplayConfig>;
+  pathwaySource?: 'reactome' | 'kegg' | 'wikipathways';
+  pathwayCount?: number;
+  domainCount?: number;
 }
 
 // species lookup table
@@ -57,13 +59,104 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
     `;
 }
 
+// A generic function to render a list section (for Pathways or Domains)
+function renderListSection(
+  title: string,
+  items: { name: string; url: string }[],
+  initialCount: number,
+  moreButtonId: string
+): string {
+  if (!items || items.length === 0) {
+    return '';
+  }
+
+  const visibleItems = items.slice(0, initialCount);
+  const hiddenItemCount = items.length - initialCount;
+
+  // Create the list of visible items
+  const listItems = visibleItems
+    .map(item => `
+      <li>
+        <a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a>
+      </li>
+    `)
+    .join('');
+
+  // Create the "more" button if there are hidden items
+  const moreButton = hiddenItemCount > 0
+    ? `<span id="${moreButtonId}" class="gene-tooltip-more-btn" data-more-count="${hiddenItemCount}">
+         ... and ${hiddenItemCount} more
+       </span>`
+    : '';
+
+  // Store the full list as a data attribute on the "more" button for the nested tippy
+  if (hiddenItemCount > 0) {
+    // We need to find the button later and add the data. We'll do this in the main `init`.
+    // For now, we'll just render the button.
+  }
+
+  return `
+    <div class="gene-tooltip-section gene-tooltip-list-section">
+      <div class="gene-tooltip-list-header">${title}</div>
+      <ul>${listItems}</ul>
+      ${moreButton}
+    </div>
+  `;
+}
+
+// Formats raw pathway data and calls the renderer
+function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'wikipathways', count: number): string {
+    const rawPathways: MyGenePathway | MyGenePathway[] | undefined = data.pathway?.[source];
+    if (!rawPathways) return '';
+    
+    const pathways = (Array.isArray(rawPathways) ? rawPathways : [rawPathways])
+      .map(p => {
+        let url = '#';
+        if (source === 'reactome') url = `https://reactome.org/content/detail/${p.id}`;
+        if (source === 'kegg') url = `https://www.genome.jp/dbget-bin/www_bget?path:${p.id}`;
+        if (source === 'wikipathways') url = `https://www.wikipathways.org/pathways/${p.id}`;
+        return { name: p.name, url };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    const moreButtonId = `pathways-more-${data._id}`;
+
+    return renderListSection('Pathways', pathways, count, moreButtonId);
+}
+
+// Formats raw domain data and calls the renderer
+function renderDomains(data: MyGeneInfoResult, count: number): string {
+  // FIX: Explicitly type the raw data to satisfy the compiler and improve clarity.
+  const rawDomains: MyGeneInterproDomain | MyGeneInterproDomain[] | undefined = data.interpro;
+  if (!rawDomains) return '';
+
+  const domains = (Array.isArray(rawDomains) ? rawDomains : [rawDomains])
+    .map(d => ({
+      name: d.short_desc,
+      url: `https://www.ebi.ac.uk/interpro/entry/InterPro/${d.id}`
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const moreButtonId = `domains-more-${data._id}`;
+
+  return renderListSection('Protein Domains', domains, count, moreButtonId);
+}
+
+
 export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,
   options: RenderOptions = {}
 ): string {
   if (!data) return '<p>Gene not found.</p>';
 
-  const { sources = ["ncbi"], truncate = 3, display = { species: true, location: true, ideogram: false } } = options;
+  const { 
+    sources = ["ncbi"], 
+    truncate = 5, 
+    display = {},
+    pathwaySource = 'reactome',
+    pathwayCount = 3,
+    domainCount = 3
+  } = options;
 
   // External links
   const links = SOURCES.filter(src => sources.includes(src.key))
@@ -98,10 +191,13 @@ export function renderTooltipHTML(
         <span class="gene-tooltip-name">(${data.name})</span>
       </div>
 
-      ${display.species && data.taxid ? renderSpecies(data.taxid) : ''}
-      ${display.location ? renderLocation(data.genomic_pos, display.ideogram, data._id) : ''}
+      ${display.species !== false && data.taxid ? renderSpecies(data.taxid) : ''}
+      ${display.location !== false ? renderLocation(data.genomic_pos, display.ideogram, data._id) : ''}
       
       <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
+
+      ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount) : ''}
+      ${display.domains !== false ? renderDomains(data, domainCount) : ''}
       
       ${links ? `<div class="gene-tooltip-links">${links}</div>` : ""}
     </div>
@@ -111,13 +207,10 @@ export function renderTooltipHTML(
 
         
         
-        // To add:
-        // - arrange the species info and icon on one line (second line) instead, with the format like "[ICON] Human, <i>Homo sapiens</i>"
-// - ideogram showing location (using CSS/SVG?) (this is tricky because the API call doesn't innately have the information about the whole chromosome... where to get that? store a file in constants.ts?)
-// - below ideogram, text showing chromosomal location (e.g., chr1:10,000,000-10,010,248)
-// - top pathways (configurable to pick which source? e.g., KEGG as default, but allow reactome, Wikipathways etc.)
-// - mini exon map (using CSS/SVG? Other tools in JS that we can leverage?)
+// To do:
+// - add top pathways (configurable to pick which source? e.g., KEGG as default, but allow reactome, Wikipathways etc.)
+// - add mini exon map (using CSS/SVG? Other tools in JS that we can leverage?)
 // - top protein domains (expandable to show them?)
 
-// - finally, ideally, we could make each component optional at the user-level
+// - finally, ideally, we should make each component optional at the user-level
 // { common: "Yeast", genus: "Saccharomyces", icon: "🧫"},

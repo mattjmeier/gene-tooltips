@@ -3,6 +3,9 @@ interface RenderOptions {
     sources?: string[];
     truncate?: number;
     display?: Partial<TooltipDisplayConfig>;
+    pathwaySource?: 'reactome' | 'kegg' | 'wikipathways';
+    pathwayCount?: number;
+    domainCount?: number;
 }
 export declare function renderTooltipHTML(data: MyGeneInfoResult | null | undefined, options?: RenderOptions): string;
 export {};

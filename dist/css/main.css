@@ -165,3 +165,66 @@
   flex-direction: column;
   gap: 0.5em;
 }
+.gene-tooltip-list-section {
+  flex-direction: column;
+  align-items: flex-start;
+  border-top: 1px solid #eee;
+  padding-top: 0.5em;
+}
+.gene-tooltip-list-header {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #333;
+  margin-bottom: 0.3em;
+}
+.gene-tooltip-list-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+.gene-tooltip-list-section li {
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 2px 0;
+}
+.gene-tooltip-list-section a {
+  text-decoration: none;
+  color: #007bff;
+}
+.gene-tooltip-list-section a:hover {
+  text-decoration: underline;
+}
+.gene-tooltip-more-btn {
+  font-size: 0.85em;
+  color: #6c757d;
+  cursor: pointer;
+  margin-top: 4px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+.gene-tooltip-more-btn:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+.gene-tooltip-nested-list {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  text-align: left;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.gene-tooltip-nested-list li {
+  padding: 3px 5px;
+}
+.gene-tooltip-nested-list a {
+  color: #007bff;
+  text-decoration: none;
+}
+.gene-tooltip-nested-list a:hover {
+  text-decoration: underline;
+}
