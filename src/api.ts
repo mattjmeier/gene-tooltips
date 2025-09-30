@@ -26,7 +26,8 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
     'taxid', 
     'genomic_pos',
     'pathway',
-    'interpro'
+    'interpro',
+    'exons'
   ].join(',');
 
   try {

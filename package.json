@@ -35,7 +35,6 @@
   "scripts": {
     "// HOUSEKEEPING": "-------------------------------------------------",
     "clean": "rimraf dist",
-
     "// DEVELOPMENT": "-------------------------------------------------",
     "dev": "npm run build && npm-run-all --parallel watch:*",
     "watch:js": "npm-run-all --parallel watch:js:*",
@@ -43,7 +42,6 @@
     "watch:js:esm": "esbuild src/index.ts --bundle --platform=browser --format=esm --outfile=dist/gene-tooltip.esm.js --minify --watch --external:ideogram",
     "watch:js:umd": "esbuild src/index.ts --bundle --global-name=GeneTooltip --format=iife --outfile=dist/gene-tooltip.umd.js --footer:js=\"window.GeneTooltip = window.GeneTooltip.default\" --minify --external:ideogram",
     "watch:css": "esbuild src/css/*.css --bundle --outdir=dist/css --watch",
-
     "// PRODUCTION & DECLARATIONS": "---------------------------",
     "build": "npm run clean && npm-run-all build:js build:css  && tsc --emitDeclarationOnly",
     "build:js": "npm-run-all build:js:*",
@@ -51,7 +49,6 @@
     "build:js:esm": "esbuild src/index.ts --bundle --platform=browser --format=esm --outfile=dist/gene-tooltip.esm.js --minify --external:ideogram",
     "build:js:umd": "esbuild src/index.ts --bundle --global-name=GeneTooltip --format=iife --outfile=dist/gene-tooltip.umd.js --footer:js=\"window.GeneTooltip = window.GeneTooltip.default\" --minify --external:ideogram",
     "build:css": "esbuild src/css/*.css --bundle --outdir=dist/css --minify",
-  
     "// DOCS & TESTING": "---------------------------------------------",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
@@ -60,9 +57,11 @@
     "test:watch": "vitest --watch"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
     "@types/node": "^20.14.12",
     "@types/tippy.js": "^6.0.0",
     "cpx": "^1.5.0",
+    "d3": "^7.9.0",
     "esbuild": "^0.23.0",
     "glob": "^11.0.3",
     "ideogram": "^1.53.0",
@@ -75,9 +74,13 @@
     "vitest": "^2.0.4"
   },
   "peerDependencies": {
+    "d3": "^7.0.0",
     "ideogram": "^1.53.0"
   },
   "peerDependenciesMeta": {
+    "d3": {
+      "optional": true
+    },
     "ideogram": {
       "optional": true
     }

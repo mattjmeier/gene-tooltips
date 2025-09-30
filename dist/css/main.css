@@ -228,3 +228,8 @@
 .gene-tooltip-nested-list a:hover {
   text-decoration: underline;
 }
+.gene-tooltip-track {
+  margin: 0.75em 0;
+  min-height: 40px;
+  overflow: hidden;
+}

@@ -59,6 +59,11 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
     `;
 }
 
+function renderGeneTrackContainer(geneId: string): string {
+  return `<div class="gene-tooltip-track" id="gene-tooltip-track-${geneId}"></div>`;
+}
+
+
 // A generic function to render a list section (for Pathways or Domains)
 function renderListSection(
   title: string,
@@ -193,7 +198,8 @@ export function renderTooltipHTML(
 
       ${display.species !== false && data.taxid ? renderSpecies(data.taxid) : ''}
       ${display.location !== false ? renderLocation(data.genomic_pos, display.ideogram, data._id) : ''}
-      
+      ${display.geneTrack !== false && data.genomic_pos ? renderGeneTrackContainer(data._id) : ''}
+
       <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
 
       ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount) : ''}

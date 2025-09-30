@@ -33,6 +33,7 @@ export interface MyGeneInfoResult {
     wikipathways?: MyGenePathway[] | MyGenePathway;
   };
   interpro?: MyGeneInterproDomain[] | MyGeneInterproDomain;
+  exons?: MyGeneExon[];
 }
 
 
@@ -43,6 +44,7 @@ export interface TooltipDisplayConfig {
   ideogram: boolean;
   pathways: boolean;
   domains: boolean;
+  geneTrack: boolean;
 }
 
 // Ideogram configuration
@@ -70,6 +72,18 @@ export interface GeneTooltipConfig {
   domainCount: number; // Number of domains to show before "more"
 }
 
+export interface MyGeneExon {
+  cdsend: number;
+  cdsstart: number;
+  chr: string;
+  start: number;
+  end: number;
+  strand: number;
+  txend: number;
+  txstart: number;
+}
+
+
 
 export const defaultConfig: GeneTooltipConfig = {
   selector: '.gene-tooltip',
@@ -83,6 +97,7 @@ export const defaultConfig: GeneTooltipConfig = {
     ideogram: true,
     pathways: true,
     domains: true,
+    geneTrack: true,
   },
   ideogram: {
     enabled: true,

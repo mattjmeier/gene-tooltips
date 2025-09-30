@@ -9,7 +9,7 @@ import { findGeneElements, getGeneInfoFromElement } from './parser.js';
 import { runPrefetch } from './prefetch.js';
 import { enableSummaryExpand } from './ui/summaryExpand.js';
 import { renderIdeogram } from './ideogram.js'; 
-
+import { renderGeneTrack } from './gene-track.js';
 
 // Helper function to create content for the nested tooltip
 function createNestedContent(items: { name: string; url: string }[]): string {
@@ -100,6 +100,10 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
 
       const data = cache.get(info.symbol, info.species);
       if (!data) return;
+
+      if (config.display.geneTrack && data.exons) {
+          renderGeneTrack(instance, data);
+      }
 
       instance._nestedTippys = [];
 
