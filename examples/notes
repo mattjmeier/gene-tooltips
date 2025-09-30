@@ -1,1 +1,1 @@
-for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./*.js* | grep -v lock && ls ./src/css/*.css); do echo $i; cat $i; done > compiled
+for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./*.js* | grep -v lock && ls ./src/css/*.css); do echo $i; cat $i; done > compiled 

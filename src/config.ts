@@ -76,12 +76,17 @@ export interface MyGeneExon {
   cdsend: number;
   cdsstart: number;
   chr: string;
-  start: number;
-  end: number;
   strand: number;
   txend: number;
   txstart: number;
+  // Make all possible coordinate formats optional
+  position?: [number, number][]; 
+  start?: number;                 
+  end?: number;                   
 }
+
+
+
 
 
 

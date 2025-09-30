@@ -28,6 +28,7 @@ export interface MyGeneInfoResult {
         wikipathways?: MyGenePathway[] | MyGenePathway;
     };
     interpro?: MyGeneInterproDomain[] | MyGeneInterproDomain;
+    exons?: MyGeneExon[];
 }
 export interface TooltipDisplayConfig {
     species: boolean;
@@ -35,6 +36,7 @@ export interface TooltipDisplayConfig {
     ideogram: boolean;
     pathways: boolean;
     domains: boolean;
+    geneTrack: boolean;
 }
 export interface IdeogramConfig {
     enabled: boolean;
@@ -54,6 +56,17 @@ export interface GeneTooltipConfig {
     pathwaySource: 'reactome' | 'kegg' | 'wikipathways';
     pathwayCount: number;
     domainCount: number;
+}
+export interface MyGeneExon {
+    cdsend: number;
+    cdsstart: number;
+    chr: string;
+    strand: number;
+    txend: number;
+    txstart: number;
+    position?: [number, number][];
+    start?: number;
+    end?: number;
 }
 export declare const defaultConfig: GeneTooltipConfig;
 //# sourceMappingURL=config.d.ts.map
