@@ -37,6 +37,10 @@ export interface TooltipDisplayConfig {
     pathways: boolean;
     domains: boolean;
     geneTrack: boolean;
+    links: {
+        ncbi?: boolean;
+        ensembl?: boolean;
+    };
 }
 export interface IdeogramConfig {
     enabled: boolean;

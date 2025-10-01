@@ -1,6 +1,5 @@
 import type { MyGeneInfoResult, TooltipDisplayConfig } from './config';
 interface RenderOptions {
-    sources?: string[];
     truncate?: number;
     display?: Partial<TooltipDisplayConfig>;
     pathwaySource?: 'reactome' | 'kegg' | 'wikipathways';

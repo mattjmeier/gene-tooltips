@@ -1,1 +1,14 @@
-for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./*.js* | grep -v lock && ls ./src/css/*.css); do echo $i; cat $i; done > compiled 
+for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./*.js* | grep -v lock && ls ./src/css/*.css); do echo $i; cat $i; done > compiled
+
+for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./src/types/*.ts && ls ./test/*.ts && ls ./*.js* | grep -v lock && ls ./src/css/*.css); do echo $i; cat $i; done > compiled 
+
+
+## To do:
+- Modify the links:
+    - Fix the ensebml link to use the ensembl gene ID instead
+    - Fix the SVGs to use static PNGs - where do I store them in an NPM package?
+
+- Modify the exon map - instead of the chevrons pointing in the direction of transcription, we will have a single label above the exon map showing the gene symbol name in bold, followed by an arrow pointing in the direction of transcription
+
+- Modify the Pathways and Domain formatting - 1) instead of having a line-separated list, let's make it comma separated in paragraph style; this will make it more compact. The child tooltip should stay line separated though.
+                                              2) the pathways and domains sometimes each have duplicates - could be reasons for this in the underlying data, but let's simply deduplicate them to get unique elements for now.

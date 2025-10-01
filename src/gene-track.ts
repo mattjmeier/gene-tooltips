@@ -65,17 +65,17 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
 
 
   // --- D3 Drawing Logic ---
-  const margin = { top: 5, right: 10, bottom: 5, left: 10 };
+  const margin = { top: 20, right: 10, bottom: 5, left: 10 }; // Increased top margin for the label
   const width = 290 - margin.left - margin.right;
-  const height = 30;
-  const exonHeight = 16;
+  const height = 20; // The track itself remains this height
+  const exonHeight = 10;
   const yCenter = height / 2;
   const exonY = yCenter - (exonHeight / 2);
 
   container.innerHTML = '';
   const svg = d3.select(container).append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("height", height + margin.top + margin.bottom) // Use the total height
     .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
   
   const geneStart = transcriptExons[0].txstart;
@@ -83,6 +83,15 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
   const strand = transcriptExons[0].strand;
   const xScale = d3.scaleLinear().domain([geneStart, geneEnd]).range([0, width]);
   
+  // --- NEW: Add the title label ---
+  const directionArrow = strand === 1 ? '→' : '←';
+  svg.append("text")
+    .attr("x", 0)
+    .attr("y", -5) // Position above the track
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "12px")
+    .html(`<tspan font-weight="bold">${data.symbol}</tspan> <tspan>${directionArrow}</tspan>`);
+
   svg.append("line").attr("x1", xScale(geneStart)).attr("y1", yCenter)
     .attr("x2", xScale(geneEnd)).attr("y2", yCenter)
     .attr("stroke", "#555").attr("stroke-width", 2);
@@ -96,6 +105,8 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     .attr("fill", "#007bff")
     .attr("stroke", "#0056b3");
 
+  // --- chevron drawing logic, didn't like the look of this ---
+  /*
   const numChevrons = Math.floor(width / 20);
   const chevronPoints = d3.range(numChevrons).map(i => geneStart + (i + 1) * (geneEnd - geneStart) / (numChevrons + 1));
   const chevronPath = strand === 1 ? "M-2,-4 L2,0 L-2,4" : "M2,-4 L-2,0 L2,4";
@@ -104,4 +115,5 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     .attr("class", "chevron").attr("d", chevronPath)
     .attr("transform", d => `translate(${xScale(d)}, ${yCenter})`)
     .attr("fill", "none").attr("stroke", "#555").attr("stroke-width", 1.5);
+  */
 }

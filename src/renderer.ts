@@ -1,33 +1,18 @@
 import type { MyGeneInfoResult, GenomicPosition, TooltipDisplayConfig, MyGenePathway, MyGeneInterproDomain } from './config';
-import { SOURCES } from './constants';
+import { speciesMap } from './constants';
+
+import NCBILogoText from "./assets/US-NLM-NCBI-Logo.svg";
+const NCBILogo = `data:image/svg+xml,${encodeURIComponent(NCBILogoText)}`;
+import EnsemblLogo from "./assets/EnsemblLogo.webp";
+console.log('NCBILogo variable contains:', NCBILogo);
 
 interface RenderOptions {
-  sources?: string[];
   truncate?: number;
-  display?: Partial<TooltipDisplayConfig>;
+  display?: Partial<TooltipDisplayConfig>; // This now includes the 'links' property
   pathwaySource?: 'reactome' | 'kegg' | 'wikipathways';
   pathwayCount?: number;
   domainCount?: number;
 }
-
-// species lookup table
-interface SpeciesInfo {
-  common: string;
-  genus: string;
-  icon: string;
-}
-
-const speciesMap: Record<number, SpeciesInfo> = {
-  9606: { common: "Human", genus: "Homo sapiens", icon: "🧑" },
-  10090: { common: "Mouse", genus: "Mus musculus", icon: "🐭" },
-  10116: { common: "Rat", genus: "Rattus norvegicus", icon: "🐀" },
-  7227: { common: "Fruitfly", genus: "Drosophila melanogaster", icon: "🪰" },
-  6239: { common: "Nematode", genus: "Caenorhabditis elegans", icon: "🪱" },
-  7955: { common: "Zebrafish", genus: "Danio rerio", icon: "🐟" },
-  3702: { common: "Thale-cress", genus: "Arabidopsis thaliana", icon: "🌱" },
-  8364: { common: "Frog", genus: "Xenopus tropicalis", icon: "🐸" },
-  9823: { common: "Pig", genus: "Sus scrofa", icon: "🐖" },
-};
 
 function renderSpecies(taxid: number): string {
   const species = speciesMap[taxid] ?? { common: "Unknown", genus: "", icon: "❓" };
@@ -51,7 +36,7 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
     return `
       <div class="gene-tooltip-section gene-tooltip-location">
         <div>
-          <span class="gene-tooltip-location-label">Location:</span>
+          <div class="gene-tooltip-location-label">Location</div>
           <span>chr${pos.chr}:${start}-${end}</span>
         </div>
         ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${geneId}"></div>` : ""}
@@ -63,9 +48,7 @@ function renderGeneTrackContainer(geneId: string): string {
   return `<div class="gene-tooltip-track" id="gene-tooltip-track-${geneId}"></div>`;
 }
 
-
-// A generic function to render a list section (for Pathways or Domains)
-function renderListSection(
+function renderParagraphSection(
   title: string,
   items: { name: string; url: string }[],
   initialCount: number,
@@ -78,14 +61,10 @@ function renderListSection(
   const visibleItems = items.slice(0, initialCount);
   const hiddenItemCount = items.length - initialCount;
 
-  // Create the list of visible items
-  const listItems = visibleItems
-    .map(item => `
-      <li>
-        <a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a>
-      </li>
-    `)
-    .join('');
+  // Create the comma-separated list of links for the paragraph
+  const itemLinks = visibleItems
+    .map(item => `<a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a>`)
+    .join(', ');
 
   // Create the "more" button if there are hidden items
   const moreButton = hiddenItemCount > 0
@@ -94,19 +73,19 @@ function renderListSection(
        </span>`
     : '';
 
-  // Store the full list as a data attribute on the "more" button for the nested tippy
-  if (hiddenItemCount > 0) {
-    // We need to find the button later and add the data. We'll do this in the main `init`.
-    // For now, we'll just render the button.
-  }
-
   return `
-    <div class="gene-tooltip-section gene-tooltip-list-section">
-      <div class="gene-tooltip-list-header">${title}</div>
-      <ul>${listItems}</ul>
-      ${moreButton}
+    <div class="gene-tooltip-section gene-tooltip-p-section">
+      <div class="gene-tooltip-p-header">${title}</div>
+      <p class="gene-tooltip-p-content">
+        ${itemLinks}${hiddenItemCount > 0 ? ',' : ''} ${moreButton}
+      </p>
     </div>
   `;
+}
+
+// Helper to get unique items based on a key
+function getUniqueItems<T>(items: T[], key: keyof T): T[] {
+  return [...new Map(items.map(item => [item[key], item])).values()];
 }
 
 // Formats raw pathway data and calls the renderer
@@ -114,7 +93,10 @@ function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'w
     const rawPathways: MyGenePathway | MyGenePathway[] | undefined = data.pathway?.[source];
     if (!rawPathways) return '';
     
-    const pathways = (Array.isArray(rawPathways) ? rawPathways : [rawPathways])
+    // Deduplicate by pathway 'id'
+    const uniqueRawPathways = getUniqueItems(Array.isArray(rawPathways) ? rawPathways : [rawPathways], 'id');
+
+    const pathways = uniqueRawPathways
       .map(p => {
         let url = '#';
         if (source === 'reactome') url = `https://reactome.org/content/detail/${p.id}`;
@@ -126,16 +108,18 @@ function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'w
 
     const moreButtonId = `pathways-more-${data._id}`;
 
-    return renderListSection('Pathways', pathways, count, moreButtonId);
+    return renderParagraphSection('Pathways', pathways, count, moreButtonId);
 }
 
-// Formats raw domain data and calls the renderer
+// Formats raw domain data and calls the new renderer
 function renderDomains(data: MyGeneInfoResult, count: number): string {
-  // FIX: Explicitly type the raw data to satisfy the compiler and improve clarity.
   const rawDomains: MyGeneInterproDomain | MyGeneInterproDomain[] | undefined = data.interpro;
   if (!rawDomains) return '';
 
-  const domains = (Array.isArray(rawDomains) ? rawDomains : [rawDomains])
+  // Deduplicate by domain 'id'
+  const uniqueRawDomains = getUniqueItems(Array.isArray(rawDomains) ? rawDomains : [rawDomains], 'id');
+
+  const domains = uniqueRawDomains
     .map(d => ({
       name: d.short_desc,
       url: `https://www.ebi.ac.uk/interpro/entry/InterPro/${d.id}`
@@ -144,9 +128,8 @@ function renderDomains(data: MyGeneInfoResult, count: number): string {
 
   const moreButtonId = `domains-more-${data._id}`;
 
-  return renderListSection('Protein Domains', domains, count, moreButtonId);
+  return renderParagraphSection('Protein Domains', domains, count, moreButtonId);
 }
-
 
 export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,
@@ -155,27 +138,43 @@ export function renderTooltipHTML(
   if (!data) return '<p>Gene not found.</p>';
 
   const { 
-    sources = ["ncbi"], 
-    truncate = 5, 
-    display = {},
+    truncate = 4, 
+    display = {}, // This will contain the display config from init
     pathwaySource = 'reactome',
     pathwayCount = 3,
     domainCount = 3
   } = options;
 
   // External links
-  const links = SOURCES.filter(src => sources.includes(src.key))
-    .map(src => {
-      if (src.requires === "id" && !data._id) return "";
-      if (src.requires === "symbol" && !data.symbol) return "";
-      return `<a href="${src.url(data._id || data.symbol)}"
-                 target="_blank"
-                 rel="noopener noreferrer">
-                ${src.name}
-              </a>`;
-    })
-    .filter(Boolean)
-    .join(" | ");
+  let headerLinks = '';
+  const linksToShow = [];
+  // Check the config to see if we should show the NCBI link
+  if (display.links?.ncbi !== false) {
+      linksToShow.push(`
+        <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}"
+          target="_blank" rel="noopener noreferrer" title="View on NCBI Gene">
+          <img src="${NCBILogo}" alt="NCBI Gene link" class="gene-tooltip-link-icon" />
+        </a>
+      `);
+  }
+
+  // Check the config to see if we should show the Ensembl link
+  if (display.links?.ensembl !== false) {
+    linksToShow.push(`
+      <a href="https://www.ensembl.org/id/${data._id}"
+        target="_blank" rel="noopener noreferrer" title="View on Ensembl">
+        <img src="${EnsemblLogo}" alt="Ensembl link" class="gene-tooltip-link-icon" />
+      </a>
+    `);
+  }
+
+  if (linksToShow.length > 0) {
+    headerLinks = `
+      <span class="gene-tooltip-header-links">
+        ${linksToShow.join('')}
+      </span>
+    `;
+  }
 
   const summary = data.summary || "No summary available.";
   const summaryClass = truncate && summary.length > 0 ? 'gene-tooltip-summary' : 'gene-tooltip-summary-full';
@@ -185,15 +184,15 @@ export function renderTooltipHTML(
   return `
     <div class="gene-tooltip-content" style="text-align: left; max-width: 300px;">
       <div class="gene-tooltip-header">
-        <strong>
-          <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}" 
-             target="_blank" 
-             rel="noopener noreferrer"
-             class="gene-tooltip-link">
-            ${data.symbol}
-          </a>
-        </strong>
-        <span class="gene-tooltip-name">(${data.name})</span>
+        
+        <!-- START: Change is here -->
+        <div class="gene-tooltip-title">
+          <strong>${data.symbol}</strong>
+          <span class="gene-tooltip-name">(${data.name})</span>
+        </div>
+        <!-- END: Change is here -->
+
+        ${headerLinks}
       </div>
 
       ${display.species !== false && data.taxid ? renderSpecies(data.taxid) : ''}
@@ -204,19 +203,6 @@ export function renderTooltipHTML(
 
       ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount) : ''}
       ${display.domains !== false ? renderDomains(data, domainCount) : ''}
-      
-      ${links ? `<div class="gene-tooltip-links">${links}</div>` : ""}
     </div>
   `;
 }
-
-
-        
-        
-// To do:
-// - add top pathways (configurable to pick which source? e.g., KEGG as default, but allow reactome, Wikipathways etc.)
-// - add mini exon map (using CSS/SVG? Other tools in JS that we can leverage?)
-// - top protein domains (expandable to show them?)
-
-// - finally, ideally, we should make each component optional at the user-level
-// { common: "Yeast", genus: "Saccharomyces", icon: "🧫"},

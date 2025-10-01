@@ -45,6 +45,10 @@ export interface TooltipDisplayConfig {
   pathways: boolean;
   domains: boolean;
   geneTrack: boolean;
+  links: {
+    ncbi?: boolean;
+    ensembl?: boolean;
+  };
 }
 
 // Ideogram configuration
@@ -85,11 +89,6 @@ export interface MyGeneExon {
   end?: number;                   
 }
 
-
-
-
-
-
 export const defaultConfig: GeneTooltipConfig = {
   selector: '.gene-tooltip',
   api: 'mygene',
@@ -103,6 +102,10 @@ export const defaultConfig: GeneTooltipConfig = {
     pathways: true,
     domains: true,
     geneTrack: true,
+    links: {
+      ncbi: true,
+      ensembl: true,
+    },
   },
   ideogram: {
     enabled: true,

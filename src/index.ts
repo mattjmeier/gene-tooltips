@@ -24,7 +24,14 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   const config: GeneTooltipConfig = {
     ...defaultConfig,
     ...userConfig,
-    display: { ...defaultConfig.display, ...userConfig.display },
+    display: {
+      ...defaultConfig.display,
+      ...userConfig.display,
+      links: {
+        ...defaultConfig.display.links,
+        ...userConfig.display?.links,
+      },
+    },
     ideogram: { ...defaultConfig.ideogram, ...userConfig.ideogram },
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
@@ -40,7 +47,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
     _nestedTippys?: Instance[];
   }
 
-
   tippy(geneElements, {
     ...config.tippyOptions,
     content: 'Loading...',
@@ -54,10 +60,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       const { symbol, species } = info;
       const renderOptions = {
         truncate: config.truncateSummary,
-        display: {
-          ...config.display,
-          ideogram: config.ideogram?.enabled ?? false
-        },
+        display: config.display,
         pathwaySource: config.pathwaySource,
         pathwayCount: config.pathwayCount,
         domainCount: config.domainCount,

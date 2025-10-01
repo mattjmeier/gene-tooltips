@@ -24,4 +24,22 @@ export const SOURCES = [
   },
 ];
 
+// species lookup table
+interface SpeciesInfo {
+  common: string;
+  genus: string;
+  icon: string;
+}
 
+export const speciesMap: Record<number, SpeciesInfo> = {
+  9606: { common: "Human", genus: "Homo sapiens", icon: "🧑" },
+  10090: { common: "Mouse", genus: "Mus musculus", icon: "🐭" },
+  10116: { common: "Rat", genus: "Rattus norvegicus", icon: "🐀" },
+  7227: { common: "Fruitfly", genus: "Drosophila melanogaster", icon: "🪰" },
+  6239: { common: "Nematode", genus: "Caenorhabditis elegans", icon: "🪱" },
+  7955: { common: "Zebrafish", genus: "Danio rerio", icon: "🐟" },
+  3702: { common: "Thale-cress", genus: "Arabidopsis thaliana", icon: "🌱" },
+  8364: { common: "Frog", genus: "Xenopus tropicalis", icon: "🐸" },
+  9823: { common: "Pig", genus: "Sus scrofa", icon: "🐖" },
+  4932: { common: "Yeast", genus: "Saccharomyces cerevisiae", icon: "🧫" },
+};

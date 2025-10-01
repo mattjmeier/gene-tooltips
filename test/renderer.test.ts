@@ -75,11 +75,41 @@ describe('renderTooltipHTML', () => {
     expect(html).not.toContain('--line-clamp');
   });
   
-  it('should render external links based on the sources option', () => {
-    const html = renderTooltipHTML(mockGeneData, { sources: ["ncbi", "genecards"] });
-    expect(html).toContain('https://www.ncbi.nlm.nih.gov/gene/7157');
-    expect(html).toContain('https://www.genecards.org/cgi-bin/carddisp.pl?gene=TP53');
-    expect(html).not.toContain('Ensembl');
+  it('should truncate the summary with a custom value', () => {
+    // The default in config is 4, so let's check your test's assumption of 3.
+    const html = renderTooltipHTML(mockGeneData, { truncate: 3 });
+    expect(html).toContain('class="gene-tooltip-summary"');
+    expect(html).toContain('style="--line-clamp: 3;"');
+  });
+
+  it('should NOT truncate the summary when truncate is set to 0', () => {
+    const html = renderTooltipHTML(mockGeneData, { truncate: 0 });
+    expect(html).toContain('class="gene-tooltip-summary-full"');
+    expect(html).not.toContain('--line-clamp');
+  });
+  
+  // THIS IS THE FIXED TEST
+  it('should render external links by default and hide them based on display options', () => {
+    // Default: both should be visible
+    let html = renderTooltipHTML(mockGeneData);
+    expect(html).toContain('href="https://www.ncbi.nlm.nih.gov/gene/7157"');
+    expect(html).toContain('<img src="fake-ncbi-logo.svg"');
+    expect(html).toContain('href="https://www.ensembl.org/id/7157"');
+    expect(html).toContain('<img src="fake-ensembl-logo.webp"');
+
+    // Disable NCBI
+    html = renderTooltipHTML(mockGeneData, { display: { links: { ncbi: false } } });
+    expect(html).not.toContain('href="https://www.ncbi.nlm.nih.gov/gene/7157"');
+    expect(html).toContain('href="https://www.ensembl.org/id/7157"');
+
+    // Disable Ensembl
+    html = renderTooltipHTML(mockGeneData, { display: { links: { ensembl: false } } });
+    expect(html).toContain('href="https://www.ncbi.nlm.nih.gov/gene/7157"');
+    expect(html).not.toContain('href="https://www.ensembl.org/id/7157"');
+    
+    // Disable both
+    html = renderTooltipHTML(mockGeneData, { display: { links: { ncbi: false, ensembl: false } } });
+    expect(html).not.toContain('gene-tooltip-header-links');
   });
 
 });

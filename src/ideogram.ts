@@ -11,7 +11,7 @@ async function getIdeogram() {
     return ideogramModulePromise;
   }
   
-  // 💡 NEW LOGIC: Check for Ideogram as a global variable first
+  // Check for Ideogram as a global variable first
   if ((window as any).Ideogram) {
     return Promise.resolve((window as any).Ideogram);
   }

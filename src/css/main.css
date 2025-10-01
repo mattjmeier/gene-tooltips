@@ -150,3 +150,96 @@
   min-height: 40px; /* Match the SVG height */
   overflow: hidden;
 }
+/* New styles for header and icon links */
+.gene-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* This is the key change */
+  gap: 1em; /* Increased gap for better spacing between title and links when wrapping */
+  flex-wrap: wrap; 
+}
+
+/* New wrapper for symbol and name */
+.gene-tooltip-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap; /* Allows the long name to wrap if needed */
+  /* This ensures the title group doesn't shrink to nothing if the name is very long */
+  min-width: 0; 
+}
+
+.gene-tooltip-header strong {
+  font-size: 1.1em;
+  /* Prevent the symbol from being broken up */
+  white-space: nowrap;
+}
+
+/* This is also important to handle long gene names gracefully */
+.gene-tooltip-name {
+  word-break: break-all;
+}
+
+.gene-tooltip-header-links {
+  /* margin-left: auto; -- REMOVE THIS LINE -- */
+  display: flex;
+  gap: 0.5em;
+  /* Ensure icons don't shrink */
+  flex-shrink: 0; 
+}
+
+.gene-tooltip-header-links a {
+  color: #555;
+  transition: color 0.2s;
+}
+.gene-tooltip-header-links a:hover {
+  color: #007bff;
+}
+
+/* Style for the container of a paragraph section */
+.gene-tooltip-p-section {
+  flex-direction: column;
+  align-items: flex-start;
+  border-top: 1px solid #eee;
+  padding-top: 0.5em;
+  gap: 0.2em; /* Smaller gap for p-style */
+}
+
+/* Style for the header (e.g., "Pathways") */
+.gene-tooltip-p-header {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #333;
+}
+
+/* Style for the paragraph content */
+.gene-tooltip-p-content {
+  margin: 0;
+  padding: 0;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.gene-tooltip-p-content a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.gene-tooltip-p-content a:hover {
+  text-decoration: underline;
+}
+
+/* More button can be slightly different */
+.gene-tooltip-more-btn {
+  font-size: 0.85em;
+  color: #6c757d;
+  cursor: pointer;
+  /* Remove padding/border to make it look like text */
+}
+
+/* Style for the icons in the header links */
+.gene-tooltip-link-icon {
+  height: 1.2em; /* Control the icon height */
+  vertical-align: middle; /* Align nicely with text */
+  border: 0; /* Remove default image borders */
+}

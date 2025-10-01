@@ -13,4 +13,11 @@ export declare const SOURCES: ({
     url: (symbol: string) => string;
     requires: "symbol";
 })[];
+interface SpeciesInfo {
+    common: string;
+    genus: string;
+    icon: string;
+}
+export declare const speciesMap: Record<number, SpeciesInfo>;
+export {};
 //# sourceMappingURL=constants.d.ts.map
