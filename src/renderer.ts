@@ -14,6 +14,12 @@ interface RenderOptions {
   domainCount?: number;
 }
 
+// Helper to get unique items based on a key
+function getUniqueItems<T>(items: T[], key: keyof T): T[] {
+  return [...new Map(items.map(item => [item[key], item])).values()];
+}
+
+
 function renderSpecies(taxid: number): string {
   const species = speciesMap[taxid] ?? { common: "Unknown", genus: "", icon: "❓" };
   return `
@@ -24,6 +30,7 @@ function renderSpecies(taxid: number): string {
   `;
 }
 
+// Modified for Ideogram layout
 function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined, showIdeogram: boolean = false, geneId: string = ''): string {
     if (!genomic_pos) return '';
 
@@ -34,19 +41,90 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
     const end = pos.end.toLocaleString();
 
     return `
-      <div class="gene-tooltip-section gene-tooltip-location">
-        <div>
-          <div class="gene-tooltip-location-label">Location</div>
-          <span>chr${pos.chr}:${start}-${end}</span>
+      <div class="gene-tooltip-section-container">
+        <div class="gene-tooltip-section-header">Location</div>
+        <div class="gene-tooltip-location">
+            <span>chr${pos.chr}:${start}-${end}</span>
+            ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${geneId}"></div>` : ""}
         </div>
-        ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${geneId}"></div>` : ""}
       </div>
     `;
 }
 
+
+// Modified for Gene Track section layout
 function renderGeneTrackContainer(geneId: string): string {
-  return `<div class="gene-tooltip-track" id="gene-tooltip-track-${geneId}"></div>`;
+  return `
+    <div class="gene-tooltip-section-container">
+        <div class="gene-tooltip-section-header">Gene Model</div>
+        <div class="gene-tooltip-track" id="gene-tooltip-track-${geneId}"></div>
+    </div>
+  `;
 }
+
+function renderSummary(summaryText: string | undefined, truncate: number): string {
+  const summary = summaryText || "No summary available.";
+  
+  if (!summaryText) {
+    return `
+      <div class="gene-tooltip-section-container">
+        <p class="gene-tooltip-summary-full">${summary}</p>
+      </div>
+    `;
+  }
+
+  const summaryClass = truncate > 0 ? 'gene-tooltip-summary' : 'gene-tooltip-summary-full';
+  const tabIndex = truncate > 0 ? 'tabindex="0"' : '';
+  const summaryStyle = truncate > 0 ? `style="--line-clamp: ${truncate};"` : '';
+
+  return `
+    <div class="gene-tooltip-section-container">
+        <div class="gene-tooltip-section-header">Summary</div>
+        <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
+    </div>
+  `;
+}
+
+
+
+
+// Section for rendering external links
+function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConfig>): string {
+    const linksToShow = [];
+    
+    if (display.links?.ncbi !== false) {
+        linksToShow.push(`
+          <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}"
+            target="_blank" rel="noopener noreferrer" title="View on NCBI Gene">
+            <img src="${NCBILogo}" alt="NCBI Gene link" class="gene-tooltip-link-icon" />
+            <span>NCBI</span>
+          </a>
+        `);
+    }
+
+    // Use the correct Ensembl ID
+    if (display.links?.ensembl !== false && data.ensembl?.gene) {
+      linksToShow.push(`
+        <a href="https://www.ensembl.org/id/${data.ensembl.gene}"
+          target="_blank" rel="noopener noreferrer" title="View on Ensembl">
+          <img src="${EnsemblLogo}" alt="Ensembl link" class="gene-tooltip-link-icon" />
+          <span>Ensembl</span>
+        </a>
+      `);
+    }
+
+    if (linksToShow.length === 0) return '';
+
+    return `
+        <div class="gene-tooltip-section-container">
+            <div class="gene-tooltip-section-header">Links</div>
+            <div class="gene-tooltip-links-container">
+                ${linksToShow.join('')}
+            </div>
+        </div>
+    `;
+}
+
 
 function renderParagraphSection(
   title: string,
@@ -74,8 +152,8 @@ function renderParagraphSection(
     : '';
 
   return `
-    <div class="gene-tooltip-section gene-tooltip-p-section">
-      <div class="gene-tooltip-p-header">${title}</div>
+    <div class="gene-tooltip-section-container">
+      <div class="gene-tooltip-section-header">${title}</div>
       <p class="gene-tooltip-p-content">
         ${itemLinks}${hiddenItemCount > 0 ? ',' : ''} ${moreButton}
       </p>
@@ -83,10 +161,6 @@ function renderParagraphSection(
   `;
 }
 
-// Helper to get unique items based on a key
-function getUniqueItems<T>(items: T[], key: keyof T): T[] {
-  return [...new Map(items.map(item => [item[key], item])).values()];
-}
 
 // Formats raw pathway data and calls the renderer
 function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'wikipathways', count: number): string {
@@ -139,70 +213,30 @@ export function renderTooltipHTML(
 
   const { 
     truncate = 4, 
-    display = {}, // This will contain the display config from init
+    display = {},
     pathwaySource = 'reactome',
     pathwayCount = 3,
     domainCount = 3
   } = options;
 
-  // External links
-  let headerLinks = '';
-  const linksToShow = [];
-  // Check the config to see if we should show the NCBI link
-  if (display.links?.ncbi !== false) {
-      linksToShow.push(`
-        <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}"
-          target="_blank" rel="noopener noreferrer" title="View on NCBI Gene">
-          <img src="${NCBILogo}" alt="NCBI Gene link" class="gene-tooltip-link-icon" />
-        </a>
-      `);
-  }
-
-  // Check the config to see if we should show the Ensembl link
-  if (display.links?.ensembl !== false) {
-    linksToShow.push(`
-      <a href="https://www.ensembl.org/id/${data._id}"
-        target="_blank" rel="noopener noreferrer" title="View on Ensembl">
-        <img src="${EnsemblLogo}" alt="Ensembl link" class="gene-tooltip-link-icon" />
-      </a>
-    `);
-  }
-
-  if (linksToShow.length > 0) {
-    headerLinks = `
-      <span class="gene-tooltip-header-links">
-        ${linksToShow.join('')}
-      </span>
-    `;
-  }
-
-  const summary = data.summary || "No summary available.";
-  const summaryClass = truncate && summary.length > 0 ? 'gene-tooltip-summary' : 'gene-tooltip-summary-full';
-  const tabIndex = truncate ? 'tabindex="0"' : '';
-  const summaryStyle = truncate ? `style="--line-clamp: ${truncate};"` : '';
-
   return `
     <div class="gene-tooltip-content" style="text-align: left; max-width: 300px;">
       <div class="gene-tooltip-header">
-        
-        <!-- START: Change is here -->
         <div class="gene-tooltip-title">
           <strong>${data.symbol}</strong>
           <span class="gene-tooltip-name">(${data.name})</span>
         </div>
-        <!-- END: Change is here -->
-
-        ${headerLinks}
       </div>
 
       ${display.species !== false && data.taxid ? renderSpecies(data.taxid) : ''}
+      
+      ${renderSummary(data.summary, truncate)}
+
       ${display.location !== false ? renderLocation(data.genomic_pos, display.ideogram, data._id) : ''}
-      ${display.geneTrack !== false && data.genomic_pos ? renderGeneTrackContainer(data._id) : ''}
-
-      <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
-
+      ${display.geneTrack !== false && data.exons && data.exons.length > 0 ? renderGeneTrackContainer(data._id) : ''}
       ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount) : ''}
       ${display.domains !== false ? renderDomains(data, domainCount) : ''}
+      ${renderLinks(data, display)}
     </div>
   `;
 }

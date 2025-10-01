@@ -2,10 +2,11 @@
 
 import type { Instance } from 'tippy.js';
 import type { MyGeneInfoResult, IdeogramConfig } from './config';
+import { speciesMap } from './constants';
 
 let ideogramModulePromise: Promise<any> | null = null;
 
-// The key change: Use a function that is module-aware or global-aware
+//  Checking for module or global mode
 async function getIdeogram() {
   if (ideogramModulePromise) {
     return ideogramModulePromise;
@@ -78,16 +79,23 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
       chromosome = chromosome.substring(3);
     }
 
-    let organism = "human";
-    if (data.taxid === 10090) organism = "mouse";
-
+    const organism = speciesMap[data.taxid]?.ideogramName;
+    // If the organism isn't supported by Ideogram, we can't render it.
+    if (!organism) {
+      ideoDiv.innerHTML = '<small>Ideogram not available for this species.</small>';
+      console.warn(`[GeneTooltip] Ideogram not rendered: species with taxid ${data.taxid} is not configured for Ideogram.`);
+      return;
+    }
+    
     const configForIdeogram = {
       container: ideogramContainerSelector,
       organism,
       chromosome: chromosome,
       chrHeight: ideogramConfig.height ?? 100,
       orientation: 'horizontal',
-      showBandLabels: ideogramConfig.showLabels ?? false,
+      showChromosomeLabels: false,
+      chrMargin: 1,
+      showBandLabels: ideogramConfig.showLabels ?? true,
       annotations: [{
         name: data.symbol,
         chr: chromosome,

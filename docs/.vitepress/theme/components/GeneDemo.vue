@@ -24,7 +24,16 @@ import '../../../../dist/css/main.css';
 onMounted(() => {
   // Now, use the imported module directly instead of the window object.
   if (GeneTooltip) {
-    GeneTooltip.init();
+    GeneTooltip.init({
+      truncateSummary: 3,
+      display: {
+          ideogram: true
+      },
+      ideogram: {
+          enabled: true,
+          height: 50
+      }
+    });
   }
 });
 

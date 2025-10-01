@@ -3,6 +3,7 @@
 import type { Instance } from 'tippy.js';
 import type { MyGeneInfoResult, MyGeneExon } from './config';
 import * as d3 from 'd3';
+import tippy from 'tippy.js';
 
 export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
   const containerSelector = `#gene-tooltip-track-${data._id}`;
@@ -12,6 +13,7 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     console.error(`[GeneTooltip] Gene track container '${containerSelector}' not found.`);
     return;
   }
+
 
   if (!data.exons || data.exons.length === 0) {
     container.innerHTML = `<small>Exon data not available.</small>`;
@@ -65,9 +67,9 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
 
 
   // --- D3 Drawing Logic ---
-  const margin = { top: 20, right: 10, bottom: 5, left: 10 }; // Increased top margin for the label
+  const margin = { top: 20, right: 10, bottom: 5, left: 10 }; 
   const width = 290 - margin.left - margin.right;
-  const height = 20; // The track itself remains this height
+  const height = 20; 
   const exonHeight = 10;
   const yCenter = height / 2;
   const exonY = yCenter - (exonHeight / 2);
@@ -75,7 +77,7 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
   container.innerHTML = '';
   const svg = d3.select(container).append("svg")
     .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom) // Use the total height
+    .attr("height", height + margin.top + margin.bottom)
     .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
   
   const geneStart = transcriptExons[0].txstart;
@@ -83,11 +85,10 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
   const strand = transcriptExons[0].strand;
   const xScale = d3.scaleLinear().domain([geneStart, geneEnd]).range([0, width]);
   
-  // --- NEW: Add the title label ---
   const directionArrow = strand === 1 ? '→' : '←';
   svg.append("text")
     .attr("x", 0)
-    .attr("y", -5) // Position above the track
+    .attr("y", -5)
     .attr("font-family", "sans-serif")
     .attr("font-size", "12px")
     .html(`<tspan font-weight="bold">${data.symbol}</tspan> <tspan>${directionArrow}</tspan>`);
@@ -103,17 +104,17 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     .attr("width", d => Math.max(1, xScale(d[1]) - xScale(d[0])))
     .attr("height", exonHeight)
     .attr("fill", "#007bff")
-    .attr("stroke", "#0056b3");
-
-  // --- chevron drawing logic, didn't like the look of this ---
-  /*
-  const numChevrons = Math.floor(width / 20);
-  const chevronPoints = d3.range(numChevrons).map(i => geneStart + (i + 1) * (geneEnd - geneStart) / (numChevrons + 1));
-  const chevronPath = strand === 1 ? "M-2,-4 L2,0 L-2,4" : "M2,-4 L-2,0 L2,4";
-
-  svg.selectAll(".chevron").data(chevronPoints).enter().append("path")
-    .attr("class", "chevron").attr("d", chevronPath)
-    .attr("transform", d => `translate(${xScale(d)}, ${yCenter})`)
-    .attr("fill", "none").attr("stroke", "#555").attr("stroke-width", 1.5);
-  */
+    .attr("stroke", "#0056b3")
+    // --- Add tippy to each exon ---
+    .each(function(d) {
+      const start = d[0].toLocaleString();
+      const end = d[1].toLocaleString();
+      tippy(this as Element, {
+        content: `Exon: ${start} - ${end}`,
+        placement: 'top',
+        arrow: true,
+        animation: 'scale-subtle',
+        theme: 'light',
+      });
+    });
 }

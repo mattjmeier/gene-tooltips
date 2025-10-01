@@ -34,6 +34,9 @@ export interface MyGeneInfoResult {
   };
   interpro?: MyGeneInterproDomain[] | MyGeneInterproDomain;
   exons?: MyGeneExon[];
+  ensembl?: {
+    gene: string;
+  };
 }
 
 

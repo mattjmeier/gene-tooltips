@@ -6,19 +6,24 @@
 .gene-tooltip-summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  /* Use the custom property from the inline style */
   -webkit-line-clamp: var(--line-clamp, 3);
   line-clamp: var(--line-clamp, 3);
   overflow: hidden;
   position: relative;
   cursor: pointer;
-  margin: 1em 0; /* Add standard paragraph margin */
+  margin: 0; /* REMOVED MARGIN */
+  padding: 0; /* ADDED PADDING RESET */
+  line-height: 1.5; /* Ensure consistent line height */
 }
+
 
 /* This class is for the untruncated version */
 .gene-tooltip-summary-full {
-  margin: 1em 0; /* Add standard paragraph margin */
+  margin: 0; /* REMOVED MARGIN */
+  padding: 0; /* ADDED PADDING RESET */
+  line-height: 1.5; /* Ensure consistent line height */
 }
+
 
 .gene-tooltip-summary::after {
   content: "more";
@@ -42,6 +47,9 @@
   display: none;
 }
 
+
+
+
 /* New styles for tooltip sections */
 .gene-tooltip-section {
   display: flex;
@@ -56,9 +64,6 @@
   font-size: 1.2em;
 }
 
-.gene-tooltip-location-label {
-  font-weight: bold;
-}
 
 .gene-tooltip-location {
   display: flex; 
@@ -196,20 +201,39 @@
   color: #007bff;
 }
 
-/* Style for the container of a paragraph section */
-.gene-tooltip-p-section {
-  flex-direction: column;
-  align-items: flex-start;
-  border-top: 1px solid #eee;
-  padding-top: 0.5em;
-  gap: 0.2em; /* Smaller gap for p-style */
-}
-
 /* Style for the header (e.g., "Pathways") */
 .gene-tooltip-p-header {
   font-weight: bold;
   font-size: 0.9em;
   color: #333;
+}
+/* 
+  NEW: Reusable "meta-classes" for consistent section styling.
+*/
+.gene-tooltip-section-container {
+  border-top: 1px solid #eee;
+  padding-top: 0.5em;
+  margin-top: 0.75em; /* A little extra margin for good visual separation */
+}
+
+.gene-tooltip-section-header {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: #333;
+  margin-bottom: 0.3em; /* Space between the header and its content */
+}
+
+/* MODIFIED: For side-by-side layout with Ideogram, now just for the content */
+.gene-tooltip-location {
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.gene-tooltip-ideo {
+    min-width: 120px; 
 }
 
 /* Style for the paragraph content */

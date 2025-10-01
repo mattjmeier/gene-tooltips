@@ -29,6 +29,9 @@ export interface MyGeneInfoResult {
     };
     interpro?: MyGeneInterproDomain[] | MyGeneInterproDomain;
     exons?: MyGeneExon[];
+    ensembl?: {
+        gene: string;
+    };
 }
 export interface TooltipDisplayConfig {
     species: boolean;

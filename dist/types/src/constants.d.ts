@@ -17,6 +17,7 @@ interface SpeciesInfo {
     common: string;
     genus: string;
     icon: string;
+    ideogramName?: string;
 }
 export declare const speciesMap: Record<number, SpeciesInfo>;
 export {};
