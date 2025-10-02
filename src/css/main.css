@@ -207,8 +207,50 @@
   font-size: 0.9em;
   color: #333;
 }
+
+.gene-tooltip-location {
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+/* NEW CSS for the two-line coordinate display */
+.gene-tooltip-location-coords {
+  display: flex;
+  flex-direction: column;
+}
+
+.gene-tooltip-location-chr {
+  font-weight: bold; /* Make the chromosome stand out */
+}
+
+.gene-tooltip-location-pos {
+  font-size: 0.9em; /* Slightly smaller text for the position */
+  color: #666; /* A slightly lighter color */
+}
+
+
+.gene-tooltip-ideo {
+    min-width: 120px; 
+}
+
+.gene-tooltip-section {
+  display: flex;
+  align-items: center; /* This is the key change: from 'left' to 'center' */
+  gap: 0.5em;
+  font-size: 0.9em;
+  color: #555;
+  margin-top: 0.5em;
+}
+
+.gene-tooltip-species-icon {
+  font-size: 1.2em;
+}
+
 /* 
-  NEW: Reusable "meta-classes" for consistent section styling.
+  Reusable "meta-classes" for consistent section styling.
 */
 .gene-tooltip-section-container {
   border-top: 1px solid #eee;

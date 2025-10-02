@@ -12,10 +12,14 @@ interface RenderOptions {
   pathwaySource?: 'reactome' | 'kegg' | 'wikipathways';
   pathwayCount?: number;
   domainCount?: number;
+  tooltipWidth?: number;
+  tooltipHeight?: number;
 }
 
 // Helper to get unique items based on a key
 function getUniqueItems<T>(items: T[], key: keyof T): T[] {
+  // Use a Map to store items by their unique key. The map will automatically
+  // handle overwriting duplicates, keeping only the last one it sees.
   return [...new Map(items.map(item => [item[key], item])).values()];
 }
 
@@ -30,7 +34,7 @@ function renderSpecies(taxid: number): string {
   `;
 }
 
-// Modified for Ideogram layout
+// Ideogram layout
 function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined, showIdeogram: boolean = false, geneId: string = ''): string {
     if (!genomic_pos) return '';
 
@@ -44,12 +48,16 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
       <div class="gene-tooltip-section-container">
         <div class="gene-tooltip-section-header">Location</div>
         <div class="gene-tooltip-location">
-            <span>chr${pos.chr}:${start}-${end}</span>
+            <div class="gene-tooltip-location-coords">
+              <span class="gene-tooltip-location-chr">chr${pos.chr}</span>
+              <span class="gene-tooltip-location-pos">${start}-${end}</span>
+            </div>
             ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${geneId}"></div>` : ""}
         </div>
       </div>
     `;
 }
+
 
 
 // Modified for Gene Track section layout
@@ -216,11 +224,19 @@ export function renderTooltipHTML(
     display = {},
     pathwaySource = 'reactome',
     pathwayCount = 3,
-    domainCount = 3
+    domainCount = 3,
+    tooltipWidth,
+    tooltipHeight 
   } = options;
 
+  const styleParts: string[] = [];
+  if (tooltipWidth) styleParts.push(`max-width: ${tooltipWidth}px`);
+  if (tooltipHeight) styleParts.push(`max-height: ${tooltipHeight}px`, `overflow-y: auto`);
+  const inlineStyle = styleParts.length > 0 ? `style="${styleParts.join('; ')}"` : '';
+
+
   return `
-    <div class="gene-tooltip-content" style="text-align: left; max-width: 300px;">
+    <div class="gene-tooltip-content" ${inlineStyle}>
       <div class="gene-tooltip-header">
         <div class="gene-tooltip-title">
           <strong>${data.symbol}</strong>

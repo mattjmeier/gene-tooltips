@@ -14,56 +14,69 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     return;
   }
 
-
   if (!data.exons || data.exons.length === 0) {
     container.innerHTML = `<small>Exon data not available.</small>`;
     return;
   }
+  
+  // === NEW SIMPLIFIED LOGIC ===
 
-  // 1. Group all exon records into transcripts
-  const transcripts: { [key: string]: MyGeneExon[] } = {};
+  // 1. Find the best transcript data. We'll prioritize the one with the most segments in its 'position' array.
+  let bestTranscript: MyGeneExon[] | null = null;
+  let maxPositions = 0;
+
   data.exons.forEach(exon => {
-    const txid = `${exon.txstart}-${exon.txend}`;
-    if (!transcripts[txid]) { transcripts[txid] = []; }
-    transcripts[txid].push(exon);
+    // A transcript can be represented by a single exon object with many positions,
+    // so we treat each exon object as a potential "transcript definition".
+    const currentPositions = exon.position?.length || 1; // Fallback to 1 if no position array
+    if (currentPositions > maxPositions) {
+      maxPositions = currentPositions;
+      // In the case of the data you showed, `data.exons` is the transcript.
+      bestTranscript = [exon]; 
+    }
   });
 
-  if (Object.keys(transcripts).length === 0) {
-    container.innerHTML = `<small>Exon data could not be processed.</small>`;
+  // If no 'position' arrays were found, fall back to the longest transcript by object count
+  if (!bestTranscript) {
+    const transcripts: { [key: string]: MyGeneExon[] } = {};
+    data.exons.forEach(exon => {
+        const txid = `${exon.txstart}-${exon.txend}`;
+        if (!transcripts[txid]) { transcripts[txid] = []; }
+        transcripts[txid].push(exon);
+    });
+    const longestTranscriptKey = Object.keys(transcripts).sort((a, b) => transcripts[b].length - transcripts[a].length)[0];
+    bestTranscript = transcripts[longestTranscriptKey];
+  }
+
+
+  // 2. Create a flat array of all coordinate pairs, each with its exon number.
+  //    This is the key step to solve the numbering issue.
+  const allSegments: { coords: [number, number]; number: number }[] = [];
+  let exonCounter = 1;
+
+  bestTranscript.forEach(exonObj => {
+      if (exonObj.position) {
+          // Case 1: The exon object contains a 'position' array of segments
+          exonObj.position.forEach(pos => {
+              allSegments.push({ coords: pos, number: exonCounter });
+              exonCounter++;
+          });
+      } else if (exonObj.start && exonObj.end) {
+          // Case 2: The exon object has simple start/end
+          allSegments.push({ coords: [exonObj.start, exonObj.end], number: exonCounter });
+          exonCounter++;
+      } else if (exonObj.cdsstart && exonObj.cdsend) {
+          // Case 3: Fallback to cds coordinates
+          allSegments.push({ coords: [exonObj.cdsstart, exonObj.cdsend], number: exonCounter });
+          exonCounter++;
+      }
+  });
+
+
+  if (allSegments.length === 0) {
+    container.innerHTML = `<small>Exon coordinate format not recognized.</small>`;
     return;
   }
-  
-  // 2. Find the key for the longest transcript
-  const longestTranscriptKey = Object.keys(transcripts).sort((a, b) => transcripts[b].length - transcripts[a].length)[0];
-  const transcriptExons = transcripts[longestTranscriptKey];
-
-  // --- DIAGNOSTIC LOG 1: What is in the raw data? ---
-  console.log(`[GeneTooltip] DIAGNOSTIC: Found ${transcriptExons.length} raw exon objects for transcript ${longestTranscriptKey}. First object:`, JSON.parse(JSON.stringify(transcriptExons[0])));
-
-  // 3. Normalize the exon data into a consistent [start, end] format
-  let normalizedExons: [number, number][] = [];
-  const firstExon = transcriptExons[0];
-
-  if (firstExon && firstExon.position) {
-      console.log('[GeneTooltip] SUCCESS: Normalizing from "position" property.');
-      normalizedExons = transcriptExons.flatMap(exon => exon.position || []);
-
-  } else if (firstExon && typeof firstExon.start === 'number' && typeof firstExon.end === 'number') {
-      console.log('[GeneTooltip] SUCCESS: Normalizing from "start"/"end" properties.');
-      normalizedExons = transcriptExons.map(exon => [exon.start!, exon.end!]);
-
-  } else if (firstExon && typeof firstExon.cdsstart === 'number' && typeof firstExon.cdsend === 'number') {
-      console.log('[GeneTooltip] SUCCESS: Normalizing from fallback "cdsstart"/"cdsend" properties.');
-      normalizedExons = transcriptExons.map(exon => [exon.cdsstart, exon.cdsend]);
-
-  } else {
-      console.error('[GeneTooltip] FAILURE: Could not find valid exon coordinates in the data. Bailing on gene track render.');
-      container.innerHTML = `<small>Exon coordinate format not recognized.</small>`;
-      return; // Stop execution if we can't process the data
-  }
-
-  // --- DIAGNOSTIC LOG 2: What is the result of normalization? ---
-  console.log(`[GeneTooltip] DIAGNOSTIC: Normalization resulted in ${normalizedExons.length} coordinate pairs. First pair:`, normalizedExons[0]);
 
 
   // --- D3 Drawing Logic ---
@@ -80,9 +93,10 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     .attr("height", height + margin.top + margin.bottom)
     .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
   
-  const geneStart = transcriptExons[0].txstart;
-  const geneEnd = transcriptExons[0].txend;
-  const strand = transcriptExons[0].strand;
+  const firstExonObj = bestTranscript[0];
+  const geneStart = firstExonObj.txstart;
+  const geneEnd = firstExonObj.txend;
+  const strand = firstExonObj.strand;
   const xScale = d3.scaleLinear().domain([geneStart, geneEnd]).range([0, width]);
   
   const directionArrow = strand === 1 ? '→' : '←';
@@ -97,21 +111,24 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     .attr("x2", xScale(geneEnd)).attr("y2", yCenter)
     .attr("stroke", "#555").attr("stroke-width", 2);
 
-  svg.selectAll(".exon-rect").data(normalizedExons).enter().append("rect")
+  // Now, we bind the simple `allSegments` array
+  svg.selectAll(".exon-rect").data(allSegments).enter().append("rect")
     .attr("class", "exon-rect")
-    .attr("x", d => xScale(d[0])) 
+    .attr("x", d => xScale(d.coords[0])) 
     .attr("y", exonY)
-    .attr("width", d => Math.max(1, xScale(d[1]) - xScale(d[0])))
+    .attr("width", d => Math.max(1, xScale(d.coords[1]) - xScale(d.coords[0])))
     .attr("height", exonHeight)
     .attr("fill", "#007bff")
     .attr("stroke", "#0056b3")
-    // --- Add tippy to each exon ---
-    .each(function(d) {
-      const start = d[0].toLocaleString();
-      const end = d[1].toLocaleString();
+    .each(function(d) { // 'd' is now an object: { coords: [start, end], number: exonNumber }
+      const start = d.coords[0].toLocaleString();
+      const end = d.coords[1].toLocaleString();
+      const exonNumber = d.number; // Get the number we stored
+
       tippy(this as Element, {
-        content: `Exon: ${start} - ${end}`,
+        content: `<strong>Exon ${exonNumber}:</strong> ${start} - ${end}`,
         placement: 'top',
+        allowHTML: true,
         arrow: true,
         animation: 'scale-subtle',
         theme: 'light',

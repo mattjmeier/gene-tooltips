@@ -19,6 +19,10 @@ function createNestedContent(items: { name: string; url: string }[]): string {
   return `<ul class="gene-tooltip-nested-list">${listItems}</ul>`;
 }
 
+function getUniqueItems<T>(items: T[], key: keyof T): T[] {
+  return [...new Map(items.map(item => [item[key], item])).values()];
+}
+
 // The init function accepts a partial configuration
 function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   const config: GeneTooltipConfig = {
@@ -64,7 +68,10 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         pathwaySource: config.pathwaySource,
         pathwayCount: config.pathwayCount,
         domainCount: config.domainCount,
+        tooltipWidth: config.tooltipWidth,
+        tooltipHeight: config.tooltipHeight,
       };
+
 
       const cachedData = cache.get(symbol, species);
       if (typeof cachedData !== 'undefined') {
@@ -114,21 +121,25 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       const pathwaysMoreBtn = instance.popper.querySelector<HTMLElement>(`#pathways-more-${data._id}`);
       if (pathwaysMoreBtn && data.pathway?.[config.pathwaySource]) {
         const rawPathways = data.pathway[config.pathwaySource]!;
-        const allPathways = (Array.isArray(rawPathways) ? rawPathways : [rawPathways]).map(p => {
+        const allPathways = (Array.isArray(rawPathways) ? rawPathways : [rawPathways]);
+
+        // === DEDUPLICATION AND MAPPING HAPPENS HERE ===
+        const uniquePathways = getUniqueItems(allPathways, 'id').map(p => {
             let url = '#';
             if (config.pathwaySource === 'reactome') url = `https://reactome.org/content/detail/${p.id}`;
             if (config.pathwaySource === 'kegg') url = `https://www.genome.jp/dbget-bin/www_bget?path:${p.id}`;
             if (config.pathwaySource === 'wikipathways') url = `https://www.wikipathways.org/pathways/${p.id}`;
             return { name: p.name, url };
         }).sort((a, b) => a.name.localeCompare(b.name));
-
+        
+        // Now use the clean 'uniquePathways' list for the tooltip
         const nestedInstance = tippy(pathwaysMoreBtn, {
-            content: createNestedContent(allPathways),
+            content: createNestedContent(uniquePathways), // <-- Use the deduplicated list
             allowHTML: true,
             interactive: true,
             trigger: 'mouseenter focus',
             placement: 'right',
-            theme: 'light', // or a new custom theme
+            theme: 'light',
         });
         instance._nestedTippys.push(nestedInstance);
       }
@@ -137,13 +148,16 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       const domainsMoreBtn = instance.popper.querySelector<HTMLElement>(`#domains-more-${data._id}`);
       if (domainsMoreBtn && data.interpro) {
         const rawDomains = data.interpro;
-        const allDomains = (Array.isArray(rawDomains) ? rawDomains : [rawDomains]).map(d => ({
+        const allDomains = (Array.isArray(rawDomains) ? rawDomains : [rawDomains]);
+
+        // === DEDUPLICATION AND MAPPING HAPPENS HERE ===
+        const uniqueDomains = getUniqueItems(allDomains, 'id').map(d => ({
             name: d.short_desc,
             url: `https://www.ebi.ac.uk/interpro/entry/InterPro/${d.id}`
         })).sort((a, b) => a.name.localeCompare(b.name));
 
         const nestedInstance = tippy(domainsMoreBtn, {
-            content: createNestedContent(allDomains),
+            content: createNestedContent(uniqueDomains), // <-- Use the deduplicated list
             allowHTML: true,
             interactive: true,
             trigger: 'mouseenter focus',

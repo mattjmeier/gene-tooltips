@@ -77,6 +77,8 @@ export interface GeneTooltipConfig {
   pathwaySource: 'reactome' | 'kegg' | 'wikipathways';
   pathwayCount: number; // Number of pathways to show before "more"
   domainCount: number; // Number of domains to show before "more"
+  tooltipWidth?: number; // Optional tooltip width in pixels
+  tooltipHeight?: number; // Optional tooltip height in pixels
 }
 
 export interface MyGeneExon {
