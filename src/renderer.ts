@@ -1,5 +1,7 @@
-import type { MyGeneInfoResult, GenomicPosition, TooltipDisplayConfig, MyGenePathway, MyGeneInterproDomain } from './config';
+import type { MyGeneInfoResult, GenomicPosition, TooltipDisplayConfig } from './config';
 import { speciesMap } from './constants';
+import { formatPathways, formatDomains, formatTranscripts, formatGeneRIFs } from './formatters';
+export type FormattedItem = { name: string; url: string };
 
 import NCBILogoText from "./assets/US-NLM-NCBI-Logo.svg";
 const NCBILogo = `data:image/svg+xml,${encodeURIComponent(NCBILogoText)}`;
@@ -18,19 +20,6 @@ interface RenderOptions {
   generifCount?: number;
   tooltipWidth?: number;
   tooltipHeight?: number;
-}
-
-// Helper to get unique items based on a key
-function getUniqueItems<T>(items: T[], key: keyof T): T[] {
-  // Use a Map to store items by their unique key. The map will automatically
-  // handle overwriting duplicates, keeping only the last one it sees.
-  return [...new Map(items.map(item => [item[key], item])).values()];
-}
-
-// Helper to ensure data is an array
-function asArray<T>(data: T | T[] | undefined): T[] {
-  if (!data) return [];
-  return Array.isArray(data) ? data : [data];
 }
 
 function renderSpecies(taxid: number): string {
@@ -172,111 +161,77 @@ function renderParagraphSection(
   `;
 }
 
-// Formats raw pathway data and calls the renderer
-function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'wikipathways', count: number): string {
-    const rawPathways: MyGenePathway | MyGenePathway[] | undefined = data.pathway?.[source];
-    if (!rawPathways) return '';
-    
-    // Deduplicate by pathway 'id'
-    const uniqueRawPathways = getUniqueItems(Array.isArray(rawPathways) ? rawPathways : [rawPathways], 'id');
+function renderListSection(
+  title: string,
+  items: FormattedItem[],
+  initialCount: number,
+  moreButtonId: string
+): string {
+  if (!items || items.length === 0) {
+    return '';
+  }
 
-    const pathways = uniqueRawPathways
-      .map(p => {
-        let url = '#';
-        if (source === 'reactome') url = `https://reactome.org/content/detail/${p.id}`;
-        if (source === 'kegg') url = `https://www.genome.jp/dbget-bin/www_bget?path:${p.id}`;
-        if (source === 'wikipathways') url = `https://www.wikipathways.org/pathways/${p.id}`;
-        return { name: p.name, url };
-      })
-      .sort((a, b) => a.name.localeCompare(b.name));
+  const visibleItems = items.slice(0, initialCount);
+  const hiddenItemCount = items.length - initialCount;
 
-    const moreButtonId = `pathways-more-${data._id}`;
-
-    return renderParagraphSection('Pathways', pathways, count, moreButtonId);
-}
-
-// Formats raw domain data and calls the new renderer
-function renderDomains(data: MyGeneInfoResult, count: number): string {
-  const rawDomains: MyGeneInterproDomain | MyGeneInterproDomain[] | undefined = data.interpro;
-  if (!rawDomains) return '';
-
-  // Deduplicate by domain 'id'
-  const uniqueRawDomains = getUniqueItems(Array.isArray(rawDomains) ? rawDomains : [rawDomains], 'id');
-
-  const domains = uniqueRawDomains
-    .map(d => ({
-      name: d.short_desc,
-      url: `https://www.ebi.ac.uk/interpro/entry/InterPro/${d.id}`
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  const moreButtonId = `domains-more-${data._id}`;
-
-  return renderParagraphSection('Protein Domains', domains, count, moreButtonId);
-}
-
-function renderTranscripts(data: MyGeneInfoResult, count: number): string {
-  const rawTranscripts = asArray(data.ensembl?.transcript);
-  if (rawTranscripts.length === 0) return '';
-
-  const transcripts = rawTranscripts.map(id => ({
-    name: id,
-    url: `https://www.ensembl.org/id/${id}`
-  })).sort((a, b) => a.name.localeCompare(b.name));
-
-  const moreButtonId = `transcripts-more-${data._id}`;
-  return renderParagraphSection('Transcripts', transcripts, count, moreButtonId);
-}
-
-function renderStructures(data: MyGeneInfoResult, count: number): string {
-  const rawStructures = asArray(data.pdb);
-  if (rawStructures.length === 0) return '';
-
-  const structures = rawStructures.map(id => ({
-    name: id,
-    url: `https://www.rcsb.org/structure/${id}`
-  })).sort();
-
-  const moreButtonId = `structures-more-${data._id}`;
-  return renderParagraphSection('PDB Structures', structures, count, moreButtonId);
-}
-
-function renderGeneRIFs(data: MyGeneInfoResult, count: number): string {
-  const rawGeneRIFs = asArray(data.generif);
-  if (rawGeneRIFs.length === 0) return '';
-  
-  const visibleItems = rawGeneRIFs.slice(0, count);
-  const hiddenItemCount = rawGeneRIFs.length - count;
-
-  // Create list items with links, using the full text for the link.
-  const itemLinks = visibleItems.map(rif => 
+  // Create list items with links
+  const itemLinks = visibleItems.map(item => 
     `<li>
-       <a href="https://pubmed.ncbi.nlm.nih.gov/${rif.pubmed}" 
+       <a href="${item.url}" 
           target="_blank" 
           rel="noopener noreferrer" 
-          title="${rif.text}">
-          ${rif.text}
+          title="${item.name}">
+          ${item.name}
        </a>
      </li>`
   ).join('');
 
   const moreButton = hiddenItemCount > 0
-    ? `<span id="generifs-more-${data._id}" class="gene-tooltip-more-btn" data-more-count="${hiddenItemCount}">
+    ? `<span id="${moreButtonId}" class="gene-tooltip-more-btn" data-more-count="${hiddenItemCount}">
          ... and ${hiddenItemCount} more
        </span>`
     : '';
 
-  // Use the standard container and header, but our new list class.
-  // This avoids the double border and indentation issues.
   return `
     <div class="gene-tooltip-section-container">
-      <div class="gene-tooltip-section-header">GeneRIFs</div>
+      <div class="gene-tooltip-section-header">${title}</div>
       <ul class="gene-tooltip-rif-list">${itemLinks}</ul>
       ${moreButton}
     </div>
   `;
 }
 
+// Formats raw pathway data and calls the renderer
+function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'wikipathways', count: number): string {
+    const pathways = formatPathways(data.pathway?.[source], source);
+    return renderParagraphSection('Pathways', pathways, count, `pathways-more-${data._id}`);
+}
+
+// Formats raw domain data and calls the new renderer
+function renderDomains(data: MyGeneInfoResult, count: number): string {
+  const domains = formatDomains(data.interpro);
+  return renderParagraphSection('Protein Domains', domains, count, `domains-more-${data._id}`);
+}
+
+function renderTranscripts(data: MyGeneInfoResult, count: number): string {
+  const transcripts = formatTranscripts(data.ensembl?.transcript);
+  return renderParagraphSection('Transcripts', transcripts, count, `transcripts-more-${data._id}`);
+}
+
+function renderStructures(data: MyGeneInfoResult, count: number): string {
+  const structures = formatTranscripts(data.pdb);
+  return renderParagraphSection('PDB Structures', structures, count, `structures-more-${data._id}`);
+}
+
+// renderGeneRIFs function is now clean and simple
+function renderGeneRIFs(data: MyGeneInfoResult, count: number): string {
+  // 1. Get the clean, formatted data
+  const generifs = formatGeneRIFs(data.generif);
+  
+  // 2. Pass it to the appropriate generic renderer
+  const moreButtonId = `generifs-more-${data._id}`;
+  return renderListSection('GeneRIFs', generifs, count, moreButtonId);
+}
 
 export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,

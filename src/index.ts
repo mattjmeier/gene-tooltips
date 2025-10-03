@@ -1,7 +1,6 @@
 import tippy, { type Instance } from 'tippy.js'; // Import the 'Instance' type
 import 'tippy.js/dist/tippy.css';
-
-import { defaultConfig, type GeneTooltipConfig, type GeneRIF } from './config.js';
+import { defaultConfig, type GeneTooltipConfig } from './config.js';
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
 import { renderTooltipHTML } from './renderer.js';
@@ -10,6 +9,7 @@ import { runPrefetch } from './prefetch.js';
 import { enableSummaryExpand } from './ui/summaryExpand.js';
 import { renderIdeogram } from './ideogram.js'; 
 import { renderGeneTrack } from './gene-track.js';
+import { formatPathways, formatDomains, formatTranscripts, formatStructures, formatGeneRIFs } from './formatters.js';
 
 // Helper function to create content for the nested tooltip
 function createNestedContent(items: { name: string; url: string }[]): string {
@@ -17,16 +17,6 @@ function createNestedContent(items: { name: string; url: string }[]): string {
     .map(item => `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a></li>`)
     .join('');
   return `<ul class="gene-tooltip-nested-list">${listItems}</ul>`;
-}
-
-// Helper to ensure data is an array
-function asArray<T>(data: T | T[] | undefined): T[] {
-  if (!data) return [];
-  return Array.isArray(data) ? data : [data];
-}
-
-function getUniqueItems<T>(items: T[], key: keyof T): T[] {
-  return [...new Map(items.map(item => [item[key], item])).values()];
 }
 
 // The init function accepts a partial configuration
@@ -145,75 +135,24 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
 
 
       // 1. Handle Pathways
-      const pathwaysMoreBtn = instance.popper.querySelector<HTMLElement>(`#pathways-more-${data._id}`);
-      if (pathwaysMoreBtn && data.pathway?.[config.pathwaySource]) {
-        const rawPathways = data.pathway[config.pathwaySource]!;
-        const allPathways = (Array.isArray(rawPathways) ? rawPathways : [rawPathways]);
-
-        // === DEDUPLICATION AND MAPPING HAPPENS HERE ===
-        const uniquePathways = getUniqueItems(allPathways, 'id').map(p => {
-            let url = '#';
-            if (config.pathwaySource === 'reactome') url = `https://reactome.org/content/detail/${p.id}`;
-            if (config.pathwaySource === 'kegg') url = `https://www.genome.jp/dbget-bin/www_bget?path:${p.id}`;
-            if (config.pathwaySource === 'wikipathways') url = `https://www.wikipathways.org/pathways/${p.id}`;
-            return { name: p.name, url };
-        }).sort((a, b) => a.name.localeCompare(b.name));
-        
-        // Now use the clean 'uniquePathways' list for the tooltip
-        const nestedInstance = tippy(pathwaysMoreBtn, {
-            content: createNestedContent(uniquePathways), // <-- Use the deduplicated list
-            allowHTML: true,
-            interactive: true,
-            trigger: 'mouseenter focus',
-            placement: 'right',
-            theme: 'light',
-        });
-        instance._nestedTippys.push(nestedInstance);
-      }
+      const pathwayItems = formatPathways(data.pathway?.[config.pathwaySource], config.pathwaySource);
+      createNestedTippy(`#pathways-more-${data._id}`, pathwayItems);
 
       // 2. Handle Domains
-      const domainsMoreBtn = instance.popper.querySelector<HTMLElement>(`#domains-more-${data._id}`);
-      if (domainsMoreBtn && data.interpro) {
-        const rawDomains = data.interpro;
-        const allDomains = (Array.isArray(rawDomains) ? rawDomains : [rawDomains]);
+      const domainItems = formatDomains(data.interpro);
+      createNestedTippy(`#domains-more-${data._id}`, domainItems);
 
-        // === DEDUPLICATION AND MAPPING HAPPENS HERE ===
-        const uniqueDomains = getUniqueItems(allDomains, 'id').map(d => ({
-            name: d.short_desc,
-            url: `https://www.ebi.ac.uk/interpro/entry/InterPro/${d.id}`
-        })).sort((a, b) => a.name.localeCompare(b.name));
-
-        const nestedInstance = tippy(domainsMoreBtn, {
-            content: createNestedContent(uniqueDomains), // <-- Use the deduplicated list
-            allowHTML: true,
-            interactive: true,
-            trigger: 'mouseenter focus',
-            placement: 'right',
-            theme: 'light',
-        });
-        instance._nestedTippys.push(nestedInstance);
-      }
-      
-      // NEW: 3. Handle Transcripts
-      const transcriptItems = asArray(data.ensembl?.transcript)
-        .map(id => ({ name: id, url: `https://www.ensembl.org/id/${id}` }))
-        .sort((a, b) => a.name.localeCompare(b.name));
+      // 3. Handle Transcripts
+      const transcriptItems = formatTranscripts(data.ensembl?.transcript);
       createNestedTippy(`#transcripts-more-${data._id}`, transcriptItems);
 
-      // NEW: 4. Handle PDB Structures
-      const structureItems = asArray(data.pdb)
-        .map(id => ({ name: id, url: `https://www.rcsb.org/structure/${id}` }))
-        .sort();
+      // 4. Handle PDB Structures
+      const structureItems = formatStructures(data.pdb);
       createNestedTippy(`#structures-more-${data._id}`, structureItems);
-
-      // NEW: 5. Handle GeneRIFs
-      const generifItems = asArray(data.generif)
-        .map((rif: GeneRIF) => ({
-          name: rif.text,
-          url: `https://pubmed.ncbi.nlm.nih.gov/${rif.pubmed}`
-        }));
+      
+      // 5. Handle GeneRIFs
+      const generifItems = formatGeneRIFs(data.generif);
       createNestedTippy(`#generifs-more-${data._id}`, generifItems);
-
 
     },
     // NEW: Clean up nested instances to prevent memory leaks

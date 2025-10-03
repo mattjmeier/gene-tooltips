@@ -1,4 +1,8 @@
 import type { MyGeneInfoResult, TooltipDisplayConfig } from './config';
+export type FormattedItem = {
+    name: string;
+    url: string;
+};
 interface RenderOptions {
     truncate?: number;
     display?: Partial<TooltipDisplayConfig>;

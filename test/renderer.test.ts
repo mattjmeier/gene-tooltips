@@ -1,6 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { renderTooltipHTML } from '../src/renderer';
 import type { MyGeneInfoResult } from '../src/config';
+
+// Mock the asset imports at the top of the file
+vi.mock('../src/assets/US-NLM-NCBI-Logo.svg', () => ({
+  default: 'data:image/svg+xml,mock-ncbi-logo',
+}));
+vi.mock('../src/assets/EnsemblLogo.webp', () => ({
+  default: 'mock-ensembl-logo.webp',
+}));
 
 // A complete mock object for thorough testing
 const mockGeneData: MyGeneInfoResult = {
@@ -10,7 +18,8 @@ const mockGeneData: MyGeneInfoResult = {
   name: 'tumor protein p53',
   summary: 'This is a summary that is long enough to be truncated by the default settings.',
   taxid: 9606,
-  genomic_pos: { chr: '17', start: 7661779, end: 7687538, strand: -1 }
+  genomic_pos: { chr: '17', start: 7661779, end: 7687538, strand: -1 },
+  ensembl: { gene: 'ENSG00000141510' } // Add ensembl ID for link testing
 };
 
 
@@ -88,28 +97,26 @@ describe('renderTooltipHTML', () => {
     expect(html).not.toContain('--line-clamp');
   });
   
-  // THIS IS THE FIXED TEST
   it('should render external links by default and hide them based on display options', () => {
     // Default: both should be visible
     let html = renderTooltipHTML(mockGeneData);
     expect(html).toContain('href="https://www.ncbi.nlm.nih.gov/gene/7157"');
-    expect(html).toContain('<img src="fake-ncbi-logo.svg"');
-    expect(html).toContain('href="https://www.ensembl.org/id/7157"');
-    expect(html).toContain('<img src="fake-ensembl-logo.webp"');
+    expect(html).toContain('src="data:image/svg+xml,mock-ncbi-logo"'); // Check for mocked src
+    expect(html).toContain('href="https://www.ensembl.org/id/ENSG00000141510"');
+    expect(html).toContain('src="mock-ensembl-logo.webp"');
 
     // Disable NCBI
     html = renderTooltipHTML(mockGeneData, { display: { links: { ncbi: false } } });
     expect(html).not.toContain('href="https://www.ncbi.nlm.nih.gov/gene/7157"');
-    expect(html).toContain('href="https://www.ensembl.org/id/7157"');
+    expect(html).toContain('href="https://www.ensembl.org/id/ENSG00000141510"');
 
     // Disable Ensembl
     html = renderTooltipHTML(mockGeneData, { display: { links: { ensembl: false } } });
     expect(html).toContain('href="https://www.ncbi.nlm.nih.gov/gene/7157"');
-    expect(html).not.toContain('href="https://www.ensembl.org/id/7157"');
+    expect(html).not.toContain('href="https://www.ensembl.org/id/ENSG00000141510"');
     
     // Disable both
     html = renderTooltipHTML(mockGeneData, { display: { links: { ncbi: false, ensembl: false } } });
-    expect(html).not.toContain('gene-tooltip-header-links');
-  });
-
+    expect(html).not.toContain('gene-tooltip-links-container');
 });
+})

@@ -1,5 +1,6 @@
 import type { Props } from 'tippy.js';
 
+
 // Define the shape of the data we expect from mygene.info
 export interface GenomicPosition {
   chr: string;
