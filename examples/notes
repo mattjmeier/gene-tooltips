@@ -11,8 +11,6 @@ for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./src/types/*.ts && ls ./test
 - test out reactome vs kegg vs whatever in configuration
 - allow multiples? like kegg AND reactome?
 
-- BUG: the tooltip descendent on the ideogram annotation shows up in the wrong spot. It also uses tippy under the hood - must be something to do with how I'm configuring things, because the one index.html renders where the cursor is. The ideogram must not be aware that it itself is in a tooltip - is there a way to pass that info?
-
 - chore - clean up code, improve cohesiveness, test deployment and documentation
 - include in documentation instructions for making a custom section?
 - show examples from various species; size of tooltips; with and without various features included

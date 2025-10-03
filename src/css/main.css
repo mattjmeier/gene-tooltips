@@ -16,14 +16,12 @@
   line-height: 1.5; /* Ensure consistent line height */
 }
 
-
 /* This class is for the untruncated version */
 .gene-tooltip-summary-full {
   margin: 0; /* REMOVED MARGIN */
   padding: 0; /* ADDED PADDING RESET */
   line-height: 1.5; /* Ensure consistent line height */
 }
-
 
 .gene-tooltip-summary::after {
   content: "more";
@@ -47,9 +45,6 @@
   display: none;
 }
 
-
-
-
 /* New styles for tooltip sections */
 .gene-tooltip-section {
   display: flex;
@@ -63,7 +58,6 @@
 .gene-tooltip-species-icon {
   font-size: 1.2em;
 }
-
 
 .gene-tooltip-location {
   display: flex; 
@@ -231,7 +225,6 @@
   color: #666; /* A slightly lighter color */
 }
 
-
 .gene-tooltip-ideo {
     min-width: 120px; 
 }
@@ -308,4 +301,28 @@
   height: 1.2em; /* Control the icon height */
   vertical-align: middle; /* Align nicely with text */
   border: 0; /* Remove default image borders */
+}
+
+/* New styles specifically for the GeneRIF list */
+.gene-tooltip-rif-list {
+  list-style: none; /* Remove bullet points */
+  padding: 0;       /* Remove browser default indentation */
+  margin: 0;        /* Remove browser default margins */
+}
+
+.gene-tooltip-rif-list li {
+  font-size: 0.9em;
+  white-space: nowrap;         /* Keep text on one line */
+  overflow: hidden;            /* Hide overflow */
+  text-overflow: ellipsis;     /* Add "..." for truncated text */
+  padding: 2px 0;              /* Add a little vertical space */
+}
+
+.gene-tooltip-rif-list a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.gene-tooltip-rif-list a:hover {
+  text-decoration: underline;
 }

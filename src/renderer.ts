@@ -26,12 +26,12 @@ function getUniqueItems<T>(items: T[], key: keyof T): T[] {
   // handle overwriting duplicates, keeping only the last one it sees.
   return [...new Map(items.map(item => [item[key], item])).values()];
 }
+
 // Helper to ensure data is an array
 function asArray<T>(data: T | T[] | undefined): T[] {
   if (!data) return [];
   return Array.isArray(data) ? data : [data];
 }
-
 
 function renderSpecies(taxid: number): string {
   const species = speciesMap[taxid] ?? { common: "Unknown", genus: "", icon: "❓" };
@@ -67,8 +67,6 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
     `;
 }
 
-
-
 // Modified for Gene Track section layout
 function renderGeneTrackContainer(geneId: string): string {
   return `
@@ -101,9 +99,6 @@ function renderSummary(summaryText: string | undefined, truncate: number): strin
     </div>
   `;
 }
-
-
-
 
 // Section for rendering external links
 function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConfig>): string {
@@ -142,7 +137,6 @@ function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConf
     `;
 }
 
-
 function renderParagraphSection(
   title: string,
   items: { name: string; url: string }[],
@@ -177,7 +171,6 @@ function renderParagraphSection(
     </div>
   `;
 }
-
 
 // Formats raw pathway data and calls the renderer
 function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'wikipathways', count: number): string {
@@ -222,8 +215,6 @@ function renderDomains(data: MyGeneInfoResult, count: number): string {
   return renderParagraphSection('Protein Domains', domains, count, moreButtonId);
 }
 
-// NEW: Render functions for new sections
-
 function renderTranscripts(data: MyGeneInfoResult, count: number): string {
   const rawTranscripts = asArray(data.ensembl?.transcript);
   if (rawTranscripts.length === 0) return '';
@@ -254,24 +245,33 @@ function renderGeneRIFs(data: MyGeneInfoResult, count: number): string {
   const rawGeneRIFs = asArray(data.generif);
   if (rawGeneRIFs.length === 0) return '';
   
-  // Use a simplified render function as GeneRIF text can be long
   const visibleItems = rawGeneRIFs.slice(0, count);
   const hiddenItemCount = rawGeneRIFs.length - count;
 
+  // Create list items with links, using the full text for the link.
   const itemLinks = visibleItems.map(rif => 
-    `<li><a href="https://pubmed.ncbi.nlm.nih.gov/${rif.pubmed}" target="_blank" rel="noopener noreferrer">${rif.text}</a></li>`
+    `<li>
+       <a href="https://pubmed.ncbi.nlm.nih.gov/${rif.pubmed}" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          title="${rif.text}">
+          ${rif.text}
+       </a>
+     </li>`
   ).join('');
 
   const moreButton = hiddenItemCount > 0
-    ? `<span id="generifs-more-${data._id}" class="gene-tooltip-more-btn">
+    ? `<span id="generifs-more-${data._id}" class="gene-tooltip-more-btn" data-more-count="${hiddenItemCount}">
          ... and ${hiddenItemCount} more
        </span>`
     : '';
 
+  // Use the standard container and header, but our new list class.
+  // This avoids the double border and indentation issues.
   return `
     <div class="gene-tooltip-section-container">
       <div class="gene-tooltip-section-header">GeneRIFs</div>
-      <ul class="gene-tooltip-list-section">${itemLinks}</ul>
+      <ul class="gene-tooltip-rif-list">${itemLinks}</ul>
       ${moreButton}
     </div>
   `;
@@ -321,8 +321,6 @@ export function renderTooltipHTML(
       ${display.geneTrack !== false && data.exons && data.exons.length > 0 ? renderGeneTrackContainer(data._id) : ''}
       ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount) : ''}
       ${display.domains !== false ? renderDomains(data, domainCount) : ''}
-      
-      <!-- NEW: Render new sections based on display config -->
       ${display.transcripts !== false ? renderTranscripts(data, transcriptCount) : ''}
       ${display.structures !== false ? renderStructures(data, structureCount) : ''}
       ${display.generifs !== false ? renderGeneRIFs(data, generifCount) : ''}

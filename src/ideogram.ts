@@ -49,12 +49,9 @@ Please ensure 'ideogram' is installed (it's a peer dependency).`;
 export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult, ideogramConfig: Partial<IdeogramConfig>) {
   console.log('[GeneTooltip] Starting renderIdeogram for:', data.symbol);
 
-  // The Ideogram container element might not exist if the user has a slow connection 
-  // or if the component is being rapidly hidden/shown.
   const ideoDivInPopper = instance.popper.querySelector(`.gene-tooltip-ideo`) as HTMLElement;
 
   try {
-    // 1. Load the Ideogram constructor dynamically
     const Ideogram = await getIdeogram();
     
     if (!Ideogram) {
@@ -74,21 +71,20 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
       ideoDiv.innerHTML = '<small>No genomic position</small>';
       return;
     }
-    
+
     let chromosome = String(genomicPos.chr);
     if (chromosome.toLowerCase().startsWith('chr')) {
       chromosome = chromosome.substring(3);
     }
 
     const organism = speciesMap[data.taxid]?.ideogramName;
-    // If the organism isn't supported by Ideogram, we can't render it.
     if (!organism) {
-      ideoDiv.innerHTML = '<small>Ideogram not available for this species.</small>';
-      console.warn(`[GeneTooltip] Ideogram not rendered: species with taxid ${data.taxid} is not configured for Ideogram.`);
-      return;
+        ideoDiv.innerHTML = '<small>Ideogram not available for this species.</small>';
+        return;
     }
 
-    const configForIdeogram = {
+
+const configForIdeogram = {
       container: ideogramContainerSelector,
       organism,
       chromosome: chromosome,
@@ -103,46 +99,55 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
         start: genomicPos.start,
         stop: genomicPos.end
       }],
-      // By adding `this: HTMLElement`, we tell TypeScript to expect `this`
-      // to be an HTMLElement inside this function, solving the error.
-      onWillShowAnnotTooltip: function(this: HTMLElement) {
-        const annotEl = this; // `this` is now correctly typed as HTMLElement
+      showAnnotTooltip: false,
 
-        let tippyInstance = (annotEl as any)._tippy as Instance;
+      // Dummy callback to prevent click error
+      onClickAnnot: function() {},
+      onDrawAnnots: function() {
+        console.log('[GeneTooltip] onDrawAnnots fired!');
+        
+        // Use the selector we already have to find the container
+        // from within the main tippy popper.
+        const containerElement = instance.popper.querySelector(ideogramContainerSelector);
 
-        if (!tippyInstance) {
-          tippyInstance = tippy(annotEl, {
-            content: data.symbol,
-            placement: 'top',
-            trigger: 'manual', 
-            interactive: true,
-            appendTo: instance.popper,
-            popperOptions: {
-              strategy: 'absolute',
-            },
-          });
+        if (!containerElement) {
+            console.error(`[GeneTooltip] CRITICAL: Could not find the ideogram container element ('${ideogramContainerSelector}') after it was drawn.`);
+            return;
         }
-        
-        tippyInstance.show();
-        
-        return false;
-      },
-      onDidHideAnnotTooltip: function(this: HTMLElement) {
-          const annotEl = this;
-          if (annotEl && (annotEl as any)._tippy) {
-              const tippyInstance = (annotEl as any)._tippy as Instance;
-              tippyInstance.hide();
+
+        // Now, search for annotations *inside* that specific container
+        const annotElements = containerElement.querySelectorAll('.annot');
+        console.log(`[GeneTooltip] Found ${annotElements.length} annotation elements inside '${ideogramContainerSelector}'.`);
+
+        if (annotElements.length === 0) {
+            console.warn('[GeneTooltip] Could not find any .annot elements to attach tooltips to. This might be a timing issue or an incorrect class name.');
+            return;
+        }
+
+        tippy(annotElements, {
+          content: `<b>${data.symbol}</b><br>chr${chromosome}:${genomicPos.start.toLocaleString()}-${genomicPos.end.toLocaleString()}`,
+          allowHTML: true,
+          placement: 'top',
+          appendTo: instance.popper, // append to the main popper
+          theme: 'light',
+          animation: 'scale-subtle',
+          zIndex: 99999,
+          onShow() {
+              console.log('[GeneTooltip] Tippy onShow fired for annotation!');
           }
-      }
+        });
+
+      console.log('[GeneTooltip] Attached our custom Tippy instance to .annot elements.');
+      },
     };
 
     new Ideogram(configForIdeogram);
     console.log('[GeneTooltip] Ideogram initialized.');
 
   } catch (error) {
+
     console.error('[GeneTooltip] Ideogram failed to render:', error);
     if (ideoDivInPopper) {
-      // Show error to the user if the import failed
       ideoDivInPopper.innerHTML = '<small>Ideogram not installed or failed to load.</small>';
     }
   }
