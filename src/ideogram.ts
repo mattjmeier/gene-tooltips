@@ -103,29 +103,37 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
         start: genomicPos.start,
         stop: genomicPos.end
       }],
-      onWillShowAnnotTooltip: (annot: {
-        annots: { chr: any, annot: HTMLElement }[] 
-      }) => {
-        // Get the actual SVG path element from the annotation object
-        const annotEl = annot.annots[0]?.annot;
-        
-        // Ensure the element exists and doesn't already have a tippy instance
-        if (annotEl && !(annotEl as any)._tippy) {
-          tippy(annotEl as Element, {
+      // By adding `this: HTMLElement`, we tell TypeScript to expect `this`
+      // to be an HTMLElement inside this function, solving the error.
+      onWillShowAnnotTooltip: function(this: HTMLElement) {
+        const annotEl = this; // `this` is now correctly typed as HTMLElement
+
+        let tippyInstance = (annotEl as any)._tippy as Instance;
+
+        if (!tippyInstance) {
+          tippyInstance = tippy(annotEl, {
             content: data.symbol,
             placement: 'top',
-            // Append the tooltip to the main popper so it's positioned correctly.
-            appendTo: instance.popper, 
-            // This helps Tippy understand its positioning context
+            trigger: 'manual', 
+            interactive: true,
+            appendTo: instance.popper,
             popperOptions: {
               strategy: 'absolute',
             },
           });
         }
         
-        // Return false to prevent Ideogram from creating its own misplaced tooltip.
-        return false; 
+        tippyInstance.show();
+        
+        return false;
       },
+      onDidHideAnnotTooltip: function(this: HTMLElement) {
+          const annotEl = this;
+          if (annotEl && (annotEl as any)._tippy) {
+              const tippyInstance = (annotEl as any)._tippy as Instance;
+              tippyInstance.hide();
+          }
+      }
     };
 
     new Ideogram(configForIdeogram);
