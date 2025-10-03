@@ -48,35 +48,42 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     bestTranscript = transcripts[longestTranscriptKey];
   }
 
-
-  // 2. Create a flat array of all coordinate pairs, each with its exon number.
-  //    This is the key step to solve the numbering issue.
-  const allSegments: { coords: [number, number]; number: number }[] = [];
-  let exonCounter = 1;
-
-  bestTranscript.forEach(exonObj => {
-      if (exonObj.position) {
-          // Case 1: The exon object contains a 'position' array of segments
-          exonObj.position.forEach(pos => {
-              allSegments.push({ coords: pos, number: exonCounter });
-              exonCounter++;
-          });
-      } else if (exonObj.start && exonObj.end) {
-          // Case 2: The exon object has simple start/end
-          allSegments.push({ coords: [exonObj.start, exonObj.end], number: exonCounter });
-          exonCounter++;
-      } else if (exonObj.cdsstart && exonObj.cdsend) {
-          // Case 3: Fallback to cds coordinates
-          allSegments.push({ coords: [exonObj.cdsstart, exonObj.cdsend], number: exonCounter });
-          exonCounter++;
-      }
-  });
+  const firstExonObj = bestTranscript[0]; // Get a representative exon to check strand
+  const strand = firstExonObj.strand;
 
 
-  if (allSegments.length === 0) {
-    container.innerHTML = `<small>Exon coordinate format not recognized.</small>`;
-    return;
-  }
+  // 2. Create a flat array of all coordinate pairs.
+    //    We will add the exon number in a second pass.
+    const allSegments: { coords: [number, number]; number: number }[] = [];
+
+    bestTranscript.forEach(exonObj => {
+        if (exonObj.position) {
+            exonObj.position.forEach(pos => {
+                allSegments.push({ coords: pos, number: 0 }); // Use 0 as a placeholder
+            });
+        } else if (exonObj.start && exonObj.end) {
+            allSegments.push({ coords: [exonObj.start, exonObj.end], number: 0 });
+        } else if (exonObj.cdsstart && exonObj.cdsend) {
+            allSegments.push({ coords: [exonObj.cdsstart, exonObj.cdsend], number: 0 });
+        }
+    });
+
+    if (allSegments.length === 0) {
+        container.innerHTML = `<small>Exon coordinate format not recognized.</small>`;
+        return;
+    }
+
+    // === NEW LOGIC FOR REVERSIBLE NUMBERING ===
+    const totalExons = allSegments.length;
+    allSegments.forEach((segment, i) => {
+        if (strand === -1) {
+            // If on the reverse strand, count down from the total
+            segment.number = totalExons - i;
+        } else {
+            // Otherwise, count up as usual
+            segment.number = i + 1;
+        }
+    });
 
 
   // --- D3 Drawing Logic ---
@@ -93,13 +100,12 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     .attr("height", height + margin.top + margin.bottom)
     .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
   
-  const firstExonObj = bestTranscript[0];
-  const geneStart = firstExonObj.txstart;
-  const geneEnd = firstExonObj.txend;
-  const strand = firstExonObj.strand;
-  const xScale = d3.scaleLinear().domain([geneStart, geneEnd]).range([0, width]);
-  
-  const directionArrow = strand === 1 ? '→' : '←';
+    const geneStart = firstExonObj.txstart;
+    const geneEnd = firstExonObj.txend;
+    // We already have the 'strand' variable from above
+    const xScale = d3.scaleLinear().domain([geneStart, geneEnd]).range([0, width]);
+    
+    const directionArrow = strand === -1 ? '←' : '→'; // Changed from '1' to handle other cases
   svg.append("text")
     .attr("x", 0)
     .attr("y", -5)
@@ -120,18 +126,18 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     .attr("height", exonHeight)
     .attr("fill", "#007bff")
     .attr("stroke", "#0056b3")
-    .each(function(d) { // 'd' is now an object: { coords: [start, end], number: exonNumber }
-      const start = d.coords[0].toLocaleString();
-      const end = d.coords[1].toLocaleString();
-      const exonNumber = d.number; // Get the number we stored
+    .each(function(d) {
+        const start = d.coords[0].toLocaleString();
+        const end = d.coords[1].toLocaleString();
+        const exonNumber = d.number; // This now holds the correct forward/reverse number
 
-      tippy(this as Element, {
-        content: `<strong>Exon ${exonNumber}:</strong> ${start} - ${end}`,
-        placement: 'top',
-        allowHTML: true,
-        arrow: true,
-        animation: 'scale-subtle',
-        theme: 'light',
+        tippy(this as Element, {
+            content: `<strong>Exon ${exonNumber}:</strong> ${start} - ${end}`,
+            placement: 'top',
+            allowHTML: true,
+            arrow: true,
+            animation: 'scale-subtle',
+            theme: 'light',
       });
     });
 }

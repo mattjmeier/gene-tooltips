@@ -4,15 +4,6 @@ for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./src/types/*.ts && ls ./test
 
 
 ## To do:
-- Exon view (gene track) - let's add Exon 1, 2, 3, etc., in front of the location coordinate tooltips?
-
-- Fix the Pathways and Domain formatting - the pathways and domains sometimes each have duplicates - I tried to add a deduplication function but it is clearly not working; maybe it should be done on the value of the ID associated?
-
-- Optional configuration to change width/height of tooltip?
-
-- line up species icon?
-
-- split chr and pos onto two lines..?
 
 - new optional sections to make, similar to the domains and pathways sections:
 
@@ -81,3 +72,13 @@ Transcripts and proteins would include links to ensembl transcripts and proteins
         ],
 
 - include in documentation instructions for making a custom section?
+- show examples from various species; size of tooltips; with and without various features included
+- what to do about styling? better CSS defaults for some parts; need to use variables for colors and provide defaults for those in scss? also integrate well with bootstrap, other frameworks?
+- final styling tweaks for links... no underline - grey instead? fix icons; separate by pipe? | also add genecards link... other?
+
+- test out reactome vs kegg vs whatever in configuration
+- allow multiples? like kegg AND reactome?
+
+- BUG: the tooltip descendent on the ideogram annotation shows up in the wrong spot. It also uses tippy under the hood - must be something to do with how I'm configuring things, because the one index.html renders where the cursor is. The ideogram must not be aware that it itself is in a tooltip - is there a way to pass that info?
+
+- chore - clean up code, improve cohesiveness, test deployment and documentation

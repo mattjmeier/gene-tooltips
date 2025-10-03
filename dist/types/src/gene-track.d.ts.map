@@ -1,1 +1,1 @@
-{"version":3,"file":"gene-track.d.ts","sourceRoot":"","sources":["../../../src/gene-track.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,UAAU,CAAC;AACzC,OAAO,KAAK,EAAE,gBAAgB,EAAc,MAAM,UAAU,CAAC;AAI7D,wBAAgB,eAAe,CAAC,QAAQ,EAAE,QAAQ,EAAE,IAAI,EAAE,gBAAgB,QAiIzE"}
+{"version":3,"file":"gene-track.d.ts","sourceRoot":"","sources":["../../../src/gene-track.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,UAAU,CAAC;AACzC,OAAO,KAAK,EAAE,gBAAgB,EAAc,MAAM,UAAU,CAAC;AAI7D,wBAAgB,eAAe,CAAC,QAAQ,EAAE,QAAQ,EAAE,IAAI,EAAE,gBAAgB,QAuIzE"}
