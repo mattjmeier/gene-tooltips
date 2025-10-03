@@ -28,7 +28,12 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
     'pathway',
     'interpro',
     'exons',
-    'ensembl.gene'
+    'ensembl.gene',
+    // NEW: Add the new fields to the request
+    'ensembl.protein',
+    'ensembl.transcript',
+    'pdb',
+    'generif'
   ].join(',');
 
 

@@ -5,6 +5,9 @@ interface RenderOptions {
     pathwaySource?: 'reactome' | 'kegg' | 'wikipathways';
     pathwayCount?: number;
     domainCount?: number;
+    transcriptCount?: number;
+    structureCount?: number;
+    generifCount?: number;
     tooltipWidth?: number;
     tooltipHeight?: number;
 }

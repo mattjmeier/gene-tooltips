@@ -31,7 +31,7 @@ onMounted(() => {
       },
       ideogram: {
           enabled: true,
-          height: 50
+          height: 100
       }
     });
   }

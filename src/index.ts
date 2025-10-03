@@ -1,7 +1,7 @@
 import tippy, { type Instance } from 'tippy.js'; // Import the 'Instance' type
 import 'tippy.js/dist/tippy.css';
 
-import { defaultConfig, type GeneTooltipConfig } from './config.js';
+import { defaultConfig, type GeneTooltipConfig, type GeneRIF } from './config.js';
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
 import { renderTooltipHTML } from './renderer.js';
@@ -17,6 +17,12 @@ function createNestedContent(items: { name: string; url: string }[]): string {
     .map(item => `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a></li>`)
     .join('');
   return `<ul class="gene-tooltip-nested-list">${listItems}</ul>`;
+}
+
+// Helper to ensure data is an array
+function asArray<T>(data: T | T[] | undefined): T[] {
+  if (!data) return [];
+  return Array.isArray(data) ? data : [data];
 }
 
 function getUniqueItems<T>(items: T[], key: keyof T): T[] {
@@ -68,6 +74,10 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         pathwaySource: config.pathwaySource,
         pathwayCount: config.pathwayCount,
         domainCount: config.domainCount,
+        // NEW: Pass new counts to renderer
+        transcriptCount: config.transcriptCount,
+        structureCount: config.structureCount,
+        generifCount: config.generifCount,
         tooltipWidth: config.tooltipWidth,
         tooltipHeight: config.tooltipHeight,
       };
@@ -116,6 +126,23 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       }
 
       instance._nestedTippys = [];
+
+      // Helper for creating nested tooltips
+      const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
+        const button = instance.popper.querySelector<HTMLElement>(selector);
+        if (button && items.length > 0) {
+          const nestedInstance = tippy(button, {
+            content: createNestedContent(items),
+            allowHTML: true,
+            interactive: true,
+            trigger: 'mouseenter focus',
+            placement: 'right',
+            theme: 'light',
+          });
+          instance._nestedTippys?.push(nestedInstance);
+        }
+      };
+
 
       // 1. Handle Pathways
       const pathwaysMoreBtn = instance.popper.querySelector<HTMLElement>(`#pathways-more-${data._id}`);
@@ -166,6 +193,28 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         });
         instance._nestedTippys.push(nestedInstance);
       }
+      
+      // NEW: 3. Handle Transcripts
+      const transcriptItems = asArray(data.ensembl?.transcript)
+        .map(id => ({ name: id, url: `https://www.ensembl.org/id/${id}` }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+      createNestedTippy(`#transcripts-more-${data._id}`, transcriptItems);
+
+      // NEW: 4. Handle PDB Structures
+      const structureItems = asArray(data.pdb)
+        .map(id => ({ name: id, url: `https://www.rcsb.org/structure/${id}` }))
+        .sort();
+      createNestedTippy(`#structures-more-${data._id}`, structureItems);
+
+      // NEW: 5. Handle GeneRIFs
+      const generifItems = asArray(data.generif)
+        .map((rif: GeneRIF) => ({
+          name: rif.text,
+          url: `https://pubmed.ncbi.nlm.nih.gov/${rif.pubmed}`
+        }));
+      createNestedTippy(`#generifs-more-${data._id}`, generifItems);
+
+
     },
     // NEW: Clean up nested instances to prevent memory leaks
     onHidden(instance: TippyInstanceWithCustoms) {

@@ -12,6 +12,10 @@ interface RenderOptions {
   pathwaySource?: 'reactome' | 'kegg' | 'wikipathways';
   pathwayCount?: number;
   domainCount?: number;
+  // NEW: Add new counts to render options
+  transcriptCount?: number;
+  structureCount?: number;
+  generifCount?: number;
   tooltipWidth?: number;
   tooltipHeight?: number;
 }
@@ -21,6 +25,11 @@ function getUniqueItems<T>(items: T[], key: keyof T): T[] {
   // Use a Map to store items by their unique key. The map will automatically
   // handle overwriting duplicates, keeping only the last one it sees.
   return [...new Map(items.map(item => [item[key], item])).values()];
+}
+// Helper to ensure data is an array
+function asArray<T>(data: T | T[] | undefined): T[] {
+  if (!data) return [];
+  return Array.isArray(data) ? data : [data];
 }
 
 
@@ -213,6 +222,62 @@ function renderDomains(data: MyGeneInfoResult, count: number): string {
   return renderParagraphSection('Protein Domains', domains, count, moreButtonId);
 }
 
+// NEW: Render functions for new sections
+
+function renderTranscripts(data: MyGeneInfoResult, count: number): string {
+  const rawTranscripts = asArray(data.ensembl?.transcript);
+  if (rawTranscripts.length === 0) return '';
+
+  const transcripts = rawTranscripts.map(id => ({
+    name: id,
+    url: `https://www.ensembl.org/id/${id}`
+  })).sort((a, b) => a.name.localeCompare(b.name));
+
+  const moreButtonId = `transcripts-more-${data._id}`;
+  return renderParagraphSection('Transcripts', transcripts, count, moreButtonId);
+}
+
+function renderStructures(data: MyGeneInfoResult, count: number): string {
+  const rawStructures = asArray(data.pdb);
+  if (rawStructures.length === 0) return '';
+
+  const structures = rawStructures.map(id => ({
+    name: id,
+    url: `https://www.rcsb.org/structure/${id}`
+  })).sort();
+
+  const moreButtonId = `structures-more-${data._id}`;
+  return renderParagraphSection('PDB Structures', structures, count, moreButtonId);
+}
+
+function renderGeneRIFs(data: MyGeneInfoResult, count: number): string {
+  const rawGeneRIFs = asArray(data.generif);
+  if (rawGeneRIFs.length === 0) return '';
+  
+  // Use a simplified render function as GeneRIF text can be long
+  const visibleItems = rawGeneRIFs.slice(0, count);
+  const hiddenItemCount = rawGeneRIFs.length - count;
+
+  const itemLinks = visibleItems.map(rif => 
+    `<li><a href="https://pubmed.ncbi.nlm.nih.gov/${rif.pubmed}" target="_blank" rel="noopener noreferrer">${rif.text}</a></li>`
+  ).join('');
+
+  const moreButton = hiddenItemCount > 0
+    ? `<span id="generifs-more-${data._id}" class="gene-tooltip-more-btn">
+         ... and ${hiddenItemCount} more
+       </span>`
+    : '';
+
+  return `
+    <div class="gene-tooltip-section-container">
+      <div class="gene-tooltip-section-header">GeneRIFs</div>
+      <ul class="gene-tooltip-list-section">${itemLinks}</ul>
+      ${moreButton}
+    </div>
+  `;
+}
+
+
 export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,
   options: RenderOptions = {}
@@ -225,6 +290,10 @@ export function renderTooltipHTML(
     pathwaySource = 'reactome',
     pathwayCount = 3,
     domainCount = 3,
+    // NEW: Destructure new counts
+    transcriptCount = 3,
+    structureCount = 3,
+    generifCount = 3,
     tooltipWidth,
     tooltipHeight 
   } = options;
@@ -252,6 +321,12 @@ export function renderTooltipHTML(
       ${display.geneTrack !== false && data.exons && data.exons.length > 0 ? renderGeneTrackContainer(data._id) : ''}
       ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount) : ''}
       ${display.domains !== false ? renderDomains(data, domainCount) : ''}
+      
+      <!-- NEW: Render new sections based on display config -->
+      ${display.transcripts !== false ? renderTranscripts(data, transcriptCount) : ''}
+      ${display.structures !== false ? renderStructures(data, structureCount) : ''}
+      ${display.generifs !== false ? renderGeneRIFs(data, generifCount) : ''}
+
       ${renderLinks(data, display)}
     </div>
   `;

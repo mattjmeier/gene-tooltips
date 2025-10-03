@@ -19,6 +19,11 @@ export interface MyGeneInterproDomain {
   short_desc: string;
 }
 
+export interface GeneRIF {
+  pubmed: number;
+  text: string;
+}
+
 export interface MyGeneInfoResult {
   _id: string;
   query: string;
@@ -36,10 +41,18 @@ export interface MyGeneInfoResult {
   exons?: MyGeneExon[];
   ensembl?: {
     gene: string;
+    // NEW: Add protein and transcript fields
+    protein?: string[] | string;
+    transcript?: string[] | string;
   };
+  // NEW: Add PDB and GeneRIF fields
+  pdb?: string[] | string;
+  generif?: GeneRIF[] | GeneRIF;
 }
 
 
+
+// Define the components that can be shown or hidden
 // Define the components that can be shown or hidden
 export interface TooltipDisplayConfig {
   species: boolean;
@@ -48,6 +61,10 @@ export interface TooltipDisplayConfig {
   pathways: boolean;
   domains: boolean;
   geneTrack: boolean;
+  // NEW: Add display flags for new sections
+  transcripts: boolean;
+  structures: boolean;
+  generifs: boolean;
   links: {
     ncbi?: boolean;
     ensembl?: boolean;
@@ -77,6 +94,10 @@ export interface GeneTooltipConfig {
   pathwaySource: 'reactome' | 'kegg' | 'wikipathways';
   pathwayCount: number; // Number of pathways to show before "more"
   domainCount: number; // Number of domains to show before "more"
+  // NEW: Add counts for new sections
+  transcriptCount: number;
+  structureCount: number;
+  generifCount: number;
   tooltipWidth?: number; // Optional tooltip width in pixels
   tooltipHeight?: number; // Optional tooltip height in pixels
 }
@@ -107,6 +128,10 @@ export const defaultConfig: GeneTooltipConfig = {
     pathways: true,
     domains: true,
     geneTrack: true,
+    // NEW: Set default display values to true
+    transcripts: true,
+    structures: true,
+    generifs: true,
     links: {
       ncbi: true,
       ensembl: true,
@@ -120,6 +145,10 @@ export const defaultConfig: GeneTooltipConfig = {
   pathwaySource: 'reactome',
   pathwayCount: 3,
   domainCount: 3,
+  // NEW: Set default counts
+  transcriptCount: 3,
+  structureCount: 3,
+  generifCount: 3,
   tippyOptions: {
     allowHTML: true,
     interactive: true,

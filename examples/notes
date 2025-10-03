@@ -71,8 +71,7 @@ Transcripts and proteins would include links to ensembl transcripts and proteins
             "ENST00000556656"
         ],
 
-- include in documentation instructions for making a custom section?
-- show examples from various species; size of tooltips; with and without various features included
+
 - what to do about styling? better CSS defaults for some parts; need to use variables for colors and provide defaults for those in scss? also integrate well with bootstrap, other frameworks?
 - final styling tweaks for links... no underline - grey instead? fix icons; separate by pipe? | also add genecards link... other?
 
@@ -82,3 +81,5 @@ Transcripts and proteins would include links to ensembl transcripts and proteins
 - BUG: the tooltip descendent on the ideogram annotation shows up in the wrong spot. It also uses tippy under the hood - must be something to do with how I'm configuring things, because the one index.html renders where the cursor is. The ideogram must not be aware that it itself is in a tooltip - is there a way to pass that info?
 
 - chore - clean up code, improve cohesiveness, test deployment and documentation
+- include in documentation instructions for making a custom section?
+- show examples from various species; size of tooltips; with and without various features included

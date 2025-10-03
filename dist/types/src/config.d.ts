@@ -14,6 +14,10 @@ export interface MyGeneInterproDomain {
     id: string;
     short_desc: string;
 }
+export interface GeneRIF {
+    pubmed: number;
+    text: string;
+}
 export interface MyGeneInfoResult {
     _id: string;
     query: string;
@@ -31,7 +35,11 @@ export interface MyGeneInfoResult {
     exons?: MyGeneExon[];
     ensembl?: {
         gene: string;
+        protein?: string[] | string;
+        transcript?: string[] | string;
     };
+    pdb?: string[] | string;
+    generif?: GeneRIF[] | GeneRIF;
 }
 export interface TooltipDisplayConfig {
     species: boolean;
@@ -40,6 +48,9 @@ export interface TooltipDisplayConfig {
     pathways: boolean;
     domains: boolean;
     geneTrack: boolean;
+    transcripts: boolean;
+    structures: boolean;
+    generifs: boolean;
     links: {
         ncbi?: boolean;
         ensembl?: boolean;
@@ -63,6 +74,9 @@ export interface GeneTooltipConfig {
     pathwaySource: 'reactome' | 'kegg' | 'wikipathways';
     pathwayCount: number;
     domainCount: number;
+    transcriptCount: number;
+    structureCount: number;
+    generifCount: number;
     tooltipWidth?: number;
     tooltipHeight?: number;
 }

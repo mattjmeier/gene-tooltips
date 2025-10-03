@@ -3,6 +3,7 @@
 import type { Instance } from 'tippy.js';
 import type { MyGeneInfoResult, IdeogramConfig } from './config';
 import { speciesMap } from './constants';
+import tippy from 'tippy.js';
 
 let ideogramModulePromise: Promise<any> | null = null;
 
@@ -86,7 +87,7 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
       console.warn(`[GeneTooltip] Ideogram not rendered: species with taxid ${data.taxid} is not configured for Ideogram.`);
       return;
     }
-    
+
     const configForIdeogram = {
       container: ideogramContainerSelector,
       organism,
@@ -102,7 +103,29 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
         start: genomicPos.start,
         stop: genomicPos.end
       }],
-      //onWillShowAnnotTooltip: () => false, 
+      onWillShowAnnotTooltip: (annot: {
+        annots: { chr: any, annot: HTMLElement }[] 
+      }) => {
+        // Get the actual SVG path element from the annotation object
+        const annotEl = annot.annots[0]?.annot;
+        
+        // Ensure the element exists and doesn't already have a tippy instance
+        if (annotEl && !(annotEl as any)._tippy) {
+          tippy(annotEl as Element, {
+            content: data.symbol,
+            placement: 'top',
+            // Append the tooltip to the main popper so it's positioned correctly.
+            appendTo: instance.popper, 
+            // This helps Tippy understand its positioning context
+            popperOptions: {
+              strategy: 'absolute',
+            },
+          });
+        }
+        
+        // Return false to prevent Ideogram from creating its own misplaced tooltip.
+        return false; 
+      },
     };
 
     new Ideogram(configForIdeogram);
