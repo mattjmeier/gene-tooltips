@@ -44,9 +44,9 @@ export function formatTranscripts(transcripts: string[] | string | undefined): F
 }
 
 export function formatStructures(pdbs: string[] | string | undefined): FormattedItem[] {
-  return asArray(pdbs)
+  return asArray(pdbs) // <-- Use asArray directly
     .map(id => ({ name: id, url: `https://www.rcsb.org/structure/${id}` }))
-    .sort();
+    .sort((a, b) => a.name.localeCompare(b.name)); // <-- Use localeCompare for consistency
 }
 
 // GeneRIFs are slightly different, but can still be formatted

@@ -61,8 +61,10 @@ describe('parser', () => {
       const info = getGeneInfoFromElement(el);
       expect(info).not.toBeNull();
       expect(info?.symbol).toBe('TP53');
-      expect(info?.species).toBe('human');
+      // <-- FIX: Check for the numeric taxid, not the string 'human'
+      expect(info?.taxid).toBe(9606);
     });
+
 
     it('should return null if symbol is missing', () => {
       const el = document.createElement('span');

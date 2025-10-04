@@ -5,8 +5,8 @@ for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./src/types/*.ts && ls ./test
 
 ## To do:
 
-- CSS fixes - make tooltips scrollable instead of extending the page?
-- Test different themes (dark, material)
+- material theme and translucent theme don't really seem to work quite right, any thoughts how to improve this?
+
 
 - test out reactome vs kegg vs whatever in configuration
 - allow multiples? like kegg AND reactome?

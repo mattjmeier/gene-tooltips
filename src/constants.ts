@@ -44,3 +44,32 @@ export const speciesMap: Record<number, SpeciesInfo> = {
   9823: { common: "Pig", genus: "Sus scrofa", icon: "🐖" },
   4932: { common: "Yeast", genus: "Saccharomyces cerevisiae", icon: "🧫" },
 };
+
+/**
+ * Finds species data by either taxid or common name (case-insensitive).
+ * @param identifier - The taxid (number) or common name (string).
+ * @returns An object with the taxid and the SpeciesInfo, or null if not found.
+ */
+export function findSpecies(identifier: string | number | undefined): { taxid: number; info: SpeciesInfo } | null {
+  if (identifier === undefined || identifier === null) return null;
+
+  const identifierStr = String(identifier).toLowerCase();
+  
+  // First, try to match by taxid if it's a number
+  if (typeof identifier === 'number' && speciesMap[identifier]) {
+    return { taxid: identifier, info: speciesMap[identifier] };
+  }
+
+  // Otherwise, search by common name or taxid string
+  for (const taxidStr in speciesMap) {
+    const taxid = parseInt(taxidStr, 10);
+    const info = speciesMap[taxid];
+    
+    // Check taxid string match OR common name match
+    if (identifierStr === taxidStr || identifierStr === info.common.toLowerCase()) {
+      return { taxid, info };
+    }
+  }
+
+  return null;
+}

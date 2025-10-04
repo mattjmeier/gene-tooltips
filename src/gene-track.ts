@@ -2,10 +2,28 @@
 
 import type { Instance } from 'tippy.js';
 import type { MyGeneInfoResult, MyGeneExon } from './config';
-import * as d3 from 'd3';
+//import * as d3 from 'd3';
 import tippy from 'tippy.js';
 
-export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
+// Lazy-load d3
+async function getD3() {
+    try {
+        // Assuming d3 is a peer dependency, this will work in ESM/CJS environments
+        return await import('d3');
+    } catch (e) {
+        console.error("[GeneTooltip] d3.js is required for the gene track feature but could not be loaded. Please ensure 'd3' is installed.");
+        return null;
+    }
+}
+
+export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
+  const d3 = await getD3();
+  if (!d3) {
+      // Handle the case where d3 couldn't be loaded
+      const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${data._id}`);
+      if (container) container.innerHTML = `<small>Gene track library (d3) not found.</small>`;
+      return;
+  }
   const containerSelector = `#gene-tooltip-track-${data._id}`;
   const container = instance.popper.querySelector<HTMLElement>(containerSelector);
 

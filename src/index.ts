@@ -1,10 +1,4 @@
 import tippy, { type Instance } from 'tippy.js'; // Import the 'Instance' type
-// import 'tippy.js/dist/tippy.css'; // Import Tippy's base structural styles
-// import 'tippy.js/themes/light.css';        // tippy's `theme: 'light'`
-// import 'tippy.js/themes/light-border.css'; // tippy's `theme: 'light-border'`
-// import 'tippy.js/themes/material.css';     // tippy's `theme: 'material'`
-// import 'tippy.js/themes/translucent.css';  // tippy's `theme: 'translucent'`
-// import './css/main.css'; // custom theme and all component styles
 import { defaultConfig, type GeneTooltipConfig } from './config.js';
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
@@ -61,7 +55,8 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         return;
       }
 
-      const { symbol, species } = info;
+      const { symbol, taxid } = info; // <-- Use taxid now
+
       const renderOptions = {
         truncate: config.truncateSummary,
         display: config.display,
@@ -75,8 +70,9 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         tooltipHeight: config.tooltipHeight,
       };
 
-      const cachedData = cache.get(symbol, species);
+      const cachedData = cache.get(symbol, taxid); // <-- Use taxid
       if (typeof cachedData !== 'undefined') {
+
         instance.setContent(renderTooltipHTML(cachedData, renderOptions));
         
         if (config.ideogram?.enabled && cachedData?.genomic_pos) {
@@ -87,9 +83,9 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         return;
       }
 
-      fetchMyGeneBatch([symbol], species).then(resultsMap => {
+      fetchMyGeneBatch([symbol], String(taxid)).then(resultsMap => {
         const data = resultsMap.get(symbol) || null;
-        cache.set(symbol, species, data);
+        cache.set(symbol, taxid, data);
         instance.setContent(renderTooltipHTML(data, renderOptions));
 
         if (config.ideogram?.enabled && data?.genomic_pos) {
@@ -106,7 +102,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       const info = getGeneInfoFromElement(instance.reference as HTMLElement);
       if (!info) return;
 
-      const data = cache.get(info.symbol, info.species);
+      const data = cache.get(info.symbol, info.taxid);
       if (!data) return;
 
       if (config.display.geneTrack && data.exons) {

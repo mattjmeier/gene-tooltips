@@ -57,7 +57,8 @@ describe('renderTooltipHTML', () => {
   it('should render location information when enabled', () => {
     const html = renderTooltipHTML(mockGeneData, { display: { location: true } });
     expect(html).toContain('gene-tooltip-location');
-    expect(html).toContain('chr17:7,661,779-7,687,538');
+    expect(html).toContain('<span class="gene-tooltip-location-chr">chr17</span>');
+    expect(html).toContain('<span class="gene-tooltip-location-pos">7,661,779-7,687,538</span>');
   });
   
   it('should NOT render location information when disabled', () => {

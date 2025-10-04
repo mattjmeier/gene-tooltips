@@ -3,7 +3,7 @@
  */
 export interface GeneInfo {
     symbol: string;
-    species: string;
+    taxid: number;
 }
 /**
  * Finds all elements matching the selector and expands gene lists.
@@ -14,7 +14,7 @@ export declare function findGeneElements(selector: string): HTMLElement[];
 /**
  * Extracts gene information from a DOM element.
  * @param el - The DOM element.
- * @returns An object with symbol and species, or null.
+ * @returns An object with symbol and taxid, or null.
  */
 export declare function getGeneInfoFromElement(el: HTMLElement): GeneInfo | null;
 //# sourceMappingURL=parser.d.ts.map

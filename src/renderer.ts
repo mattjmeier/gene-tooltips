@@ -1,6 +1,6 @@
 import type { MyGeneInfoResult, GenomicPosition, TooltipDisplayConfig } from './config';
 import { speciesMap } from './constants';
-import { formatPathways, formatDomains, formatTranscripts, formatGeneRIFs } from './formatters';
+import { formatPathways, formatDomains, formatTranscripts, formatStructures, formatGeneRIFs } from './formatters';
 export type FormattedItem = { name: string; url: string };
 
 // import NCBILogoText from "./assets/US-NLM-NCBI-Logo.svg";
@@ -220,7 +220,7 @@ function renderTranscripts(data: MyGeneInfoResult, count: number): string {
 }
 
 function renderStructures(data: MyGeneInfoResult, count: number): string {
-  const structures = formatTranscripts(data.pdb);
+  const structures = formatStructures(data.pdb);
   return renderParagraphSection('PDB Structures', structures, count, `structures-more-${data._id}`);
 }
 
