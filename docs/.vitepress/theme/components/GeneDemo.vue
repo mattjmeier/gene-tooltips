@@ -3,8 +3,8 @@
     <p style="font-size: 1.2em; line-height: 1.8;">
       The protein encoded by <span class="gene-tooltip" data-species="human">TP53</span> is a tumor suppressor.
       In mice, the ortholog is <span class="gene-tooltip" data-species="mouse">Trp53</span>.
-      This is a well-known gene from the fruit fly: <span class="gene-tooltip" data-species="fruitfly">Dop2</span>.
-      Here is one from yeast: <span class="gene-tooltip" data-species="yeast">STE2</span>.
+      This is a well-known gene from the fruit fly: <span class="gene-tooltip" data-species="7227">dib</span>.
+      Here is one from yeast: <span class="gene-tooltip" data-species="559292">RAD51</span>.
     </p>
   </div>
 </template>

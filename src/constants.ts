@@ -42,7 +42,7 @@ export const speciesMap: Record<number, SpeciesInfo> = {
   3702: { common: "Thale-cress", genus: "Arabidopsis thaliana", icon: "🌱" },
   8364: { common: "Frog", genus: "Xenopus tropicalis", icon: "🐸" },
   9823: { common: "Pig", genus: "Sus scrofa", icon: "🐖" },
-  4932: { common: "Yeast", genus: "Saccharomyces cerevisiae", icon: "🧫" },
+  559292 : { common: "Yeast", genus: "Saccharomyces cerevisiae", icon: "🧫" },
 };
 
 /**
