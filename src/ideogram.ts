@@ -83,8 +83,10 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
         return;
     }
 
+    // Get the theme from the main instance
+    const currentTheme = (instance.props as any).theme || 'light';
 
-const configForIdeogram = {
+    const configForIdeogram = {
       container: ideogramContainerSelector,
       organism,
       chromosome: chromosome,
@@ -100,14 +102,10 @@ const configForIdeogram = {
         stop: genomicPos.end
       }],
       showAnnotTooltip: false,
-
-      // Dummy callback to prevent click error
       onClickAnnot: function() {},
       onDrawAnnots: function() {
         console.log('[GeneTooltip] onDrawAnnots fired!');
         
-        // Use the selector we already have to find the container
-        // from within the main tippy popper.
         const containerElement = instance.popper.querySelector(ideogramContainerSelector);
 
         if (!containerElement) {
@@ -115,12 +113,11 @@ const configForIdeogram = {
             return;
         }
 
-        // Now, search for annotations *inside* that specific container
         const annotElements = containerElement.querySelectorAll('.annot');
         console.log(`[GeneTooltip] Found ${annotElements.length} annotation elements inside '${ideogramContainerSelector}'.`);
 
         if (annotElements.length === 0) {
-            console.warn('[GeneTooltip] Could not find any .annot elements to attach tooltips to. This might be a timing issue or an incorrect class name.');
+            console.warn('[GeneTooltip] Could not find any .annot elements to attach tooltips to.');
             return;
         }
 
@@ -128,8 +125,8 @@ const configForIdeogram = {
           content: `<b>${data.symbol}</b><br>chr${chromosome}:${genomicPos.start.toLocaleString()}-${genomicPos.end.toLocaleString()}`,
           allowHTML: true,
           placement: 'top',
-          appendTo: instance.popper, // append to the main popper
-          theme: 'light',
+          appendTo: instance.popper,
+          theme: currentTheme, // Use the same theme as parent
           animation: 'scale-subtle',
           zIndex: 99999,
           onShow() {
@@ -145,10 +142,10 @@ const configForIdeogram = {
     console.log('[GeneTooltip] Ideogram initialized.');
 
   } catch (error) {
-
     console.error('[GeneTooltip] Ideogram failed to render:', error);
     if (ideoDivInPopper) {
       ideoDivInPopper.innerHTML = '<small>Ideogram not installed or failed to load.</small>';
     }
   }
 }
+

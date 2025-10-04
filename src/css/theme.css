@@ -5,7 +5,7 @@
   Users can override these variables in their own CSS
   to integrate with frameworks like Bootstrap or Tailwind.
 */
-:root {
+/* :root {
   --gt-background-color: #fff;
   --gt-color-primary: #007bff;
   --gt-color-text: #333;
@@ -17,7 +17,7 @@
 }
 
 /* Example dark mode support */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --gt-background-color: #0d1117;
     --gt-color-primary: #58a6ff;
@@ -28,4 +28,28 @@
     --gt-background-hover: #21262d;
     --gt-summary-more-bg: linear-gradient(to right, rgba(13, 17, 23, 0), #0d1117 50%);
   }
+} */
+
+/* 
+  Custom properties for Gene Tooltip.
+  These are designed to work WITH Tippy.js themes, not replace them.
+*/
+.tippy-box {
+  /* 
+    Define a single accent color for links and highlights.
+    This default blue is chosen to have decent contrast on both the default 
+    dark theme and the light theme. Users can easily override this.
+  */
+  --gt-accent-color: #58a6ff; /* A nice, bright blue */
+
+  /*
+    Example of how a user could customize the accent for a specific theme:
+    
+    .tippy-box[data-theme~='light'] {
+      --gt-accent-color: #007bff;
+    }
+    .tippy-box[data-theme~='material'] {
+      --gt-accent-color: #B2DFDB;
+    }
+  */
 }

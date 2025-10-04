@@ -1,22 +1,4 @@
-
-/* 1. Import Tippy's structural styles FIRST */
-@import 'tippy.js/dist/tippy.css';
-
-/* 2. Import tippy themes */
-@import 'tippy.js/themes/light.css';
-@import 'tippy.js/themes/light-border.css';
-@import 'tippy.js/themes/material.css';
-@import 'tippy.js/themes/translucent.css';
-
-/* 3. Import your theme variables */
-@import './theme.css';
-
-/* --- Summary --- */
-
-
-
-/* --- Summary --- */
-
+/* This class is applied when truncation is ENABLED */
 .gene-tooltip-summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -28,32 +10,39 @@
   margin: 0;
   padding: 0;
   line-height: 1.5;
+  /* Add padding to prevent text from going under the "more" button */
+  padding-right: 3.5em;
 }
 
 .gene-tooltip-summary::after {
   content: "more";
   font-size: 0.9em;
   font-weight: bold;
-  /* Use our new, single accent color */
-  color: var(--gt-accent-color);
+  color: var(--gt-color-primary);
   position: absolute;
   bottom: 0;
   right: 0;
-  padding-left: 1.5em;
-  /* Use Tippy's background color variable for a perfect match! */
-  background: linear-gradient(to right, transparent, var(--tippy-background-color) 40%);
+  /* Increase padding for better gradient coverage */
+  padding-left: 2em;
+  /* Stronger, wider gradient */
+  background: var(--gt-summary-more-bg);
+  /* Ensure it's above the text */
+  z-index: 1;
 }
 
 .gene-tooltip-summary.expanded {
-  display: block;
+  display: block; 
   -webkit-line-clamp: unset;
   line-clamp: unset;
+  /* Remove padding when expanded */
+  padding-right: 0;
 }
 
 .gene-tooltip-summary.expanded::after {
   display: none;
 }
 
+/* This class is for the untruncated version */
 .gene-tooltip-summary-full {
   margin: 0;
   padding: 0;
@@ -68,7 +57,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1em;
-  flex-wrap: wrap;
+  flex-wrap: wrap; 
 }
 
 .gene-tooltip-title {
@@ -76,47 +65,57 @@
   align-items: center;
   gap: 0.5em;
   flex-wrap: wrap;
-  min-width: 0;
+  min-width: 0; 
 }
 
 .gene-tooltip-header strong {
   font-size: 1.1em;
   white-space: nowrap;
-  /* Let the theme control the text color */
-  color: inherit;
 }
 
 .gene-tooltip-name {
   word-break: break-all;
 }
 
+.gene-tooltip-header-links {
+  display: flex;
+  gap: 0.5em;
+  flex-shrink: 0; 
+}
+
+.gene-tooltip-header-links a {
+  color: var(--gt-color-text-subtle);
+  transition: color 0.2s;
+}
+.gene-tooltip-header-links a:hover {
+  color: var(--gt-color-primary);
+}
+
+
 /* --- Reusable Section Components --- */
 
+/* A generic container for sections that need a top border */
 .gene-tooltip-section-container {
-  /* Use a subtle border that adapts to theme, without dimming content */
-  border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-top: 1px solid var(--gt-border-color);
   padding-top: 0.5em;
   margin-top: 0.75em;
 }
 
+/* A generic header for sections like "Pathways", "GeneRIFs", etc. */
 .gene-tooltip-section-header {
   font-weight: bold;
   font-size: 0.9em;
-  /* Inherit the main text color from the theme */
-  color: inherit;
+  color: var(--gt-color-text);
   margin-bottom: 0.3em;
-  /* Make it slightly less prominent than the main title */
-  opacity: 0.9;
 }
 
+/* A generic section with an icon and text (e.g., Species) */
 .gene-tooltip-section {
   display: flex;
   align-items: center;
   gap: 0.5em;
   font-size: 0.9em;
-  /* Inherit text color and use opacity to make it subtle */
-  color: inherit;
-  opacity: 0.8;
+  color: var(--gt-color-text-subtle);
   margin-top: 0.5em;
 }
 
@@ -129,7 +128,7 @@
 
 .gene-tooltip-location {
   display: flex;
-  flex-direction: row;
+  flex-direction: row; 
   align-items: center;
   justify-content: space-between;
   gap: 1em;
@@ -146,23 +145,25 @@
 
 .gene-tooltip-location-pos {
   font-size: 0.9em;
-  /* Make secondary text subtle with opacity */
-  color: inherit;
-  opacity: 0.7;
+  color: var(--gt-color-text-secondary); /* Using secondary text color */
 }
 
 .gene-tooltip-ideo {
-  min-width: 120px;
+  min-width: 120px; 
 }
 
 
-/* --- List-based Sections --- */
+/* --- List-based Sections (Pathways, GeneRIFs) --- */
 
+/* Style for the container of a list section */
 .gene-tooltip-list-section {
+  flex-direction: column;
+  align-items: flex-start;
   padding-left: 0;
   margin-left: 0;
 }
 
+/* Reset default list styles */
 .gene-tooltip-list-section ul {
   list-style: none;
   padding: 0;
@@ -180,8 +181,7 @@
 
 .gene-tooltip-list-section a {
   text-decoration: none;
-  /* Use the single accent color for all links */
-  color: var(--gt-accent-color);
+  color: var(--gt-color-primary);
 }
 
 .gene-tooltip-list-section a:hover {
@@ -191,21 +191,17 @@
 /* Style for the "... and X more" button */
 .gene-tooltip-more-btn {
   font-size: 0.85em;
-  /* Make text subtle and theme-aware with opacity */
-  color: inherit;
-  opacity: 0.7;
+  color: var(--gt-color-text-secondary);
   cursor: pointer;
   margin-top: 4px;
   padding: 2px 4px;
   border-radius: 3px;
-  transition: background-color 0.2s, opacity 0.2s;
+  transition: background-color 0.2s;
 }
 
 .gene-tooltip-more-btn:hover {
-  /* On hover, make the text fully opaque */
-  opacity: 1;
-  /* Add a very subtle background derived from the current text color */
-  background-color: color-mix(in srgb, currentColor 10%, transparent);
+  background-color: var(--gt-background-hover);
+  color: var(--gt-color-text);
 }
 
 /* --- Nested Tooltip List --- */
@@ -224,7 +220,7 @@
 }
 
 .gene-tooltip-nested-list a {
-  color: var(--gt-accent-color);
+  color: var(--gt-color-primary);
   text-decoration: none;
 }
 .gene-tooltip-nested-list a:hover {
@@ -251,25 +247,19 @@
     align-items: center;
     gap: 0.3em;
     text-decoration: none;
-    /* Make link text subtle by default */
-    color: inherit;
-    opacity: 0.7;
-    transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
+    color: var(--gt-color-text-secondary);
+    transition: color 0.2s ease-in-out;
 }
 
 .gene-tooltip-links-container a:hover {
-    /* On hover, use the accent color and make it fully opaque */
-    color: var(--gt-accent-color);
-    opacity: 1;
+    color: var(--gt-color-primary);
 }
 
 /* Add a pipe separator between links */
 .gene-tooltip-links-container a:not(:last-child)::after {
     content: '|';
     margin-left: 0.75em;
-    /* Use currentColor with opacity for a faint, adaptive separator */
-    color: currentColor;
-    opacity: 0.2;
+    color: var(--gt-border-color);
     font-weight: 100;
 }
 
@@ -277,13 +267,12 @@
   height: 1.2em;
   vertical-align: middle;
   border: 0;
-  /* This is a great, theme-agnostic way to make icons match text color */
+  /* Add a subtle filter to make icons match text color */
   filter: grayscale(1) opacity(0.7);
   transition: filter 0.2s ease-in-out;
 }
 
 .gene-tooltip-links-container a:hover .gene-tooltip-link-icon {
-    /* Restore the icon's color on hover */
     filter: none;
 }
 
@@ -293,33 +282,74 @@
   padding: 0;
   line-height: 1.5;
   font-size: 0.9em;
-  /* Inherit text color from the theme */
-  color: inherit;
+  color: var(--gt-color-text);
 }
 
 /* Links within paragraph sections */
 .tippy-box .gene-tooltip-p-content a {
-  color: var(--gt-accent-color);
+  color: var(--gt-color-primary);
   text-decoration: none;
   transition: color 0.2s ease-in-out;
 }
 
 .tippy-box .gene-tooltip-p-content a:hover {
   text-decoration: underline;
+  color: var(--gt-color-primary);
 }
 
-/* More button within paragraph content (reuses the main .more-btn styles) */
+/* More button within paragraph content */
 .tippy-box .gene-tooltip-p-content .gene-tooltip-more-btn {
   font-size: 0.85em;
-  color: inherit;
-  opacity: 0.7;
+  color: var(--gt-color-text-secondary);
   cursor: pointer;
   padding: 2px 4px;
   border-radius: 3px;
-  transition: background-color 0.2s, opacity 0.2s;
+  transition: background-color 0.2s;
 }
 
 .tippy-box .gene-tooltip-p-content .gene-tooltip-more-btn:hover {
-  opacity: 1;
-  background-color: color-mix(in srgb, currentColor 10%, transparent);
+  background-color: var(--gt-background-hover);
+  color: var(--gt-color-text);
 }
+
+/* GeneRIF list styling */
+/* .tippy-box .gene-tooltip-rif-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.tippy-box .gene-tooltip-rif-list li {
+  padding: 2px 0;
+  line-height: 1.4;
+  color: var(--gt-color-text-subtle);
+}
+
+.tippy-box .gene-tooltip-rif-list a {
+  color: var(--gt-color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.tippy-box .gene-tooltip-rif-list a:hover {
+  text-decoration: underline;
+  color: var(--gt-color-primary);
+}
+
+/* More button for GeneRIF sections (appears after the list) */
+/* .tippy-box .gene-tooltip-rif-list + .gene-tooltip-more-btn {
+  font-size: 0.85em;
+  color: var(--gt-color-text-secondary);
+  cursor: pointer;
+  margin-top: 4px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+  display: inline-block;
+}
+
+.tippy-box .gene-tooltip-rif-list + .gene-tooltip-more-btn:hover {
+  background-color: var(--gt-background-hover);
+  color: var(--gt-color-text);
+} */

@@ -3,7 +3,8 @@ import { speciesMap } from './constants';
 import { formatPathways, formatDomains, formatTranscripts, formatGeneRIFs } from './formatters';
 export type FormattedItem = { name: string; url: string };
 
-import NCBILogoText from "./assets/US-NLM-NCBI-Logo.svg";
+// import NCBILogoText from "./assets/US-NLM-NCBI-Logo.svg";
+import NCBILogoText from "./assets/NLM-square-logo.svg";
 const NCBILogo = `data:image/svg+xml,${encodeURIComponent(NCBILogoText)}`;
 import EnsemblLogo from "./assets/EnsemblLogo.webp";
 console.log('NCBILogo variable contains:', NCBILogo);

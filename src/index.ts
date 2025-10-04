@@ -41,19 +41,18 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
 
-
   const geneElements = findGeneElements(config.selector);
   if (geneElements.length === 0) return;
 
   runPrefetch(config.prefetch, geneElements, config.prefetchThreshold);
 
-  // Interface to track our custom properties on the tippy instance
   interface TippyInstanceWithCustoms extends Instance {
     _nestedTippys?: Instance[];
   }
 
   tippy(geneElements, {
     ...config.tippyOptions,
+    theme: config.theme, // Use top-level theme
     content: 'Loading...',
     onShow(instance: Instance) {
       const info = getGeneInfoFromElement(instance.reference as HTMLElement);
@@ -76,14 +75,11 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         tooltipHeight: config.tooltipHeight,
       };
 
-
       const cachedData = cache.get(symbol, species);
       if (typeof cachedData !== 'undefined') {
         instance.setContent(renderTooltipHTML(cachedData, renderOptions));
         
-        // Also handle ideogram for cached data
         if (config.ideogram?.enabled && cachedData?.genomic_pos) {
-          // Use setTimeout to wait for the DOM to update
           setTimeout(() => {
             renderIdeogram(instance, cachedData, config.ideogram);
           }, 0);
@@ -96,9 +92,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         cache.set(symbol, species, data);
         instance.setContent(renderTooltipHTML(data, renderOptions));
 
-        // Handle ideogram rendering
         if (config.ideogram?.enabled && data?.genomic_pos) {
-          // Use setTimeout to wait for the DOM to update
           setTimeout(() => {
             renderIdeogram(instance, data, config.ideogram);
           }, 0);
@@ -121,7 +115,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
 
       instance._nestedTippys = [];
 
-      // Helper for creating nested tooltips
+      // Helper for creating nested tooltips - NOW WITH THEME SUPPORT
       const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
         const button = instance.popper.querySelector<HTMLElement>(selector);
         if (button && items.length > 0) {
@@ -131,35 +125,28 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
             interactive: true,
             trigger: 'mouseenter focus',
             placement: 'right',
-            theme: 'light',
+            theme: config.theme, // Use configured theme instead of hardcoded 'light'
           });
           instance._nestedTippys?.push(nestedInstance);
         }
       };
 
-
-      // 1. Handle Pathways
       const pathwayItems = formatPathways(data.pathway?.[config.pathwaySource], config.pathwaySource);
       createNestedTippy(`#pathways-more-${data._id}`, pathwayItems);
 
-      // 2. Handle Domains
       const domainItems = formatDomains(data.interpro);
       createNestedTippy(`#domains-more-${data._id}`, domainItems);
 
-      // 3. Handle Transcripts
       const transcriptItems = formatTranscripts(data.ensembl?.transcript);
       createNestedTippy(`#transcripts-more-${data._id}`, transcriptItems);
 
-      // 4. Handle PDB Structures
       const structureItems = formatStructures(data.pdb);
       createNestedTippy(`#structures-more-${data._id}`, structureItems);
       
-      // 5. Handle GeneRIFs
       const generifItems = formatGeneRIFs(data.generif);
       createNestedTippy(`#generifs-more-${data._id}`, generifItems);
 
     },
-    // NEW: Clean up nested instances to prevent memory leaks
     onHidden(instance: TippyInstanceWithCustoms) {
       if (instance._nestedTippys) {
         instance._nestedTippys.forEach(nested => nested.destroy());
@@ -169,6 +156,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   });
   enableSummaryExpand();
 }
+
 
 
 export default {

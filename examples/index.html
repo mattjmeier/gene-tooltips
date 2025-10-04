@@ -3,6 +3,10 @@
 <head>
     <title>Gene Tooltip Demo</title>
     <link rel="stylesheet" href="../dist/gene-tooltip.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
     <h1>Gene Tooltip Library Test</h1>
@@ -33,29 +37,12 @@
                 ideogram: {
                     enabled: true,
                     height: 100
-                }
+                },
+                tooltipHeight: 300,
+                theme: 'light'
             });
         });
     </script>
 
-
-<script type="text/javascript">
-
-    var config = {
-      organism: 'human',
-      chromosome: '17',
-      chrHeight: 100,
-      orientation: 'horizontal',
-      annotations: [{
-        name: 'BRCA1',
-        chr: '17',
-        start: 43044294,
-        stop: 43125482
-      }]
-    };
-
-    var ideogram = new Ideogram(config);
-
-  </script>
 </body>
 </html>

@@ -117,6 +117,9 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
     .attr("x2", xScale(geneEnd)).attr("y2", yCenter)
     .attr("stroke", "#555").attr("stroke-width", 2);
 
+  // Get the theme from the main instance
+  const currentTheme = (instance.props as any).theme || 'light';
+
   // Now, we bind the simple `allSegments` array
   svg.selectAll(".exon-rect").data(allSegments).enter().append("rect")
     .attr("class", "exon-rect")
@@ -137,7 +140,7 @@ export function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
             allowHTML: true,
             arrow: true,
             animation: 'scale-subtle',
-            theme: 'light',
+            theme: currentTheme,
       });
     });
 }

@@ -89,13 +89,13 @@ export interface GeneTooltipConfig {
   prefetch: 'smart' | 'all' | 'none';
   prefetchThreshold: number;
   truncateSummary: number;
+  theme: string; // NEW: Top-level theme option
   display: Partial<TooltipDisplayConfig>;
   ideogram: Partial<IdeogramConfig>;
   tippyOptions: Partial<Props>;
   pathwaySource: 'reactome' | 'kegg' | 'wikipathways';
-  pathwayCount: number; // Number of pathways to show before "more"
-  domainCount: number; // Number of domains to show before "more"
-  // NEW: Add counts for new sections
+  pathwayCount: number;
+  domainCount: number;
   transcriptCount: number;
   structureCount: number;
   generifCount: number;
@@ -122,6 +122,7 @@ export const defaultConfig: GeneTooltipConfig = {
   prefetch: 'smart',
   prefetchThreshold: 15,
   truncateSummary: 4,
+  theme: 'light', // NEW: Default theme
   display: {
     species: true,
     location: true,
@@ -129,7 +130,6 @@ export const defaultConfig: GeneTooltipConfig = {
     pathways: true,
     domains: true,
     geneTrack: true,
-    // NEW: Set default display values to true
     transcripts: true,
     structures: true,
     generifs: true,
@@ -146,7 +146,6 @@ export const defaultConfig: GeneTooltipConfig = {
   pathwaySource: 'reactome',
   pathwayCount: 3,
   domainCount: 3,
-  // NEW: Set default counts
   transcriptCount: 3,
   structureCount: 3,
   generifCount: 3,
@@ -154,6 +153,6 @@ export const defaultConfig: GeneTooltipConfig = {
     allowHTML: true,
     interactive: true,
     placement: 'bottom',
-    theme: 'light',
   },
 };
+

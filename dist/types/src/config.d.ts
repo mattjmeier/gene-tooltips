@@ -68,6 +68,7 @@ export interface GeneTooltipConfig {
     prefetch: 'smart' | 'all' | 'none';
     prefetchThreshold: number;
     truncateSummary: number;
+    theme: string;
     display: Partial<TooltipDisplayConfig>;
     ideogram: Partial<IdeogramConfig>;
     tippyOptions: Partial<Props>;
