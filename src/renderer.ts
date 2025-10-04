@@ -195,7 +195,7 @@ function renderListSection(
   return `
     <div class="gene-tooltip-section-container">
       <div class="gene-tooltip-section-header">${title}</div>
-      <ul class="gene-tooltip-rif-list">${itemLinks}</ul>
+      <ul class="gene-tooltip-list-section">${itemLinks}</ul>
       ${moreButton}
     </div>
   `;

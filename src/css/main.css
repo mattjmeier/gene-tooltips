@@ -1,6 +1,17 @@
-/* src/css/main.css */
-@import './base.css';
-@import './light.css';
+
+/* 1. Import Tippy's structural styles FIRST */
+@import 'tippy.js/dist/tippy.css';
+
+/* 2. Import tippy themes */
+@import 'tippy.js/themes/light.css';
+@import 'tippy.js/themes/light-border.css';
+@import 'tippy.js/themes/material.css';
+@import 'tippy.js/themes/translucent.css';
+
+/* 3. Import your theme variables */
+@import './theme.css';
+
+/* --- Summary --- */
 
 /* This class is applied when truncation is ENABLED */
 .gene-tooltip-summary {
@@ -11,28 +22,21 @@
   overflow: hidden;
   position: relative;
   cursor: pointer;
-  margin: 0; /* REMOVED MARGIN */
-  padding: 0; /* ADDED PADDING RESET */
-  line-height: 1.5; /* Ensure consistent line height */
-}
-
-/* This class is for the untruncated version */
-.gene-tooltip-summary-full {
-  margin: 0; /* REMOVED MARGIN */
-  padding: 0; /* ADDED PADDING RESET */
-  line-height: 1.5; /* Ensure consistent line height */
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
 }
 
 .gene-tooltip-summary::after {
   content: "more";
   font-size: 0.9em;
   font-weight: bold;
-  color: #007bff;
+  color: var(--gt-color-primary);
   position: absolute;
   bottom: 0;
   right: 0;
   padding-left: 1em;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0), white 50%);
+  background: var(--gt-summary-more-bg);
 }
 
 .gene-tooltip-summary.expanded {
@@ -45,13 +49,80 @@
   display: none;
 }
 
-/* New styles for tooltip sections */
+/* This class is for the untruncated version */
+.gene-tooltip-summary-full {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+}
+
+
+/* --- Header --- */
+
+.gene-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+  flex-wrap: wrap; 
+}
+
+.gene-tooltip-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  flex-wrap: wrap;
+  min-width: 0; 
+}
+
+.gene-tooltip-header strong {
+  font-size: 1.1em;
+  white-space: nowrap;
+}
+
+.gene-tooltip-name {
+  word-break: break-all;
+}
+
+.gene-tooltip-header-links {
+  display: flex;
+  gap: 0.5em;
+  flex-shrink: 0; 
+}
+
+.gene-tooltip-header-links a {
+  color: var(--gt-color-text-subtle);
+  transition: color 0.2s;
+}
+.gene-tooltip-header-links a:hover {
+  color: var(--gt-color-primary);
+}
+
+
+/* --- Reusable Section Components --- */
+
+/* A generic container for sections that need a top border */
+.gene-tooltip-section-container {
+  border-top: 1px solid var(--gt-border-color);
+  padding-top: 0.5em;
+  margin-top: 0.75em;
+}
+
+/* A generic header for sections like "Pathways", "GeneRIFs", etc. */
+.gene-tooltip-section-header {
+  font-weight: bold;
+  font-size: 0.9em;
+  color: var(--gt-color-text);
+  margin-bottom: 0.3em;
+}
+
+/* A generic section with an icon and text (e.g., Species) */
 .gene-tooltip-section {
   display: flex;
-  align-items: left;
+  align-items: center;
   gap: 0.5em;
   font-size: 0.9em;
-  color: #555;
+  color: var(--gt-color-text-subtle);
   margin-top: 0.5em;
 }
 
@@ -59,26 +130,44 @@
   font-size: 1.2em;
 }
 
+
+/* --- Location & Ideogram --- */
+
 .gene-tooltip-location {
-  display: flex; 
-  flex-direction: column;
-  gap: 0.5em;
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
 }
+
+.gene-tooltip-location-coords {
+  display: flex;
+  flex-direction: column;
+}
+
+.gene-tooltip-location-chr {
+  font-weight: bold;
+}
+
+.gene-tooltip-location-pos {
+  font-size: 0.9em;
+  color: var(--gt-color-text-secondary); /* Using secondary text color */
+}
+
+.gene-tooltip-ideo {
+  min-width: 120px; 
+}
+
+
+/* --- List-based Sections (Pathways, GeneRIFs) --- */
 
 /* Style for the container of a list section */
 .gene-tooltip-list-section {
   flex-direction: column;
-  align-items: flex-start; /* Align content to the left */
-  border-top: 1px solid #eee;
-  padding-top: 0.5em;
-}
-
-/* Style for the header (e.g., "Pathways") */
-.gene-tooltip-list-header {
-  font-weight: bold;
-  font-size: 0.9em;
-  color: #333;
-  margin-bottom: 0.3em;
+  align-items: flex-start;
+  padding-left: 0;
+  margin-left: 0;
 }
 
 /* Reset default list styles */
@@ -99,7 +188,7 @@
 
 .gene-tooltip-list-section a {
   text-decoration: none;
-  color: #007bff;
+  color: var(--gt-color-primary);
 }
 
 .gene-tooltip-list-section a:hover {
@@ -109,7 +198,7 @@
 /* Style for the "... and X more" button */
 .gene-tooltip-more-btn {
   font-size: 0.85em;
-  color: #6c757d;
+  color: var(--gt-color-text-secondary);
   cursor: pointer;
   margin-top: 4px;
   padding: 2px 4px;
@@ -118,11 +207,12 @@
 }
 
 .gene-tooltip-more-btn:hover {
-  background-color: #f0f0f0;
-  color: #333;
+  background-color: var(--gt-background-hover);
+  color: var(--gt-color-text);
 }
 
-/* Style for the content INSIDE the nested tooltip */
+/* --- Nested Tooltip List --- */
+
 .gene-tooltip-nested-list {
   list-style: none;
   padding: 5px;
@@ -137,192 +227,136 @@
 }
 
 .gene-tooltip-nested-list a {
-  color: #007bff;
+  color: var(--gt-color-primary);
   text-decoration: none;
 }
 .gene-tooltip-nested-list a:hover {
   text-decoration: underline;
 }
 
+
+/* --- Miscellaneous --- */
+
 .gene-tooltip-track {
   margin: 0.75em 0;
-  min-height: 40px; /* Match the SVG height */
+  min-height: 40px;
   overflow: hidden;
 }
-/* New styles for header and icon links */
-.gene-tooltip-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* This is the key change */
-  gap: 1em; /* Increased gap for better spacing between title and links when wrapping */
-  flex-wrap: wrap; 
+
+.gene-tooltip-links-container {
+    display: flex;
+    gap: 0.75em;
+    align-items: center;
 }
 
-/* New wrapper for symbol and name */
-.gene-tooltip-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5em;
-  flex-wrap: wrap; /* Allows the long name to wrap if needed */
-  /* This ensures the title group doesn't shrink to nothing if the name is very long */
-  min-width: 0; 
+.gene-tooltip-links-container a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    text-decoration: none;
+    color: var(--gt-color-text-secondary);
+    transition: color 0.2s ease-in-out;
 }
 
-.gene-tooltip-header strong {
-  font-size: 1.1em;
-  /* Prevent the symbol from being broken up */
-  white-space: nowrap;
+.gene-tooltip-links-container a:hover {
+    color: var(--gt-color-primary);
 }
 
-/* This is also important to handle long gene names gracefully */
-.gene-tooltip-name {
-  word-break: break-all;
+/* Add a pipe separator between links */
+.gene-tooltip-links-container a:not(:last-child)::after {
+    content: '|';
+    margin-left: 0.75em;
+    color: var(--gt-border-color);
+    font-weight: 100;
 }
 
-.gene-tooltip-header-links {
-  /* margin-left: auto; -- REMOVE THIS LINE -- */
-  display: flex;
-  gap: 0.5em;
-  /* Ensure icons don't shrink */
-  flex-shrink: 0; 
+.gene-tooltip-link-icon {
+  height: 1.2em;
+  vertical-align: middle;
+  border: 0;
+  /* Add a subtle filter to make icons match text color */
+  filter: grayscale(1) opacity(0.7);
+  transition: filter 0.2s ease-in-out;
 }
 
-.gene-tooltip-header-links a {
-  color: #555;
-  transition: color 0.2s;
-}
-.gene-tooltip-header-links a:hover {
-  color: #007bff;
+.gene-tooltip-links-container a:hover .gene-tooltip-link-icon {
+    filter: none;
 }
 
-/* Style for the header (e.g., "Pathways") */
-.gene-tooltip-p-header {
-  font-weight: bold;
-  font-size: 0.9em;
-  color: #333;
-}
-
-.gene-tooltip-location {
-  display: flex;
-  flex-direction: row; 
-  align-items: center;
-  justify-content: space-between;
-  gap: 1em;
-}
-
-/* NEW CSS for the two-line coordinate display */
-.gene-tooltip-location-coords {
-  display: flex;
-  flex-direction: column;
-}
-
-.gene-tooltip-location-chr {
-  font-weight: bold; /* Make the chromosome stand out */
-}
-
-.gene-tooltip-location-pos {
-  font-size: 0.9em; /* Slightly smaller text for the position */
-  color: #666; /* A slightly lighter color */
-}
-
-.gene-tooltip-ideo {
-    min-width: 120px; 
-}
-
-.gene-tooltip-section {
-  display: flex;
-  align-items: center; /* This is the key change: from 'left' to 'center' */
-  gap: 0.5em;
-  font-size: 0.9em;
-  color: #555;
-  margin-top: 0.5em;
-}
-
-.gene-tooltip-species-icon {
-  font-size: 1.2em;
-}
-
-/* 
-  Reusable "meta-classes" for consistent section styling.
-*/
-.gene-tooltip-section-container {
-  border-top: 1px solid #eee;
-  padding-top: 0.5em;
-  margin-top: 0.75em; /* A little extra margin for good visual separation */
-}
-
-.gene-tooltip-section-header {
-  font-weight: bold;
-  font-size: 0.9em;
-  color: #333;
-  margin-bottom: 0.3em; /* Space between the header and its content */
-}
-
-/* MODIFIED: For side-by-side layout with Ideogram, now just for the content */
-.gene-tooltip-location {
-  display: flex;
-  flex-direction: row; 
-  align-items: center;
-  justify-content: space-between;
-  gap: 1em;
-}
-
-.gene-tooltip-ideo {
-    min-width: 120px; 
-}
-
-/* Style for the paragraph content */
-.gene-tooltip-p-content {
+/* Paragraph content within tooltip sections */
+.tippy-box .gene-tooltip-p-content {
   margin: 0;
   padding: 0;
-  font-size: 0.9em;
   line-height: 1.5;
-}
-
-.gene-tooltip-p-content a {
-  text-decoration: none;
-  color: #007bff;
-}
-
-.gene-tooltip-p-content a:hover {
-  text-decoration: underline;
-}
-
-/* More button can be slightly different */
-.gene-tooltip-more-btn {
-  font-size: 0.85em;
-  color: #6c757d;
-  cursor: pointer;
-  /* Remove padding/border to make it look like text */
-}
-
-/* Style for the icons in the header links */
-.gene-tooltip-link-icon {
-  height: 1.2em; /* Control the icon height */
-  vertical-align: middle; /* Align nicely with text */
-  border: 0; /* Remove default image borders */
-}
-
-/* New styles specifically for the GeneRIF list */
-.gene-tooltip-rif-list {
-  list-style: none; /* Remove bullet points */
-  padding: 0;       /* Remove browser default indentation */
-  margin: 0;        /* Remove browser default margins */
-}
-
-.gene-tooltip-rif-list li {
   font-size: 0.9em;
-  white-space: nowrap;         /* Keep text on one line */
-  overflow: hidden;            /* Hide overflow */
-  text-overflow: ellipsis;     /* Add "..." for truncated text */
-  padding: 2px 0;              /* Add a little vertical space */
+  color: var(--gt-color-text);
 }
 
-.gene-tooltip-rif-list a {
+/* Links within paragraph sections */
+.tippy-box .gene-tooltip-p-content a {
+  color: var(--gt-color-primary);
   text-decoration: none;
-  color: #007bff;
+  transition: color 0.2s ease-in-out;
 }
 
-.gene-tooltip-rif-list a:hover {
+.tippy-box .gene-tooltip-p-content a:hover {
   text-decoration: underline;
+  color: var(--gt-color-primary);
 }
+
+/* More button within paragraph content */
+.tippy-box .gene-tooltip-p-content .gene-tooltip-more-btn {
+  font-size: 0.85em;
+  color: var(--gt-color-text-secondary);
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.tippy-box .gene-tooltip-p-content .gene-tooltip-more-btn:hover {
+  background-color: var(--gt-background-hover);
+  color: var(--gt-color-text);
+}
+
+/* GeneRIF list styling */
+/* .tippy-box .gene-tooltip-rif-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.tippy-box .gene-tooltip-rif-list li {
+  padding: 2px 0;
+  line-height: 1.4;
+  color: var(--gt-color-text-subtle);
+}
+
+.tippy-box .gene-tooltip-rif-list a {
+  color: var(--gt-color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.tippy-box .gene-tooltip-rif-list a:hover {
+  text-decoration: underline;
+  color: var(--gt-color-primary);
+}
+
+/* More button for GeneRIF sections (appears after the list) */
+/* .tippy-box .gene-tooltip-rif-list + .gene-tooltip-more-btn {
+  font-size: 0.85em;
+  color: var(--gt-color-text-secondary);
+  cursor: pointer;
+  margin-top: 4px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+  display: inline-block;
+}
+
+.tippy-box .gene-tooltip-rif-list + .gene-tooltip-more-btn:hover {
+  background-color: var(--gt-background-hover);
+  color: var(--gt-color-text);
+} */

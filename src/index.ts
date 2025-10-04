@@ -1,5 +1,10 @@
 import tippy, { type Instance } from 'tippy.js'; // Import the 'Instance' type
-import 'tippy.js/dist/tippy.css';
+// import 'tippy.js/dist/tippy.css'; // Import Tippy's base structural styles
+// import 'tippy.js/themes/light.css';        // tippy's `theme: 'light'`
+// import 'tippy.js/themes/light-border.css'; // tippy's `theme: 'light-border'`
+// import 'tippy.js/themes/material.css';     // tippy's `theme: 'material'`
+// import 'tippy.js/themes/translucent.css';  // tippy's `theme: 'translucent'`
+// import './css/main.css'; // custom theme and all component styles
 import { defaultConfig, type GeneTooltipConfig } from './config.js';
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
@@ -64,7 +69,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         pathwaySource: config.pathwaySource,
         pathwayCount: config.pathwayCount,
         domainCount: config.domainCount,
-        // NEW: Pass new counts to renderer
         transcriptCount: config.transcriptCount,
         structureCount: config.structureCount,
         generifCount: config.generifCount,

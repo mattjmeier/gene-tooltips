@@ -5,12 +5,13 @@ for i in $(ls ./src/*.ts && ls ./src/ui/*.ts && ls ./src/types/*.ts && ls ./test
 
 ## To do:
 
-- what to do about styling? better CSS defaults for some parts; need to use variables for colors and provide defaults for those in scss? also integrate well with bootstrap, other frameworks?
-- final styling tweaks for links... no underline - grey instead? fix icons; separate by pipe? | also add genecards link... other?
+- CSS fixes - make tooltips scrollable instead of extending the page?
+- Test different themes (dark, material)
 
 - test out reactome vs kegg vs whatever in configuration
 - allow multiples? like kegg AND reactome?
 
-- chore - clean up code, improve cohesiveness, test deployment and documentation
-- include in documentation instructions for making a custom section?
-- show examples from various species; size of tooltips; with and without various features included
+- CHORE - test deployment and documentation
+- include in documentation instructions for making a custom section? THIS NEEDS TO BE UPDATED NOW
+
+- DOCS - show examples from various species; size of tooltips; with and without various features included
