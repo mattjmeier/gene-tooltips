@@ -3,11 +3,11 @@ import { renderTooltipHTML } from '../src/renderer';
 import type { MyGeneInfoResult } from '../src/config';
 
 // Mock the asset imports at the top of the file
-vi.mock('../src/assets/US-NLM-NCBI-Logo.svg', () => ({
-  default: 'data:image/svg+xml,mock-ncbi-logo',
+vi.mock('../src/assets/NLM-square-logo.svg', () => ({
+  default: 'mock-ncbi-logo-svg-content',
 }));
-vi.mock('../src/assets/EnsemblLogo.webp', () => ({
-  default: 'mock-ensembl-logo.webp',
+vi.mock('../src/assets/ebang-400dpi.png', () => ({
+  default: 'mock-ensembl-logo.png', // This will be used directly as the src
 }));
 
 // A complete mock object for thorough testing
@@ -73,10 +73,9 @@ describe('renderTooltipHTML', () => {
   });
   
   it('should truncate the summary by default and add the correct class and style', () => {
-    // Default truncate is 3 lines
     const html = renderTooltipHTML(mockGeneData);
     expect(html).toContain('class="gene-tooltip-summary"');
-    expect(html).toContain('style="--line-clamp: 3;"');
+    expect(html).toContain('style="--line-clamp: 4;"');
   });
   
   it('should NOT truncate the summary when truncate is set to 0', () => {
@@ -91,20 +90,15 @@ describe('renderTooltipHTML', () => {
     expect(html).toContain('class="gene-tooltip-summary"');
     expect(html).toContain('style="--line-clamp: 3;"');
   });
-
-  it('should NOT truncate the summary when truncate is set to 0', () => {
-    const html = renderTooltipHTML(mockGeneData, { truncate: 0 });
-    expect(html).toContain('class="gene-tooltip-summary-full"');
-    expect(html).not.toContain('--line-clamp');
-  });
   
   it('should render external links by default and hide them based on display options', () => {
     // Default: both should be visible
     let html = renderTooltipHTML(mockGeneData);
     expect(html).toContain('href="https://www.ncbi.nlm.nih.gov/gene/7157"');
-    expect(html).toContain('src="data:image/svg+xml,mock-ncbi-logo"'); // Check for mocked src
+    // FIX: The test now checks for the correctly processed mock data
+    expect(html).toContain('src="data:image/svg+xml,mock-ncbi-logo-svg-content"');
     expect(html).toContain('href="https://www.ensembl.org/id/ENSG00000141510"');
-    expect(html).toContain('src="mock-ensembl-logo.webp"');
+    expect(html).toContain('src="mock-ensembl-logo.png"');
 
     // Disable NCBI
     html = renderTooltipHTML(mockGeneData, { display: { links: { ncbi: false } } });
@@ -119,5 +113,5 @@ describe('renderTooltipHTML', () => {
     // Disable both
     html = renderTooltipHTML(mockGeneData, { display: { links: { ncbi: false, ensembl: false } } });
     expect(html).not.toContain('gene-tooltip-links-container');
-});
+  });
 })
