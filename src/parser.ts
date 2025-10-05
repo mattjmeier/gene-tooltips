@@ -8,7 +8,6 @@ export interface GeneInfo {
   taxid: number; // Changed from species: string to taxid: number
 }
 
-
 /**
  * Finds all elements matching the selector and expands gene lists.
  * @param selector - The CSS selector for gene elements.

@@ -30,13 +30,11 @@
   content: "more";
   font-size: 0.9em;
   font-weight: bold;
-  /* Use our new, single accent color */
   color: var(--gt-accent-color);
   position: absolute;
   bottom: 0;
   right: 0;
   padding-left: 1.5em;
-  /* Use Tippy's background color variable for a perfect match! */
   background: linear-gradient(to right, transparent, var(--tippy-background-color) 40%);
 }
 
@@ -55,7 +53,6 @@
   padding: 0;
   line-height: 1.5;
 }
-
 
 /* --- Header --- */
 
@@ -120,7 +117,6 @@
   font-size: 1.2em;
 }
 
-
 /* --- Location & Ideogram --- */
 
 .gene-tooltip-location {
@@ -151,10 +147,9 @@
   min-width: 120px;
 }
 
-
 /* --- List-based Sections --- */
 
-.gene-tooltip-list-section {
+.gene-tooltip-list-section.gene-tooltip-list-section {
   padding-left: 0;
   margin-left: 0;
 }
@@ -162,12 +157,13 @@
 .gene-tooltip-list-section ul {
   list-style: none;
   padding: 0;
+  padding-left: 0;
   margin: 0;
   width: 100%;
 }
 
 .gene-tooltip-list-section li {
-  font-size: 0.9em;
+  /* font-size: 0.9em; */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -176,7 +172,6 @@
 
 .gene-tooltip-list-section a {
   text-decoration: none;
-  /* Use the single accent color for all links */
   color: var(--gt-accent-color);
 }
 
@@ -187,7 +182,7 @@
 /* Style for the "... and X more" button */
 .gene-tooltip-more-btn {
   font-size: 0.85em;
-  /* Make text subtle and theme-aware with opacity */
+  /* Make text subtle with opacity */
   color: inherit;
   opacity: 0.7;
   cursor: pointer;
@@ -227,7 +222,6 @@
   text-decoration: underline;
 }
 
-
 /* --- Miscellaneous --- */
 
 .gene-tooltip-track {
@@ -240,6 +234,7 @@
     display: flex;
     gap: 0.75em;
     align-items: center;
+    padding: 0.5em;
 }
 
 .gene-tooltip-links-container a {
@@ -289,7 +284,6 @@
   padding: 0;
   line-height: 1.5;
   font-size: 0.9em;
-  /* Inherit text color from the theme */
   color: inherit;
 }
 
@@ -304,18 +298,7 @@
   text-decoration: underline;
 }
 
-/* More button within paragraph content (reuses the main .more-btn styles) */
-.tippy-box .gene-tooltip-p-content .gene-tooltip-more-btn {
-  font-size: 0.85em;
-  color: inherit;
-  opacity: 0.7;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: background-color 0.2s, opacity 0.2s;
-}
-
-.tippy-box .gene-tooltip-p-content .gene-tooltip-more-btn:hover {
-  opacity: 1;
-  background-color: color-mix(in srgb, currentColor 10%, transparent);
+/* Add this new rule to your stylesheet */
+.gene-tooltip-list-wrapper {
+  font-size: 0.9em;
 }

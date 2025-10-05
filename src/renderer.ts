@@ -6,7 +6,8 @@ export type FormattedItem = { name: string; url: string };
 // import NCBILogoText from "./assets/US-NLM-NCBI-Logo.svg";
 import NCBILogoText from "./assets/NLM-square-logo.svg";
 const NCBILogo = `data:image/svg+xml,${encodeURIComponent(NCBILogoText)}`;
-import EnsemblLogo from "./assets/EnsemblLogo.webp";
+// import EnsemblLogo from "./assets/EnsemblLogo.webp";
+import EnsemblLogo from "./assets/ebang-400dpi.png";
 console.log('NCBILogo variable contains:', NCBILogo);
 
 interface RenderOptions {
@@ -175,7 +176,6 @@ function renderListSection(
   const visibleItems = items.slice(0, initialCount);
   const hiddenItemCount = items.length - initialCount;
 
-  // Create list items with links
   const itemLinks = visibleItems.map(item => 
     `<li>
        <a href="${item.url}" 
@@ -196,8 +196,10 @@ function renderListSection(
   return `
     <div class="gene-tooltip-section-container">
       <div class="gene-tooltip-section-header">${title}</div>
-      <ul class="gene-tooltip-list-section">${itemLinks}</ul>
-      ${moreButton}
+      <div class="gene-tooltip-list-wrapper">
+        <ul class="gene-tooltip-list-section">${itemLinks}</ul>
+        ${moreButton}
+      </div>
     </div>
   `;
 }
