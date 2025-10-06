@@ -1,41 +1,52 @@
-name: Deploy Docs to GitHub Pages
+name: Deploy Docs & Run Tests
 
 on:
-  # Run this workflow every time a change is pushed to the 'main' branch
   push:
     branches: [ main ]
 
 jobs:
-  deploy-docs:
+  test:
+    name: Run Test Suite
     runs-on: ubuntu-latest
     steps:
-      # 1. Check out the repository so the workflow can access your code
-      - uses: actions/checkout@v3
-
-      # 2. Set up Node.js for installing dependencies
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
         with:
-          node-version: 18
+          node-version: 22
           cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Run tests
+        run: npm test
 
-      # 3. Install dependencies and build the documentation site
-      - name: Install dependencies & Build
+  deploy-docs:
+    name: Deploy Docs to Pages
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: 'npm'
+      - name: Install, Build Library, and Build Docs
         run: |
           npm ci
+          npm run build
           npm run docs:build
-
-      # 4. Configure GitHub Pages for the deployment
       - name: Setup Pages
-        uses: actions/configure-pages@v3
-
-      # 5. Upload the built documentation site as an artifact
+        uses: actions/configure-pages@v5
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v4
         with:
           path: docs/.vitepress/dist
-
-      # 6. Deploy the artifact to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4

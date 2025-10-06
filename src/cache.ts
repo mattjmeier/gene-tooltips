@@ -2,18 +2,21 @@ import type { MyGeneInfoResult } from './config';
 
 const cache = new Map<string, MyGeneInfoResult | null>();
 
-export const getCacheKey = (symbol: string, species: string): string => `${symbol}_${species}`;
+export const getCacheKey = (symbol: string, taxid: number): string => `${symbol}_${taxid}`;
 
-export const has = (symbol: string, species: string): boolean => cache.has(getCacheKey(symbol, species));
+export const has = (symbol: string, taxid: number): boolean => cache.has(getCacheKey(symbol, taxid));
 
-export const get = (symbol: string, species: string): MyGeneInfoResult | null | undefined => cache.get(getCacheKey(symbol, species));
+export const get = (symbol: string, taxid: number): MyGeneInfoResult | null | undefined => cache.get(getCacheKey(symbol, taxid));
 
-export const set = (symbol: string, species: string, data: MyGeneInfoResult | null): void => {
-  cache.set(getCacheKey(symbol, species), data);
+export const set = (symbol: string, taxid: number, data: MyGeneInfoResult | null): void => {
+  cache.set(getCacheKey(symbol, taxid), data);
 };
 
-export const setBatch = (resultsMap: Map<string, MyGeneInfoResult>, species: string): void => {
+export const setBatch = (resultsMap: Map<string, MyGeneInfoResult>): void => {
   resultsMap.forEach((data, symbol) => {
-    set(symbol, species, data);
+    // The taxid is consistent in all results from a batch call
+    if (data.taxid) { 
+        set(symbol, data.taxid, data);
+    }
   });
 };

@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { fetchMyGeneBatch } from '../src/api';
 import type { MyGeneInfoResult } from '../src/config';
 
+// Define a type for the not-found result to keep things clean
 type MyGeneNotFoundResult = {
   query: string;
   notfound: true;
@@ -15,6 +16,8 @@ const allMockResults: (MyGeneInfoResult | MyGeneNotFoundResult)[] = [
     symbol: 'TP53',
     name: 'tumor protein p53',
     summary: 'This gene encodes a tumor suppressor protein...',
+    taxid: 9606,
+    genomic_pos: { chr: '17', start: 7661779, end: 7687538, strand: -1 } // Added for completeness
   },
   {
     _id: '1234',
@@ -22,6 +25,8 @@ const allMockResults: (MyGeneInfoResult | MyGeneNotFoundResult)[] = [
     symbol: 'BRCA1',
     name: 'BRCA1 DNA repair associated',
     summary: 'This gene is implicated in breast cancer...',
+    taxid: 9606,
+    genomic_pos: { chr: '17', start: 43044295, end: 43125483, strand: 1 } // Added for completeness
   },
   {
     query: 'NOTAGENE',
@@ -31,18 +36,12 @@ const allMockResults: (MyGeneInfoResult | MyGeneNotFoundResult)[] = [
 
 describe('fetchMyGeneBatch', () => {
   beforeEach(() => {
-    // Silence console logs during tests for cleaner output
     vi.spyOn(console, 'log').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    // Use mockImplementation to create a DYNAMIC mock
-    vi.spyOn(global, 'fetch').mockImplementation(async (url, options) => {
-      // The request body is a string like "q=TP53,BRCA1&species=human..."
+    vi.spyOn(global, 'fetch').mockImplementation(async (_url, options) => {
       const body = options?.body?.toString() || '';
-      // Parse the body to find which genes were requested
       const requestedGenes = new URLSearchParams(body).get('q')?.split(',') || [];
-
-      // Filter our "database" to return only the requested genes
       const filteredResponse = allMockResults.filter(item =>
         requestedGenes.includes(item.query)
       );
@@ -55,18 +54,18 @@ describe('fetchMyGeneBatch', () => {
   });
 
   afterEach(() => {
-    // Restore all mocks after each test
     vi.restoreAllMocks();
   });
 
   it('should fetch data for multiple genes and return a Map', async () => {
-    const geneSymbols = ['TP53', 'BRCA1', 'NOTAGENE'];
+    const geneSymbols = ['TP53', 'BRCA1']; // Removed NOTAGENE for this specific test
     const species = 'human';
     const results = await fetchMyGeneBatch(geneSymbols, species);
 
-    expect(results.size).toBe(2); // This will now pass correctly
+    expect(results.size).toBe(2);
     expect(results.has('TP53')).toBe(true);
     expect(results.get('TP53')?.symbol).toBe('TP53');
+    expect(results.get('BRCA1')?.name).toContain('BRCA1');
   });
 
   it('should correctly filter out genes that were not found', async () => {
@@ -74,15 +73,12 @@ describe('fetchMyGeneBatch', () => {
     const species = 'human';
     const results = await fetchMyGeneBatch(geneSymbols, species);
 
-    // The dynamic mock only returns TP53 and NOTAGENE.
-    // Your code filters out NOTAGENE, leaving a map of size 1.
-    expect(results.size).toBe(1); // This now passes!
+    expect(results.size).toBe(1);
     expect(results.has('NOTAGENE')).toBe(false);
     expect(results.has('TP53')).toBe(true);
   });
 
   it('should return an empty map if the fetch request fails', async () => {
-    // This test still works because it overrides the beforeEach mock
     vi.spyOn(global, 'fetch').mockResolvedValue({
       ok: false,
       status: 500,
@@ -93,7 +89,6 @@ describe('fetchMyGeneBatch', () => {
   });
 
   it('should return an empty map if the fetch promise is rejected', async () => {
-    // This test also works because it overrides the mock
     vi.spyOn(global, 'fetch').mockRejectedValue(new Error('Network failure'));
 
     const results = await fetchMyGeneBatch(['TP53'], 'human');

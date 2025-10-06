@@ -2,31 +2,34 @@ import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
 import { getGeneInfoFromElement } from './parser.js';
 
-function groupGenesBySpecies(elements: HTMLElement[]): Map<string, Set<string>> {
-    const genesBySpecies = new Map<string, Set<string>>();
+function groupGenesByTaxid(elements: HTMLElement[]): Map<number, Set<string>> {
+    const genesByTaxid = new Map<number, Set<string>>();
     elements.forEach(el => {
         const info = getGeneInfoFromElement(el);
-        if (!info || cache.has(info.symbol, info.species)) return;
+        // Use info.taxid for cache check
+        if (!info || cache.has(info.symbol, info.taxid)) return;
 
-        if (!genesBySpecies.has(info.species)) {
-            genesBySpecies.set(info.species, new Set());
+        // Use info.taxid for map keys
+        if (!genesByTaxid.has(info.taxid)) {
+            genesByTaxid.set(info.taxid, new Set());
         }
-        genesBySpecies.get(info.species)!.add(info.symbol);
+        genesByTaxid.get(info.taxid)!.add(info.symbol);
     });
-    return genesBySpecies;
+    return genesByTaxid;
 }
 
-async function fetchAndCache(genesBySpecies: Map<string, Set<string>>): Promise<void> {
-    const fetchPromises = Array.from(genesBySpecies.entries()).map(([species, geneSet]) => {
-        return fetchMyGeneBatch(Array.from(geneSet), species)
-            .then(resultsMap => cache.setBatch(resultsMap, species));
+async function fetchAndCache(genesByTaxid: Map<number, Set<string>>): Promise<void> {
+    // Iterate over [taxid, geneSet]
+    const fetchPromises = Array.from(genesByTaxid.entries()).map(([taxid, geneSet]) => {
+        return fetchMyGeneBatch(Array.from(geneSet), String(taxid))
+            .then(resultsMap => cache.setBatch(resultsMap));
     });
     await Promise.all(fetchPromises);
 }
 
 function prefetchAll(elements: HTMLElement[]): void {
-    const genesBySpecies = groupGenesBySpecies(elements);
-    fetchAndCache(genesBySpecies);
+    const genesByTaxid = groupGenesByTaxid(elements);
+    fetchAndCache(genesByTaxid);
 }
 
 function prefetchSmart(elements: HTMLElement[]): void {
@@ -35,8 +38,8 @@ function prefetchSmart(elements: HTMLElement[]): void {
 
     const processQueue = () => {
         if (fetchQueue.size === 0) return;
-        const genesBySpecies = groupGenesBySpecies(Array.from(fetchQueue) as HTMLElement[]);
-        fetchAndCache(genesBySpecies);
+        const genesByTaxid = groupGenesByTaxid(Array.from(fetchQueue) as HTMLElement[]);
+        fetchAndCache(genesByTaxid);
         fetchQueue.clear();
     };
 
@@ -59,10 +62,8 @@ export function runPrefetch(strategy: 'smart' | 'all' | 'none', elements: HTMLEl
     const shouldPrefetchAll = strategy === 'all' || (strategy === 'smart' && geneCount <= threshold);
 
     if (shouldPrefetchAll) {
-        console.log(`Prefetching all ${geneCount} genes.`);
         prefetchAll(elements);
     } else if (strategy === 'smart' && geneCount > threshold) {
-        console.log("Using 'smart' prefetch strategy with IntersectionObserver.");
         prefetchSmart(elements);
     }
 }

@@ -11,16 +11,34 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
     return new Map();
   }
 
-  console.log(`Making BATCH request for ${geneSymbols.length} genes in species: ${species}`);
-
   const url = 'https://mygene.info/v3/query';
   const query = geneSymbols.join(',');
+  
+  // Explicitly list only the fields used by gene-tooltips.
+  const fields = [
+    '_id', 
+    'query', 
+    'symbol', 
+    'name', 
+    'summary', 
+    'taxid', 
+    'genomic_pos',
+    'pathway',
+    'interpro',
+    'exons',
+    'ensembl.gene',
+    'ensembl.protein',
+    'ensembl.transcript',
+    'pdb',
+    'generif'
+  ].join(',');
+
 
   try {
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `q=${query}&species=${species}&scopes=symbol&fields=all`,
+      body: `q=${query}&species=${species}&scopes=symbol&fields=${fields}`,
     });
 
     if (!response.ok) {

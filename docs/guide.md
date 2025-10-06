@@ -13,7 +13,7 @@ npm install gene-tooltip
 Or include it directly in your HTML from a CDN like unpkg:
 
 ```html
-<script src="https://unpkg.com/gene-tooltip/dist/gene-tooltip.umd.js"></script>
+<script src="https://unpkg.com/gene-tooltip/dist/gene-tooltips.umd.js"></script>
 ```
 
 # Basic Usage
@@ -33,4 +33,56 @@ Once the script is loaded, you can initialize it. Add the class `gene-tooltip` a
         });
     });
 </script>
+```
+
+## Configuration
+
+You can customize the tooltip by passing a configuration object to `GeneTooltip.init()`. Here are some common examples.
+
+### Changing Displayed Sections
+
+Hide the ideogram and protein domains sections.
+
+```javascript
+GeneTooltip.init({
+    display: {
+        ideogram: false,
+        domains: false
+    }
+});
+```
+
+### Changing Pathway Source
+
+Show pathways from KEGG instead of the default Reactome.
+
+```javascript
+GeneTooltip.init({
+    pathwaySource: 'kegg'
+});
+```
+
+*Note: The gene must have KEGG pathway data available at mygene.info for this to display.*
+
+### Adjusting Tooltip Size and Truncation
+
+Create a wider tooltip and show more of the summary initially.
+
+```javascript
+GeneTooltip.init({
+    tooltipWidth: 400, // in pixels
+    truncateSummary: 6 // number of lines
+});
+```
+
+### Styling
+
+The tooltip is styled with CSS variables that you can easily override. Create your own CSS file and include it after the library's CSS to customize the appearance.
+
+```css
+/* my-styles.css */
+:root {
+  --gt-color-primary: #d946ef; /* Use a different primary color */
+  --gt-border-color: #444;   /* Darker borders for a custom theme */
+}
 ```

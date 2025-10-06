@@ -1,9 +1,11 @@
+import { findSpecies } from './constants'; 
+
 /**
  * Defines the structure for gene information extracted from an element.
  */
 export interface GeneInfo {
   symbol: string;
-  species: string;
+  taxid: number; // Changed from species: string to taxid: number
 }
 
 /**
@@ -56,13 +58,21 @@ export function findGeneElements(selector: string): HTMLElement[] {
 /**
  * Extracts gene information from a DOM element.
  * @param el - The DOM element.
- * @returns An object with symbol and species, or null.
+ * @returns An object with symbol and taxid, or null.
  */
 export function getGeneInfoFromElement(el: HTMLElement): GeneInfo | null {
     const symbol = el.textContent?.trim();
-    const species = el.dataset.species;
-    if (!symbol || !species) {
+    const speciesIdentifier = el.dataset.species;
+
+    if (!symbol || !speciesIdentifier) {
         return null;
     }
-    return { symbol, species };
+
+    const speciesData = findSpecies(speciesIdentifier);
+    if (!speciesData) {
+        console.warn(`[GeneTooltip] Unknown species identifier: "${speciesIdentifier}"`, el);
+        return null;
+    }
+    
+    return { symbol, taxid: speciesData.taxid };
 }
