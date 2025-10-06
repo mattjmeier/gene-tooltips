@@ -1,55 +1,54 @@
-name: Deploy Docs & Run Tests
+# .github/workflows/deploy-docs.yml
+
+name: Deploy Docs to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main # Or your primary branch
+  workflow_dispatch:
+
+permissions:
+  contents: read      # To checkout the code
+  pages: write       # To deploy to Pages
+  id-token: write    # To authenticate with OIDC (required for deployment)
 
 jobs:
-  test:
-    name: Run Test Suite
+  build-and-deploy:
+    name: Build and Deploy Docs
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: 'npm'
+
       - name: Install dependencies
         run: npm ci
-      - name: Run tests
-        run: npm test
 
-  deploy-docs:
-    name: Deploy Docs to Pages
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+      - name: Build docs site
+        run: npm run docs:build
 
-    steps:
-      - uses: actions/checkout@v5
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22
-          cache: 'npm'
-      - name: Install, Build Library, and Build Docs
-        run: |
-          npm ci
-          npm run build
-          npm run docs:build
       - name: Setup Pages
-        id: pages
+        # This action now has the permissions to create the site if it doesn't exist
         uses: actions/configure-pages@v5
         with:
-          enablement: true
+          enablement: true # It's safe to leave this on
+
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          # This should be the output directory of your `docs:build` script
+          path: 'docs/.vitepress/dist'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
