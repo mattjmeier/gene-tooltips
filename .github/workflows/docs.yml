@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read      # To checkout the code
-  pages: write       # To deploy to Pages
-  id-token: write    # To authenticate with OIDC (required for deployment)
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
@@ -34,19 +34,20 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build library
+        run: npm run build
+
       - name: Build docs site
         run: npm run docs:build
 
       - name: Setup Pages
-        # This action now has the permissions to create the site if it doesn't exist
         uses: actions/configure-pages@v5
         with:
-          enablement: true # It's safe to leave this on
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This should be the output directory of your `docs:build` script
           path: 'docs/.vitepress/dist'
 
       - name: Deploy to GitHub Pages
