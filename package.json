@@ -17,7 +17,9 @@
   "browser": "dist/gene-tooltips.umd.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "exports": {
     ".": {

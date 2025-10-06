@@ -1,0 +1,15 @@
+# Source and Build artifacts
+/src
+/docs
+/node_modules
+
+# Config files
+.github
+.gitignore
+package-lock.json
+tsconfig.json
+vitest.config.js
+.vscode
+
+# Testing
+/test
