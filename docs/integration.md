@@ -76,8 +76,8 @@ We'll use the UMD (Universal Module Definition) build, which is designed for thi
 
 **Required Files from CDN:**
 
-1.  **Main CSS:** `https://cdn.jsdelivr.net/npm/gene-tooltips@0.1.0/dist/gene-tooltips.css`
-2.  **Library JS (UMD):** `https://cdn.jsdelivr.net/npm/gene-tooltips@0.1.0/dist/gene-tooltips.umd.js`
+1.  **Main CSS:** `https://cdn.jsdelivr.net/npm/gene-tooltips@latest/dist/gene-tooltips.css`
+2.  **Library JS (UMD):** `https://cdn.jsdelivr.net/npm/gene-tooltips@latest/dist/gene-tooltips.umd.js`
 3.  **Peer Dependency (Ideogram):** `https://cdn.jsdelivr.net/npm/ideogram@1.53.0/dist/js/ideogram.min.js`
 4.  **Peer Dependency (D3):** `https://cdn.jsdelivr.net/npm/d3@7`
 
@@ -93,10 +93,10 @@ In RMarkdown, you can include raw HTML content in the final document's `<head>` 
 
     ```html
     <!-- header.html -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gene-tooltips@0.1.0/dist/gene-tooltips.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gene-tooltips@latest/dist/gene-tooltips.css">
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.jsdelivr.net/npm/ideogram@1.53.0/dist/js/ideogram.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gene-tooltips@0.1.0/dist/gene-tooltips.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gene-tooltips@latest/dist/gene-tooltips.umd.js"></script>
     ```
 
 2.  **Modify your `.Rmd` file:**
@@ -149,7 +149,7 @@ In Jupyter, you can use the `IPython.display.HTML` module to inject CSS and Java
     from IPython.display import display, HTML
 
     # The version of your package
-    LIB_VERSION = "0.1.2"
+    LIB_VERSION = "latest"
 
     html_setup = f"""
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gene-tooltips@{LIB_VERSION}/dist/gene-tooltips.css">
@@ -213,10 +213,10 @@ MyST provides a `{raw}` directive that allows you to pass raw HTML directly to t
     (other content...)
 
     ```{raw} html
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gene-tooltips@0.1.0/dist/gene-tooltips.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gene-tooltips/dist/gene-tooltips.css">
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.jsdelivr.net/npm/ideogram@1.53.0/dist/js/ideogram.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gene-tooltips@0.1.0/dist/gene-tooltips.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gene-tooltips/dist/gene-tooltips.umd.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         GeneTooltip.init({
