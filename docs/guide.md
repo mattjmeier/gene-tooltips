@@ -13,7 +13,7 @@ npm install gene-tooltips
 Or include it directly in your HTML from a CDN like unpkg:
 
 ```html
-<script src="https://unpkg.com/gene-tooltip/dist/gene-tooltips.umd.js"></script>
+<script src="https://unpkg.com/gene-tooltip/dist/gene-tooltips.global.js"></script>
 ```
 
 ## Basic Usage

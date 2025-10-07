@@ -34,7 +34,7 @@ To initialize gene tooltip object, add something like this (with configurable op
   And here is a mouse gene: <span class="gene-tooltip" data-species="mouse">Trp53</span>.
 </p>
 
-<script src="https://unpkg.com/gene-tooltips/dist/gene-tooltips.umd.js"></script>
+<script src="https://unpkg.com/gene-tooltips/dist/gene-tooltips.global.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
