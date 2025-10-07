@@ -22,9 +22,9 @@ These options control the core functionality of the tooltip library.
     * `'none'`: Fetches data only when the user hovers directly over a gene.
 * `tippyOptions` (object): An object of options passed directly to the underlying Tippy.js instance. This allows for advanced customization of animations, placement, delays, and more. See the [Tippy.js documentation](https://atomiks.github.io/tippyjs/v6/all-props/) for all possibilities.
 
-### Example: Changing the Theme and Placement
+### Example: changing the theme and placement
 
-Here we'll use the `material` theme and change the placement to the `'right'`.
+Here we'll use the `material` theme and change the placement to the `'right'`. You can pass any other Tippy.js options like this, too.
 
 ```javascript
 GeneTooltip.init({
@@ -132,7 +132,7 @@ GeneTooltip.init({
 
 ### Ideogram Configuration
 
-The `ideogram` object controls the chromosome visualization.
+The `ideogram` object controls the chromosome visualization. In this way, you can pass along any properties to the [`ideogram.js`](https://github.com/eweitz/ideogram/blob/master/api.md) API.
 
 ```javascript
 // Structure of the 'ideogram' object
