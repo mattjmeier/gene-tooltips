@@ -2,7 +2,7 @@
 
 The `GeneTooltip.init()` method accepts a configuration object to customize the tooltip's appearance, behavior, and content. Below are the primary options available, with live examples for each.
 
-All options are optional; the library provides sensible defaults.
+No options need to be specified; the library provides sensible defaults.
 
 ```javascript
 GeneTooltip.init({
