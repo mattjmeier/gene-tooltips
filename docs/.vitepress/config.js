@@ -14,6 +14,7 @@ export default {
         items: [
           { text: 'Introduction', link: '/' },
           { text: 'Getting started', link: '/guide' },
+          { text: 'Advanced configuration', link: '/configuration.md'},
           { text: 'Integration with various frameworks', link: '/integration.md'},
           { text: 'Adding new sections to tooltips', link: '/add-modules.md'} 
         ]
