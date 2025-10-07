@@ -27,9 +27,7 @@
       "import": "./dist/gene-tooltips.esm.js",
       "require": "./dist/gene-tooltips.cjs.js"
     },
-    "./dist/css/main.css": "./dist/css/main.css",
-    "./dist/css/base.css": "./dist/css/base.css",
-    "./dist/css/light.css": "./dist/css/light.css"
+    "./style.css": "./dist/gene-tooltips.css"
   },
   "license": "MIT",
   "author": "Matthew J. Meier",

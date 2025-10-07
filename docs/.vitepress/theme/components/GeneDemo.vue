@@ -15,12 +15,10 @@
 // similar to 'DOMContentLoaded'.
 import { onMounted } from 'vue';
 
-// We can import the JS and CSS directly!
-// Vite will handle bundling them correctly.
-// Make sure the paths are correct relative to this .vue file.
-// Let's assume your '.vitepress' directory is at the root of your docs.
-import GeneTooltip from '../../../../dist/gene-tooltips.esm.js';
-import '../../../../dist/gene-tooltips.css';
+// We can import the JS and CSS from the installed package
+import GeneTooltip from 'gene-tooltips';
+import 'gene-tooltips/style.css';
+
 onMounted(() => {
   // Now, use the imported module directly instead of the window object.
   if (GeneTooltip) {

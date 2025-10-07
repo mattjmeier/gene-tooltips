@@ -7,7 +7,7 @@ This guide will walk you through installing and configuring Gene Tooltip JS.
 You can install the package via npm:
 
 ```bash
-npm install gene-tooltip
+npm install gene-tooltips
 ```
 
 Or include it directly in your HTML from a CDN like unpkg:
@@ -80,9 +80,16 @@ GeneTooltip.init({
 The tooltip is styled with CSS variables that you can easily override. Create your own CSS file and include it after the library's CSS to customize the appearance.
 
 ```css
-/* my-styles.css */
+/* ./src/css/theme.css */
 :root {
   --gt-color-primary: #d946ef; /* Use a different primary color */
-  --gt-border-color: #444;   /* Darker borders for a custom theme */
 }
+```
+
+You can also specify any of the built in [Tippy themes](https://atomiks.github.io/tippyjs/v6/themes/):
+
+```javascript
+GeneTooltip.init({
+    theme: 'material'
+});
 ```

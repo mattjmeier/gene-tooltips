@@ -2,10 +2,18 @@
 
 A framework-agnostic JavaScript/TypeScript library for displaying interactive gene information tooltips.
 
+## Context
+
+This library can be used to enrich any text within an HTML document to provide a 'glimpse' of information on a gene using the [MyGene.info]( https://mygene.info) API, providing an immediate definition alongside links to further reading for genes of interest.
+
+The library is similar in principle to [Gene Hints](https://broadinstitute.github.io/gene-hints/), but does not require an ideogram as the 'launching point'.
+
 ## Features
 - Display rich tooltips based on [Tippy.js](https://atomiks.github.io/tippyjs/) for genes in any HTML file
 - Framework-agnostic: works with vanilla JS, React, Vue, etc.
 - Optional integration with [D3.js](https://d3js.org) and [Ideogram](https://github.com/eweitz/ideogram)
+- Configure what sections of information is displayed, height/width of the tooltip, and use Tippy.js themes to style the `gene-tooltips`.
+- Can be easily extended to show more data from the MyGene.info API
 
 ## Installation
 ```bash
@@ -37,10 +45,12 @@ To initialize gene tooltip object, add something like this (with configurable op
 </script>
 ```
 
+You can also add the class to a list of consistently delimited gene names (as long as they belong to the same species)
+
 ## Documentation
 
 Full documentation and examples are available in the docs
- folder or at the project site (coming soon).
+ folder or at the [project site](https://mattjmeier.github.io/gene-tooltips/).
 
 ## Contributing
 

@@ -1,4 +1,4 @@
-## Guide: Adding a New Data Section to the Tooltip
+# Guide: Adding a New Data Section to the Tooltip
 
 This document outlines the general procedure for adding a new, optional data section to the gene tooltip (e.g., GO Terms, Phenotypes, etc.). The package is designed with an extensible pattern, so adding new sections involves touching four key files in a predictable way.
 
@@ -13,11 +13,11 @@ The 4-Step Pattern
 > [!WARNING]
 > This is an untested example, and may contain out of date information.
 
-### Step 1: Configure the New Section (src/config.ts)
+## Step 1: Configure the New Section (src/config.ts)
 
 This is the source of truth for your data structures and user settings.
 
-#### A. Define the incoming data shape:
+### A. Define the incoming data shape:
 
 If the API returns a complex object, create a new interface for it.
 
@@ -32,7 +32,7 @@ export interface MyGeneGoTerm {
 }
 ```
 
-#### B. Add the new field to MyGeneInfoResult:
+### B. Add the new field to MyGeneInfoResult:
 
 Update the main data interface to include your new field.
 
@@ -47,7 +47,7 @@ export interface MyGeneInfoResult {
 }
 ```
 
-#### C. Add a display flag to TooltipDisplayConfig:
+### C. Add a display flag to TooltipDisplayConfig:
 
 This gives users a boolean switch to show or hide the section.
 
@@ -65,7 +65,7 @@ export interface TooltipDisplayConfig {
 }
 ```
 
-#### D. Add configuration options to GeneTooltipConfig and defaultConfig:
+### D. Add configuration options to GeneTooltipConfig and defaultConfig:
 
 Add a `...Count` property to control how many items are shown initially, and set its default value.
 
@@ -93,11 +93,11 @@ export const defaultConfig: GeneTooltipConfig = {
 };
 ```
 
-### Step 2: Fetch the Data (src/api.ts)
+## Step 2: Fetch the Data (src/api.ts)
 
 This is the simplest step. You just need to tell the mygene.info query to include your new field in its response.
 
-#### A. Add the new field name to the fields array:
+### A. Add the new field name to the fields array:
 
 ```typescript
 // src/api.ts
@@ -114,11 +114,11 @@ export async function fetchMyGeneBatch(/*...*/) {
 }
 ```
 
-### Step 3: Render the HTML (src/renderer.ts)
+## Step 3: Render the HTML (src/renderer.ts)
 
 This is where you transform the raw JSON data into user-friendly HTML.
 
-#### A. Create a new `render...` function for your section:
+### A. Create a new `render...` function for your section:
 Follow the pattern of the existing `renderPathways` or `renderDomains` functions. The goal is to convert the raw data into an array of `{ name: string, url: string }` objects that the generic renderParagraphSection helper can use.
 
 ```typescript
@@ -149,7 +149,7 @@ function renderGoTerms(data: MyGeneInfoResult, count: number): string {
 }
 ```
 
-#### B. Call your new function from renderTooltipHTML:
+### B. Call your new function from renderTooltipHTML:
 
 Add the function call inside the main template, wrapped in its display flag check.
 
@@ -176,11 +176,11 @@ export function renderTooltipHTML(/*...*/) {
 }
 ```
 
-### Step 4: Integrate Interactivity (src/index.ts)
+## Step 4: Integrate Interactivity (src/index.ts)
 
 The final step is to wire up the "more" button so it shows a nested tooltip with the full list of items.
 
-#### A. Pass the new count to the renderOptions:
+### A. Pass the new count to the renderOptions:
 
 In the onShow hook, make sure the count from the configuration is passed down to the renderer.
 
@@ -201,7 +201,7 @@ onShow(instance: Instance) {
 }
 ```
 
-#### B. Add the nested tippy logic in onMount:
+### B. Add the nested tippy logic in onMount:
 
 In the onMount hook, add logic to find your new "more" button and attach a nested tippy to it. Use the createNestedTippy helper for consistency.
 

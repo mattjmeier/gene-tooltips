@@ -1,0 +1,7 @@
+# Detailed configuration options
+
+
+
+```javascript
+
+```
