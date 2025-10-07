@@ -64,25 +64,33 @@ function renderGeneTrackContainer(geneId: string): string {
   `;
 }
 
-function renderSummary(summaryText: string | undefined, truncate: number): string {
+function renderSummary(summaryText: string | undefined, truncate: number, geneId: string): string {
   const summary = summaryText || "No summary available.";
   
-  if (!summaryText) {
+  if (!summaryText || truncate <= 0) {
     return `
       <div class="gene-tooltip-section-container">
+        <div class="gene-tooltip-section-header">Summary</div>
         <p class="gene-tooltip-summary-full">${summary}</p>
       </div>
     `;
   }
 
-  const summaryClass = truncate > 0 ? 'gene-tooltip-summary' : 'gene-tooltip-summary-full';
-  const tabIndex = truncate > 0 ? 'tabindex="0"' : '';
-  const summaryStyle = truncate > 0 ? `style="--line-clamp: ${truncate};"` : '';
+  const summaryClass = 'gene-tooltip-summary';
+  const summaryStyle = `style="--line-clamp: ${truncate};"`;
+  
+  const moreButtonId = `summary-more-${geneId}`;
+  const lessButtonId = `summary-less-${geneId}`;
+  
+  const moreButton = renderMoreButton(moreButtonId, 'Show more');
+  const lessButton = renderCollapseButton(lessButtonId, 'Show less');
 
   return `
     <div class="gene-tooltip-section-container">
         <div class="gene-tooltip-section-header">Summary</div>
-        <p class="${summaryClass}" ${tabIndex} ${summaryStyle}>${summary}</p>
+        <p class="${summaryClass}" ${summaryStyle}>${summary}</p>
+        ${moreButton}
+        ${lessButton}
     </div>
   `;
 }
@@ -145,9 +153,7 @@ function renderParagraphSection(
 
   // Create the "more" button if there are hidden items
   const moreButton = hiddenItemCount > 0
-    ? `<span id="${moreButtonId}" class="gene-tooltip-more-btn" data-more-count="${hiddenItemCount}">
-         ... and ${hiddenItemCount} more
-       </span>`
+    ? renderMoreButton(moreButtonId, `... and ${hiddenItemCount} more`)
     : '';
 
   return `
@@ -157,6 +163,23 @@ function renderParagraphSection(
         ${itemLinks}${hiddenItemCount > 0 ? ',' : ''} ${moreButton}
       </p>
     </div>
+  `;
+}
+
+function renderMoreButton(id: string, text: string): string {
+  // We can add accessibility attributes here too
+  return `
+    <span id="${id}" class="gene-tooltip-more-btn" role="button" tabindex="0">
+      ${text}
+    </span>
+  `;
+}
+
+function renderCollapseButton(id: string, text: string): string {
+  return `
+    <span id="${id}" class="gene-tooltip-more-btn" role="button" tabindex="0">
+      ${text}
+    </span>
   `;
 }
 
@@ -185,9 +208,7 @@ function renderListSection(
   ).join('');
 
   const moreButton = hiddenItemCount > 0
-    ? `<span id="${moreButtonId}" class="gene-tooltip-more-btn" data-more-count="${hiddenItemCount}">
-         ... and ${hiddenItemCount} more
-       </span>`
+    ? renderMoreButton(moreButtonId, `... and ${hiddenItemCount} more`)
     : '';
 
   return `
@@ -265,7 +286,7 @@ export function renderTooltipHTML(
 
       ${display.species !== false && data.taxid ? renderSpecies(data.taxid) : ''}
       
-      ${renderSummary(data.summary, truncate)}
+      ${renderSummary(data.summary, truncate, data._id)}
 
       ${display.location !== false ? renderLocation(data.genomic_pos, display.ideogram, data._id) : ''}
       ${display.geneTrack !== false && data.exons && data.exons.length > 0 ? renderGeneTrackContainer(data._id) : ''}

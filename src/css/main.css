@@ -19,33 +19,55 @@
   -webkit-line-clamp: var(--line-clamp, 3);
   line-clamp: var(--line-clamp, 3);
   overflow: hidden;
-  position: relative;
-  cursor: pointer;
+  position: relative; /* Essential for positioning the ::after element */
   margin: 0;
   padding: 0;
   line-height: 1.5;
 }
 
+/* This pseudo-element creates the fade-out effect on the last line */
 .gene-tooltip-summary::after {
-  content: "more";
-  font-size: 0.9em;
-  font-weight: bold;
-  color: var(--gt-accent-color);
+  content: ""; /* It's purely decorative, no text */
   position: absolute;
   bottom: 0;
   right: 0;
-  padding-left: 1.5em;
+  width: 70px; /* How wide the fade is */
+  height: 1.5em; /* MUST match the line-height */
   background: linear-gradient(to right, transparent, var(--tippy-background-color) 40%);
+  pointer-events: none; /* Make sure it doesn't interfere with clicks */
 }
 
 .gene-tooltip-summary.expanded {
   display: block;
   -webkit-line-clamp: unset;
   line-clamp: unset;
+  cursor: pointer;
 }
 
+/* Hide the fade effect when the summary is expanded */
 .gene-tooltip-summary.expanded::after {
   display: none;
+}
+
+/* Hide the "Show more" button when its preceding sibling (.summary) is expanded */
+.gene-tooltip-summary.expanded + .gene-tooltip-more-btn {
+  display: none;
+}
+
+/* By default, HIDE the "Show less" button */
+#summary-less-btn,
+[id^="summary-less-"] {
+  display: none;
+}
+
+/* When expanded, HIDE the "Show more" button */
+.gene-tooltip-summary.expanded + .gene-tooltip-more-btn {
+  display: none;
+}
+
+/* When expanded, SHOW the "Show less" button */
+.gene-tooltip-summary.expanded ~ [id^="summary-less-"] {
+  display: inline-block;
 }
 
 .gene-tooltip-summary-full {

@@ -147,13 +147,13 @@ export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult
             .data(allSegments)
             .enter().append("rect")
             .attr("class", "exon-rect")
-            .attr("x", d => xScale(d.coords[0])) // 'd' is now correctly typed
+            .attr("x", d => xScale(d.coords[0]))
             .attr("y", exonY)
-            .attr("width", d => Math.max(1, xScale(d.coords[1]) - xScale(d.coords[0]))) // 'd' is also typed here
+            .attr("width", d => Math.max(1, xScale(d.coords[1]) - xScale(d.coords[0])))
             .attr("height", exonHeight)
             .attr("fill", "#007bff")
-            .attr("stroke", "#0056b3")
-            .each(function(this: SVGRectElement, d) { // and here
+            .attr("stroke", "#007bff")
+            .each(function(this: SVGRectElement, d) {
                 const start = d.coords[0].toLocaleString();
                 const end = d.coords[1].toLocaleString();
                 const exonNumber = d.number;
