@@ -102,7 +102,7 @@ In RMarkdown, you can include raw HTML content in the final document's `<head>` 
 2.  **Modify your `.Rmd` file:**
     *   Add the `includes` option to your YAML header.
     *   Add your gene elements with the correct class and `data-species` attributes.
-    *   Add a JavaScript code chunk (`{js}`) at the end of your document to initialize the library.
+    *   Add JavaScript at the end of your document to initialize the library as shown in the `init_tooltips` code chunk below.
 
     ````markdown
     ---
