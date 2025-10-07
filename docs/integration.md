@@ -149,7 +149,7 @@ In Jupyter, you can use the `IPython.display.HTML` module to inject CSS and Java
     from IPython.display import display, HTML
 
     # The version of your package
-    LIB_VERSION = "0.1.0"
+    LIB_VERSION = "0.1.2"
 
     html_setup = f"""
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gene-tooltips@{LIB_VERSION}/dist/gene-tooltips.css">

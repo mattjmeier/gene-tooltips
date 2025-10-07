@@ -16,7 +16,7 @@ Or include it directly in your HTML from a CDN like unpkg:
 <script src="https://unpkg.com/gene-tooltip/dist/gene-tooltips.umd.js"></script>
 ```
 
-# Basic Usage
+## Basic Usage
 
 Once the script is loaded, you can initialize it. Add the class `gene-tooltip` and a `data-species` attribute to any `<span>` element.
 
@@ -35,11 +35,11 @@ Once the script is loaded, you can initialize it. Add the class `gene-tooltip` a
 </script>
 ```
 
-## Configuration
+# Configuration
 
 You can customize the tooltip by passing a configuration object to `GeneTooltip.init()`. Here are some common examples.
 
-### Changing Displayed Sections
+## Changing Displayed Sections
 
 Hide the ideogram and protein domains sections.
 
@@ -52,7 +52,7 @@ GeneTooltip.init({
 });
 ```
 
-### Changing Pathway Source
+## Changing Pathway Source
 
 Show pathways from KEGG instead of the default Reactome.
 
@@ -64,7 +64,7 @@ GeneTooltip.init({
 
 *Note: The gene must have KEGG pathway data available at mygene.info for this to display.*
 
-### Adjusting Tooltip Size and Truncation
+## Adjusting Tooltip Size and Truncation
 
 Create a wider tooltip and show more of the summary initially.
 
@@ -75,7 +75,7 @@ GeneTooltip.init({
 });
 ```
 
-### Styling
+## Styling
 
 The tooltip is styled with CSS variables that you can easily override. Create your own CSS file and include it after the library's CSS to customize the appearance.
 
@@ -93,3 +93,9 @@ GeneTooltip.init({
     theme: 'material'
 });
 ```
+
+## How it works
+
+This library leverages the MyGene.info API. Read about it [here](https://mygene.info). The file [./src/api.ts](https://github.com/mattjmeier/gene-tooltips/blob/main/src/api.ts) makes a POST batch request to the API using the numeric NCBI taxid for each gene requested.
+
+This pattern could be extended to other APIs, but new sections would most likely need to be written to accomodate differently shaped data structures. I welcome any pull requests on this topic but I am not likely to develop this idea any further, given that MyGene.info is such a rich and fast data source.

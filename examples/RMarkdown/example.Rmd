@@ -1,0 +1,30 @@
+---
+title: "Gene Analysis Report"
+output:
+  html_document:
+    includes:
+      in_header: header.html
+---
+
+Our analysis identified several key genes, including <span class="gene-tooltip" data-species="human">TP53</span> and <span class="gene-tooltip" data-species="mouse">KRAS</span>.
+
+```{r setup, include=FALSE}
+# This chunk is just for setup, no output
+library(htmltools)
+```
+
+```{r init_tooltips, echo=FALSE, results='asis'}
+# This is the key chunk. 'results="asis"' tells knitr to treat the
+# output as raw HTML/JS and pass it through directly.
+
+tags$script(HTML("
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing GeneTooltip from RMarkdown...');
+    GeneTooltip.init({
+      selector: '.gene-tooltip',
+      theme: 'light',
+      prefetch: 'all'
+    });
+  });
+"))
+```
