@@ -12,7 +12,6 @@ export default {
       {
         text: 'Documentation',
         items: [
-          { text: 'Introduction', link: '/' },
           { text: 'Getting started', link: '/guide' },
           { text: 'Advanced configuration', link: '/configuration.md'},
           { text: 'Integration with various frameworks', link: '/integration.md'},

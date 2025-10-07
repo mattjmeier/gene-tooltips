@@ -1,6 +1,8 @@
 # Getting Started
 
-This guide will walk you through installing and configuring Gene Tooltip JS.
+This guide will walk you through installing and configuring Gene Tooltip JS. Below is an example to illustrate what the library does.
+
+<GeneDemoConfigurable uniqueClass="getting-started" :config="{ tooltipWidth: 400, truncateSummary: 3, pathwayCount: 3, domainCount: 3 }" />
 
 ## Installation
 
@@ -96,6 +98,14 @@ GeneTooltip.init({
 
 ## How it works
 
-This library leverages the MyGene.info API. Read about it [here](https://mygene.info). The file [./src/api.ts](https://github.com/mattjmeier/gene-tooltips/blob/main/src/api.ts) makes a POST batch request to the API using the numeric NCBI taxid for each gene requested.
+This library leverages the MyGene.info API. Read about it [here](https://mygene.info). The function `fetchMyGeneBatch` in [`./src/api.ts`](https://github.com/mattjmeier/gene-tooltips/blob/main/src/api.ts) makes a POST batch request to the API using the numeric NCBI taxid for each gene requested.
+
+It will dynamically build a query that looks something like this:
+
+[`https://mygene.info/v3/query?q=symbol:tp53&scopes=symbol&fields=_id,query,symbol,name`](https://mygene.info/v3/query?q=symbol:tp53&scopes=symbol&fields=_id,query,symbol,name)
+
+The example above is shortened, since the default is to include more fields of interest. Future improvements to this package could further parameterize the API query generation.
+
+The JSON that is returned from the query is then parsed and put into components by the collection of functions, culminating in `renderTooltipHTML` in [`./src/renderer.ts`](https://github.com/mattjmeier/gene-tooltips/blob/main/src/renderer.ts). The entire process is orchestrated by [`index.ts`](https://github.com/mattjmeier/gene-tooltips/blob/main/src/index.ts) which calls `tippy()` and populates the tooltip with the value returned by `renderTooltipHTML`, and uses all the appropriate props for tooltip settings. 
 
 This pattern could be extended to other APIs, but new sections would most likely need to be written to accomodate differently shaped data structures. I welcome any pull requests on this topic but I am not likely to develop this idea any further, given that MyGene.info is such a rich and fast data source.

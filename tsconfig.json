@@ -23,10 +23,10 @@
     /* Declaration Files */
     "declaration": true,
     "declarationMap": true,
+    "emitDeclarationOnly": true,
     "sourceMap": true,
     "outDir": "./dist",
-
-    "types": ["vitest/globals"]
+    // "types": ["vitest/globals"]
   },
   "include": ["src", "test"]
 }

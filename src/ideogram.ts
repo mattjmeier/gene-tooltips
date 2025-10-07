@@ -17,11 +17,11 @@ async function getIdeogram() {
   }
   
   // Use a standard function to check the environment
-  const isUMD = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof window.GeneTooltip !== 'undefined';
+  const isGlobal = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof window.GeneTooltip !== 'undefined';
   
   // For UMD/IIFE (browser global) builds, we can't rely on import() 
   // because it's configured as 'external'.
-  if (isUMD) {
+  if (isGlobal) {
       const errorMsg = `[GeneTooltip] Ideogram global variable not found.
 Please ensure the Ideogram script is loaded on the page
 before initializing GeneTooltip, or use the ESM/CJS build.`;
