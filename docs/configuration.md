@@ -10,8 +10,6 @@ GeneTooltip.init({
 });
 ```
 
-***
-
 ## General Behavior
 
 These options control the core functionality of the tooltip library.
@@ -38,8 +36,6 @@ GeneTooltip.init({
 ```
 
 <GeneDemoConfigurable uniqueClass="demo-theme" :config="{ theme: 'material', tippyOptions: { placement: 'right' } }" />
-
-***
 
 ## Content and Display
 
@@ -91,8 +87,6 @@ GeneTooltip.init({
 ```
 <GeneDemoConfigurable uniqueClass="demo-display" :config="{ display: { species: false, ideogram: false, pathways: false, domains: false, geneTrack: false, transcripts: false, structures: false, generifs: false, links: { ensembl: false } } }" />
 
-***
-
 ## Sizing and Truncation
 
 These options control the size of the tooltip and how much content is shown initially.
@@ -118,8 +112,6 @@ GeneTooltip.init({
 });
 ```
 <GeneDemoConfigurable uniqueClass="demo-sizing" :config="{ tooltipWidth: 450, truncateSummary: 6, pathwayCount: 5, domainCount: 5 }" />
-
-***
 
 ## Section-Specific Configuration
 
