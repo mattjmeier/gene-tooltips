@@ -81,9 +81,6 @@ We'll use the UMD (Universal Module Definition) build, which is designed for thi
 3.  **Peer Dependency (Ideogram):** `https://cdn.jsdelivr.net/npm/ideogram@1.53.0/dist/js/ideogram.min.js`
 4.  **Peer Dependency (D3):** `https://cdn.jsdelivr.net/npm/d3@7`
 
-
----
-
 ## RMarkdown
 
 In RMarkdown, you can include raw HTML content in the final document's `<head>` section using the `includes` option in the YAML front matter.
@@ -138,8 +135,6 @@ In RMarkdown, you can include raw HTML content in the final document's `<head>` 
 
 > [!TIP]
 > The R Markdown example is available in [`examples/RMarkdown`](https://github.com/mattjmeier/gene-tooltips/tree/main/examples/RMarkdown).
-
----
 
 ## Jupyter Notebooks / JupyterLab
 
@@ -207,7 +202,6 @@ In Jupyter, you can use the `IPython.display.HTML` module to inject CSS and Java
 
 > [!WARNING]
 > This Jupyter notebook example is available in [`examples/Jupyter`](https://github.com/mattjmeier/gene-tooltips/tree/main/examples/Jupyter). However, the rendered HTML is full of JavaScript and CSS issues. Consider this a proof of principle that requires more work to implement.
----
 
 ## MyST (for Sphinx)
 
@@ -241,8 +235,6 @@ MyST provides a `{raw}` directive that allows you to pass raw HTML directly to t
     ````
 
     For larger Sphinx projects, the "proper" way is to add the assets to your `_static` folder and configure them in `conf.py`, but the `{raw}` directive is perfect for quick and direct integration.
-
----
 
 ## Vanilla HTML
 
