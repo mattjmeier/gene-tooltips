@@ -1,157 +1,176 @@
 import type { Instance } from 'tippy.js';
 import type { MyGeneInfoResult, MyGeneExon } from './config';
 import tippy from 'tippy.js';
+// 1. Import the D3 type definitions
+import type * as D3 from 'd3';
 
-// Lazy-load d3
-async function getD3() {
-    try {
-        // Assuming d3 is a peer dependency, this will work in ESM/CJS environments
-        return await import('d3');
-    } catch (e) {
-        console.error("[GeneTooltip] d3.js is required for the gene track feature but could not be loaded. Please ensure 'd3' is installed.");
-        return null;
+let d3ModulePromise: Promise<typeof D3 | null> | null = null;
+
+// 2. Update the function signature to use the imported type
+async function getD3(): Promise<typeof D3 | null> {
+    if (d3ModulePromise) {
+        return d3ModulePromise;
     }
+
+    // Check for D3 as a global variable first
+    if ((window as any).d3) {
+        // We cast here to tell TS that the global d3 matches the D3 module type
+        d3ModulePromise = Promise.resolve((window as any).d3 as typeof D3);
+        return d3ModulePromise;
+    }
+
+    // For ESM/CJS builds, use dynamic import
+    d3ModulePromise = import('d3')
+        .catch(error => {
+            const errorMsg = `[GeneTooltip] Failed to load d3.js. 
+Please ensure 'd3' is installed (it's a peer dependency) or the script is loaded on the page.`;
+            console.error(errorMsg, error);
+            return Promise.reject(new Error(errorMsg));
+        });
+
+    return d3ModulePromise;
 }
 
 export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
-  const d3 = await getD3();
-  if (!d3) {
-      // Handle the case where d3 couldn't be loaded
-      const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${data._id}`);
-      if (container) container.innerHTML = `<small>Gene track library (d3) not found.</small>`;
-      return;
-  }
-  const containerSelector = `#gene-tooltip-track-${data._id}`;
-  const container = instance.popper.querySelector<HTMLElement>(containerSelector);
-
-  if (!container) {
-    console.error(`[GeneTooltip] Gene track container '${containerSelector}' not found.`);
-    return;
-  }
-
-  if (!data.exons || data.exons.length === 0) {
-    container.innerHTML = `<small>Exon data not available.</small>`;
-    return;
-  }
-
-  // 1. Find the best transcript data. We'll prioritize the one with the most segments in its 'position' array.
-  let bestTranscript: MyGeneExon[] | null = null;
-  let maxPositions = 0;
-
-  data.exons.forEach(exon => {
-    // A transcript can be represented by a single exon object with many positions,
-    // so we treat each exon object as a potential "transcript definition".
-    const currentPositions = exon.position?.length || 1; // Fallback to 1 if no position array
-    if (currentPositions > maxPositions) {
-      maxPositions = currentPositions;
-      // In the case of the data you showed, `data.exons` is the transcript.
-      bestTranscript = [exon]; 
+    const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${data._id}`);
+    if (!container) {
+        console.error(`[GeneTooltip] Gene track container '#gene-tooltip-track-${data._id}' not found.`);
+        return;
     }
-  });
+    // Define the shape of our data object
+    type ExonSegment = {
+        coords: [number, number];
+        number: number;
+    };
 
-  // If no 'position' arrays were found, fall back to the longest transcript by object count
-  if (!bestTranscript) {
-    const transcripts: { [key: string]: MyGeneExon[] } = {};
-    data.exons.forEach(exon => {
-        const txid = `${exon.txstart}-${exon.txend}`;
-        if (!transcripts[txid]) { transcripts[txid] = []; }
-        transcripts[txid].push(exon);
-    });
-    const longestTranscriptKey = Object.keys(transcripts).sort((a, b) => transcripts[b].length - transcripts[a].length)[0];
-    bestTranscript = transcripts[longestTranscriptKey];
-  }
-
-  const firstExonObj = bestTranscript[0]; // Get a representative exon to check strand
-  const strand = firstExonObj.strand;
+    try {
+        const d3 = await getD3();
+        if (!d3) {
+          container.innerHTML = `<small>Gene track library (d3) not found.</small>`;
+          return;
+        }
 
 
-  // 2. Create a flat array of all coordinate pairs.
-  //    We will add the exon number in a second pass.
-  const allSegments: { coords: [number, number]; number: number }[] = [];
+        if (!container) {
+            console.error(`[GeneTooltip] Gene track container '#gene-tooltip-track-${data._id}' not found.`);
+            return;
+        }
 
-  bestTranscript.forEach(exonObj => {
-      if (exonObj.position) {
-          exonObj.position.forEach(pos => {
-              allSegments.push({ coords: pos, number: 0 }); // Use 0 as a placeholder
+        if (!data.exons || data.exons.length === 0) {
+            container.innerHTML = `<small>Exon data not available.</small>`;
+            return;
+        }
+
+        // 1. Find the best transcript data
+        let bestTranscript: MyGeneExon[] | null = null;
+        let maxPositions = 0;
+
+        data.exons.forEach(exon => {
+          const currentPositions = exon.position?.length || 1;
+          if (currentPositions > maxPositions) {
+            maxPositions = currentPositions;
+            bestTranscript = [exon]; 
+          }
+        });
+
+        if (!bestTranscript) {
+          const transcripts: { [key: string]: MyGeneExon[] } = {};
+          data.exons.forEach(exon => {
+              const txid = `${exon.txstart}-${exon.txend}`;
+              if (!transcripts[txid]) { transcripts[txid] = []; }
+              transcripts[txid].push(exon);
           });
-      } else if (exonObj.start && exonObj.end) {
-          allSegments.push({ coords: [exonObj.start, exonObj.end], number: 0 });
-      } else if (exonObj.cdsstart && exonObj.cdsend) {
-          allSegments.push({ coords: [exonObj.cdsstart, exonObj.cdsend], number: 0 });
-      }
-  });
+          const longestTranscriptKey = Object.keys(transcripts).sort((a, b) => transcripts[b].length - transcripts[a].length)[0];
+          bestTranscript = transcripts[longestTranscriptKey];
+        }
 
-  if (allSegments.length === 0) {
-      container.innerHTML = `<small>Exon coordinate format not recognized.</small>`;
-      return;
-  }
+        const firstExonObj = bestTranscript[0];
+        const strand = firstExonObj.strand;
 
-  // === Reversible numbering based on transcribed strand ===
-  const totalExons = allSegments.length;
-  allSegments.forEach((segment, i) => {
-      if (strand === -1) {
-          // If on the reverse strand, count down from the total
-          segment.number = totalExons - i;
-      } else {
-          // Otherwise, count up as usual
-          segment.number = i + 1;
-      }
-  });
+        // 2. Create a flat array of all coordinate pairs
+        const allSegments: { coords: [number, number]; number: number }[] = [];
+        bestTranscript.forEach(exonObj => {
+            if (exonObj.position) {
+                exonObj.position.forEach(pos => {
+                    allSegments.push({ coords: pos, number: 0 });
+                });
+            } else if (exonObj.start && exonObj.end) {
+                allSegments.push({ coords: [exonObj.start, exonObj.end], number: 0 });
+            } else if (exonObj.cdsstart && exonObj.cdsend) {
+                allSegments.push({ coords: [exonObj.cdsstart, exonObj.cdsend], number: 0 });
+            }
+        });
 
-  // --- D3 Drawing Logic ---
-  const margin = { top: 20, right: 10, bottom: 5, left: 10 }; 
-  const width = 290 - margin.left - margin.right;
-  const height = 20; 
-  const exonHeight = 10;
-  const yCenter = height / 2;
-  const exonY = yCenter - (exonHeight / 2);
+        if (allSegments.length === 0) {
+            container.innerHTML = `<small>Exon coordinate format not recognized.</small>`;
+            return;
+        }
 
-  container.innerHTML = '';
-  const svg = d3.select(container).append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-  
-  const geneStart = firstExonObj.txstart;
-  const geneEnd = firstExonObj.txend;
-  const xScale = d3.scaleLinear().domain([geneStart, geneEnd]).range([0, width]);
-  const directionArrow = strand === -1 ? '←' : '→'; // Changed from '1' to handle other cases
-  
-  svg.append("text")
-    .attr("x", 0)
-    .attr("y", -5)
-    .attr("font-family", "sans-serif")
-    .attr("font-size", "12px")
-    .html(`<tspan font-weight="bold">${data.symbol}</tspan> <tspan>${directionArrow}</tspan>`);
+        const totalExons = allSegments.length;
+        allSegments.forEach((segment, i) => {
+            segment.number = (strand === -1) ? totalExons - i : i + 1;
+        });
 
-  svg.append("line").attr("x1", xScale(geneStart)).attr("y1", yCenter)
-    .attr("x2", xScale(geneEnd)).attr("y2", yCenter)
-    .attr("stroke", "#555").attr("stroke-width", 2);
+        // --- D3 Drawing Logic ---
+        const margin = { top: 20, right: 10, bottom: 5, left: 10 };
+        const width = 290 - margin.left - margin.right;
+        const height = 20;
+        const exonHeight = 10;
+        const yCenter = height / 2;
+        const exonY = yCenter - (exonHeight / 2);
 
-  // Get the theme from the main instance
-  const currentTheme = (instance.props as any).theme || 'light';
+        container.innerHTML = '';
+        const svg = d3.select(container).append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Now, we bind the simple `allSegments` array
-  svg.selectAll(".exon-rect").data(allSegments).enter().append("rect")
-    .attr("class", "exon-rect")
-    .attr("x", d => xScale(d.coords[0])) 
-    .attr("y", exonY)
-    .attr("width", d => Math.max(1, xScale(d.coords[1]) - xScale(d.coords[0])))
-    .attr("height", exonHeight)
-    .attr("fill", "#007bff")
-    .attr("stroke", "#0056b3")
-    .each(function(d) {
-        const start = d.coords[0].toLocaleString();
-        const end = d.coords[1].toLocaleString();
-        const exonNumber = d.number; // This now holds the correct forward/reverse number
+        const geneStart = firstExonObj.txstart;
+        const geneEnd = firstExonObj.txend;
+        const xScale = d3.scaleLinear().domain([geneStart, geneEnd]).range([0, width]);
+        const directionArrow = strand === -1 ? '←' : '→';
 
-        tippy(this as Element, {
-            content: `<strong>Exon ${exonNumber}:</strong> ${start} - ${end}`,
-            placement: 'top',
-            allowHTML: true,
-            arrow: true,
-            animation: 'scale-subtle',
-            theme: currentTheme,
-      });
-    });
+        svg.append("text")
+            .attr("x", 0).attr("y", -5)
+            .attr("font-family", "sans-serif").attr("font-size", "12px")
+            .html(`<tspan font-weight="bold">${data.symbol}</tspan> <tspan>${directionArrow}</tspan>`);
+
+        svg.append("line")
+            .attr("x1", xScale(geneStart)).attr("y1", yCenter)
+            .attr("x2", xScale(geneEnd)).attr("y2", yCenter)
+            .attr("stroke", "#555").attr("stroke-width", 2);
+
+        const currentTheme = (instance.props as any).theme || 'light';
+        
+        // Provide the Element type and Data type to selectAll
+        svg.selectAll<SVGRectElement, ExonSegment>(".exon-rect")
+            .data(allSegments)
+            .enter().append("rect")
+            .attr("class", "exon-rect")
+            .attr("x", d => xScale(d.coords[0])) // 'd' is now correctly typed
+            .attr("y", exonY)
+            .attr("width", d => Math.max(1, xScale(d.coords[1]) - xScale(d.coords[0]))) // 'd' is also typed here
+            .attr("height", exonHeight)
+            .attr("fill", "#007bff")
+            .attr("stroke", "#0056b3")
+            .each(function(this: SVGRectElement, d) { // and here
+                const start = d.coords[0].toLocaleString();
+                const end = d.coords[1].toLocaleString();
+                const exonNumber = d.number;
+
+                tippy(this, {
+                    content: `<strong>Exon ${exonNumber}:</strong> ${start} - ${end}`,
+                    placement: 'top',
+                    allowHTML: true,
+                    arrow: true,
+                    animation: 'scale-subtle',
+                    theme: currentTheme,
+                });
+            });
+    } catch (error) {
+        console.error(error);
+        if (container) {
+            container.innerHTML = `<small>Gene track library (d3) not found.</small>`;
+        }
+    }
 }
