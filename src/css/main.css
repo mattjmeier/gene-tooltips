@@ -356,3 +356,6 @@
 .gene-tooltip-track text {
   fill: currentColor;
 }
+.gene-tooltip-track line {
+  stroke: var(--gt-border-color);
+}
