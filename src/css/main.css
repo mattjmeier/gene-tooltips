@@ -353,3 +353,6 @@
   fill: var(--gt-exon-color);
   stroke: var(--gt-exon-color);
 }
+.gene-tooltip-track text {
+  fill: currentColor;
+}
