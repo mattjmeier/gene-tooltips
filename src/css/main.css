@@ -12,36 +12,59 @@
 @import './theme.css';
 
 /* --- Summary --- */
-
 .gene-tooltip-summary {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--line-clamp, 3);
   line-clamp: var(--line-clamp, 3);
   overflow: hidden;
-  position: relative; /* Essential for positioning the ::after element */
+  position: relative;
   margin: 0;
   padding: 0;
-  line-height: 1.5;
+  line-height: 1.5; /* Crucial for calc() */
+
+  -webkit-mask-image:
+    /* Gradient 1: The horizontal fade on the right (Correct) */
+    linear-gradient(to right, black 70%, transparent 100%),
+    /* Gradient 2: A solid block for the top section (Corrected) */
+    linear-gradient(black, black);
+  
+  mask-image:
+    linear-gradient(to right, black 70%, transparent 100%),
+    linear-gradient(black, black);
+
+
+  /* By default, masks repeat. We only want the second one to repeat vertically */
+  -webkit-mask-repeat: no-repeat, no-repeat;
+          mask-repeat: no-repeat, no-repeat;
+
+  /*
+   * Position the masks:
+   * Mask 1 (fade) is positioned at the bottom right.
+   * Mask 2 (solid block) is positioned at the top left.
+   */
+  -webkit-mask-position: bottom right, top left;
+          mask-position: bottom right, top left;
+
+  /*
+   * Size the masks:
+   * Mask 1 (fade) is 100% wide and the height of one line.
+   * Mask 2 (solid block) is 100% wide and covers everything EXCEPT the last line.
+   */
+  -webkit-mask-size: 100% 1.5em, 100% calc(100% - 1.5em);
+          mask-size: 100% 1.5em, 100% calc(100% - 1.5em);
 }
 
-/* This pseudo-element creates the fade-out effect on the last line */
-.gene-tooltip-summary::after {
-  content: ""; /* It's purely decorative, no text */
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 70px; /* How wide the fade is */
-  height: 1.5em; /* MUST match the line-height */
-  background: linear-gradient(to right, transparent, var(--tippy-background-color) 40%);
-  pointer-events: none; /* Make sure it doesn't interfere with clicks */
-}
-
+/* The .expanded rule remains the same */
 .gene-tooltip-summary.expanded {
   display: block;
   -webkit-line-clamp: unset;
   line-clamp: unset;
   cursor: pointer;
+
+  /* When expanded, remove all masks */
+  -webkit-mask-image: none;
+          mask-image: none;
 }
 
 /* Hide the fade effect when the summary is expanded */
@@ -109,7 +132,7 @@
 
 .gene-tooltip-section-container {
   /* Use a subtle border that adapts to theme, without dimming content */
-  border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+  border-top: 1px solid var(--gt-border-color);
   padding-top: 0.5em;
   margin-top: 0.75em;
 }
@@ -118,7 +141,7 @@
   font-weight: bold;
   font-size: 0.9em;
   /* Inherit the main text color from the theme */
-  color: inherit;
+  color: var(--gt-text-color);
   margin-bottom: 0.3em;
   /* Make it slightly less prominent than the main title */
   opacity: 0.9;
@@ -130,7 +153,7 @@
   gap: 0.5em;
   font-size: 0.9em;
   /* Inherit text color and use opacity to make it subtle */
-  color: inherit;
+  color: var(--gt-text-color-secondary);
   opacity: 0.8;
   margin-top: 0.5em;
 }
@@ -161,8 +184,8 @@
 .gene-tooltip-location-pos {
   font-size: 0.9em;
   /* Make secondary text subtle with opacity */
-  color: inherit;
-  opacity: 0.7;
+  color: var(--gt-text-color-secondary);
+  /* opacity: 0.7; */
 }
 
 .gene-tooltip-ideo {
@@ -205,7 +228,7 @@
 .gene-tooltip-more-btn {
   font-size: 0.85em;
   /* Make text subtle with opacity */
-  color: inherit;
+  color: var(--gt-text-color-secondary);
   opacity: 0.7;
   cursor: pointer;
   margin-top: 4px;
@@ -218,7 +241,7 @@
   /* On hover, make the text fully opaque */
   opacity: 1;
   /* Add a very subtle background derived from the current text color */
-  background-color: color-mix(in srgb, currentColor 10%, transparent);
+  background-color: var(--gt-hover-background-color);
 }
 
 /* --- Nested Tooltip List --- */
@@ -265,7 +288,7 @@
     gap: 0.3em;
     text-decoration: none;
     /* Make link text subtle by default */
-    color: inherit;
+    color: var(--gt-text-color-secondary);
     opacity: 0.7;
     transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
 }
@@ -273,7 +296,7 @@
 .gene-tooltip-links-container a:hover {
     /* On hover, use the accent color and make it fully opaque */
     color: var(--gt-accent-color);
-    opacity: 1;
+    /* opacity: 1; */
 }
 
 /* Add a pipe separator between links */
@@ -323,4 +346,10 @@
 /* Add this new rule to your stylesheet */
 .gene-tooltip-list-wrapper {
   font-size: 0.9em;
+}
+
+/* Gene exon track */
+.exon-rect {
+  fill: var(--gt-exon-color);
+  stroke: var(--gt-exon-color);
 }
