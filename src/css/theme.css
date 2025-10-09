@@ -1,45 +1,47 @@
 /* 
-  Custom properties for Gene Tooltip.
+  Custom properties for Gene Tooltips.
   These are designed to work WITH Tippy.js themes, not replace them.
 */
 
-/* --- DEFAULT THEME (Tippy's dark theme) --- */
+/* 
+  --- DEFAULT (LIGHT) THEME VARIABLES ---
+  This is the baseline. All tooltips get these styles unless overridden.
+*/
 .tippy-box {
-  /* 
-    We define our "abstract" theme variables here.
-    Their values will be overridden by specific theme selectors below.
-  */
-  --gt-background-color: #333; /* Default Tippy dark background */
-  --gt-text-color: #fff;
-  --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
-  --gt-accent-color: #58a6ff; /* A bright blue for good contrast */
-  --gt-border-color: rgba(255, 255, 255, 0.2);
-  --gt-hover-background-color: rgba(255, 255, 255, 0.1);
-
-  /* Component-specific variables */
-  --gt-exon-color: #58a6ff;
-}
-
-/* --- LIGHT THEME --- */
-.tippy-box[data-theme~='light'],
-.tippy-box[data-theme~='light-border'] {
   --gt-background-color: #fff;
   --gt-text-color: #222;
   --gt-text-color-secondary: rgba(0, 0, 0, 0.6);
-  --gt-accent-color: #007bff; /* A slightly darker blue for light backgrounds */
+  --gt-accent-color: #007bff;
   --gt-border-color: rgba(0, 0, 0, 0.1);
   --gt-hover-background-color: rgba(0, 0, 0, 0.05);
   --gt-exon-color: #007bff;
 }
 
-/* --- MATERIAL THEME --- */
+/* 
+  --- DARK THEME VARIABLES ---
+  Defined once in a "mixin-like" fashion using a placeholder selector.
+*/
+.tippy-box[data-theme~='dark'], /* Force dark when theme is 'dark' */
+html.dark .tippy-box:not([data-theme~='light']) /* Auto dark when page is dark, UNLESS theme is 'light' */
+{
+  --gt-background-color: #333;
+  --gt-text-color: #fff;
+  --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
+  --gt-accent-color: #58a6ff;
+  --gt-border-color: rgba(255, 255, 255, 0.2);
+  --gt-hover-background-color: rgba(255, 255, 255, 0.1);
+  --gt-exon-color: #58a6ff;
+}
+
+/* 
+  Overrides for other themes.
+  These should work correctly regardless of the light/dark mode of the page.
+*/
 .tippy-box[data-theme~='material'] {
   --gt-background-color: #424242;
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
-  --gt-accent-color: #80cbc4; /* A color that fits the material palette */
-  --gt-border-color: rgba(255, 255, 255, 0.2);
-  --gt-hover-background-color: rgba(255, 255, 255, 0.1);
+  --gt-accent-color: #80cbc4;
   --gt-exon-color: #80cbc4;
 }
 

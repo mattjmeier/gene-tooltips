@@ -111,7 +111,7 @@ export const defaultConfig: GeneTooltipConfig = {
   prefetch: 'smart',
   prefetchThreshold: 15,
   truncateSummary: 4,
-  theme: 'light',
+  theme: 'auto',
   display: {
     species: true,
     location: true,
