@@ -2,7 +2,7 @@
 
 This guide will walk you through installing and configuring Gene Tooltip JS. Below is an example to illustrate what the library does.
 
-<GeneDemoConfigurable uniqueClass="getting-started" :config="{ tooltipWidth: 400, truncateSummary: 3, pathwayCount: 3, domainCount: 3, theme: 'auto' }" />
+<GeneDemoConfigurable uniqueClass="getting-started" :config="{ tooltipWidth: 400, truncateSummary: 3, pathwayCount: 3, domainCount: 3 }" />
 
 ## Installation
 
