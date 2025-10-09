@@ -2,9 +2,9 @@
   <div class="gene-demo-container">
     <p style="font-size: 1.2em; line-height: 1.8;">
       Here are a bunch of human genes, separated by commas:
-      <div class="gene-tooltip" data-species="human">
+      <span class="gene-tooltip" data-species="human">
         TP53, GADD45A, BRCA1, BRCA2, RAD51, ATM, XPA, NOTAGENE
-      </div>
+      </span>
     </p>
   </div>
 </template>

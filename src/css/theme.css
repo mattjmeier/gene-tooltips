@@ -2,22 +2,55 @@
   Custom properties for Gene Tooltip.
   These are designed to work WITH Tippy.js themes, not replace them.
 */
+
+/* --- DEFAULT THEME (Tippy's dark theme) --- */
 .tippy-box {
   /* 
-    Define a single accent color for links and highlights.
-    This default blue is chosen to have decent contrast on both the default 
-    dark theme and the light theme. Users can easily override this.
+    We define our "abstract" theme variables here.
+    Their values will be overridden by specific theme selectors below.
   */
-  --gt-accent-color: #58a6ff; /* A nice, bright blue */
+  --gt-background-color: #333; /* Default Tippy dark background */
+  --gt-text-color: #fff;
+  --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
+  --gt-accent-color: #58a6ff; /* A bright blue for good contrast */
+  --gt-border-color: rgba(255, 255, 255, 0.2);
+  --gt-hover-background-color: rgba(255, 255, 255, 0.1);
 
-  /*
-    Example of how a user could customize the accent for a specific theme:
-    
-    .tippy-box[data-theme~='light'] {
-      --gt-accent-color: #007bff;
-    }
-    .tippy-box[data-theme~='material'] {
-      --gt-accent-color: #B2DFDB;
-    }
-  */
+  /* Component-specific variables */
+  --gt-exon-color: #58a6ff;
+}
+
+/* --- LIGHT THEME --- */
+.tippy-box[data-theme~='light'],
+.tippy-box[data-theme~='light-border'] {
+  --gt-background-color: #fff;
+  --gt-text-color: #222;
+  --gt-text-color-secondary: rgba(0, 0, 0, 0.6);
+  --gt-accent-color: #007bff; /* A slightly darker blue for light backgrounds */
+  --gt-border-color: rgba(0, 0, 0, 0.1);
+  --gt-hover-background-color: rgba(0, 0, 0, 0.05);
+  --gt-exon-color: #007bff;
+}
+
+/* --- MATERIAL THEME --- */
+.tippy-box[data-theme~='material'] {
+  --gt-background-color: #424242;
+  --gt-text-color: #fff;
+  --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
+  --gt-accent-color: #80cbc4; /* A color that fits the material palette */
+  --gt-border-color: rgba(255, 255, 255, 0.2);
+  --gt-hover-background-color: rgba(255, 255, 255, 0.1);
+  --gt-exon-color: #80cbc4;
+}
+
+/* --- TRANSLUCENT THEME --- */
+.tippy-box[data-theme~='translucent'] {
+    /* Translucent is tricky, but we can approximate */
+  --gt-background-color: rgba(20, 20, 20, 0.8);
+  --gt-text-color: #fff;
+  --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
+  --gt-accent-color: #8cb3f3;
+  --gt-border-color: rgba(255, 255, 255, 0.25);
+  --gt-hover-background-color: rgba(255, 255, 255, 0.15);
+  --gt-exon-color: #8cb3f3;
 }

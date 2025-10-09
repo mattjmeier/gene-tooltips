@@ -146,13 +146,11 @@ export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult
         svg.selectAll<SVGRectElement, ExonSegment>(".exon-rect")
             .data(allSegments)
             .enter().append("rect")
-            .attr("class", "exon-rect")
+            .attr("class", "exon-rect") // This class is now used for styling
             .attr("x", d => xScale(d.coords[0]))
             .attr("y", exonY)
             .attr("width", d => Math.max(1, xScale(d.coords[1]) - xScale(d.coords[0])))
             .attr("height", exonHeight)
-            .attr("fill", "#007bff")
-            .attr("stroke", "#007bff")
             .each(function(this: SVGRectElement, d) {
                 const start = d.coords[0].toLocaleString();
                 const end = d.coords[1].toLocaleString();
