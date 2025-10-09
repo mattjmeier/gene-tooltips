@@ -85,7 +85,7 @@ describe('renderTooltipHTML', () => {
   });
   
   it('should truncate the summary with a custom value', () => {
-    // The default in config is 4, so let's check your test's assumption of 3.
+    // The default in config is 4, so let's check the test's assumption of 3.
     const html = renderTooltipHTML(mockGeneData, { truncate: 3 });
     expect(html).toContain('class="gene-tooltip-summary"');
     expect(html).toContain('style="--line-clamp: 3;"');

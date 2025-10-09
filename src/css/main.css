@@ -8,7 +8,7 @@
 @import 'tippy.js/themes/material.css';
 @import 'tippy.js/themes/translucent.css';
 
-/* 3. Import your theme variables */
+/* 3. Import theme variables */
 @import './theme.css';
 
 /* --- Summary --- */
@@ -24,9 +24,9 @@
   line-height: 1.5; /* Crucial for calc() */
 
   -webkit-mask-image:
-    /* Gradient 1: The horizontal fade on the right (Correct) */
+    /* Gradient 1: The horizontal fade on the right */
     linear-gradient(to right, black 70%, transparent 100%),
-    /* Gradient 2: A solid block for the top section (Corrected) */
+    /* Gradient 2: A solid block for the top section */
     linear-gradient(black, black);
   
   mask-image:
@@ -343,7 +343,6 @@
   text-decoration: underline;
 }
 
-/* Add this new rule to your stylesheet */
 .gene-tooltip-list-wrapper {
   font-size: 0.9em;
 }

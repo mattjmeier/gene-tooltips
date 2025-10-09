@@ -5,7 +5,7 @@ export default {
   Layout: DefaultTheme.Layout,
 
   enhanceApp({ app }) {
-    // Register your custom global components
+    // Register custom global components
     app.component('GeneDemo', GeneDemo);
   }
 }
