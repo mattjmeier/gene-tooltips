@@ -139,8 +139,6 @@ export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult
             .attr("x1", xScale(geneStart)).attr("y1", yCenter)
             .attr("x2", xScale(geneEnd)).attr("y2", yCenter)
             .attr("stroke", "#555").attr("stroke-width", 2);
-
-        const currentTheme = (instance.props as any).theme || 'light';
         
         // Provide the Element type and Data type to selectAll
         svg.selectAll<SVGRectElement, ExonSegment>(".exon-rect")
@@ -156,13 +154,19 @@ export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult
                 const end = d.coords[1].toLocaleString();
                 const exonNumber = d.number;
 
+                const parentInstance = instance;
+
                 tippy(this, {
                     content: `<strong>Exon ${exonNumber}:</strong> ${start} - ${end}`,
                     placement: 'top',
                     allowHTML: true,
                     arrow: true,
                     animation: 'scale-subtle',
-                    theme: currentTheme,
+                    //theme: currentTheme,
+                    onShow(nestedInstance) {
+                        const currentParentTheme = (parentInstance.props as any).theme || 'auto';
+                        nestedInstance.setProps({ theme: currentParentTheme });
+                    }
                 });
             });
     } catch (error) {

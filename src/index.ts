@@ -18,6 +18,16 @@ function createNestedContent(items: { name: string; url: string }[]): string {
   return `<ul class="gene-tooltip-nested-list">${listItems}</ul>`;
 }
 
+let allTippyInstances: Instance[] = [];
+
+function setGlobalTippyTheme(theme: string): void {
+  allTippyInstances.forEach(instance => {
+    if (instance.props.theme !== theme) {
+      instance.setProps({ theme });
+    }
+  });
+}
+
 // The init function accepts a partial configuration
 function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   const config: GeneTooltipConfig = {
@@ -35,6 +45,18 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
 
+  if (config.theme === 'auto' || typeof config.theme === 'undefined') {
+    const isDark = document.documentElement.classList.contains('dark');
+    // Set the initial theme for Tippy.js
+    config.theme = isDark ? 'dark' : 'light'; 
+
+    const observer = new MutationObserver(() => {
+        const isNowDark = document.documentElement.classList.contains('dark');
+        setGlobalTippyTheme(isNowDark ? 'dark' : 'light');
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  }
+
   const geneElements = findGeneElements(config.selector);
   if (geneElements.length === 0) return;
 
@@ -44,7 +66,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
     _nestedTippys?: Instance[];
   }
 
-  tippy(geneElements, {
+  const instances = tippy(geneElements, {
     ...config.tippyOptions,
     theme: config.theme, // Use top-level theme
     content: 'Loading...',
@@ -111,19 +133,25 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
 
       instance._nestedTippys = [];
 
-      // Helper for creating nested tooltips - NOW WITH THEME SUPPORT
+      // Helper for creating nested tooltips
       const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
         const button = instance.popper.querySelector<HTMLElement>(selector);
         if (button && items.length > 0) {
-          const nestedInstance = tippy(button, {
-            content: createNestedContent(items),
-            allowHTML: true,
-            interactive: true,
-            trigger: 'mouseenter focus',
-            placement: 'right',
-            theme: config.theme, // Use configured theme instead of hardcoded 'light'
-          });
-          instance._nestedTippys?.push(nestedInstance);
+            const parentInstance = instance; // Keep a reference to the parent
+            const nestedInstance = tippy(button, {
+                content: createNestedContent(items),
+                allowHTML: true,
+                interactive: true,
+                trigger: 'mouseenter focus',
+                placement: 'right',
+                // Don't set the theme on creation
+                onShow(childInstance) {
+                    // Set the theme dynamically based on the parent's current theme
+                    const currentParentTheme = (parentInstance.props as any).theme || 'auto';
+                    childInstance.setProps({ theme: currentParentTheme });
+                }
+            });
+            instance._nestedTippys?.push(nestedInstance);
         }
       };
 
@@ -150,6 +178,11 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
       }
     }
   });
+    if (Array.isArray(instances)) {
+    allTippyInstances.push(...instances);
+  } else if (instances) {
+    allTippyInstances.push(instances);
+  }
   enableSummaryExpand();
 }
 
