@@ -36,7 +36,7 @@ The species in [`src/constants.ts`](https://github.com/mattjmeier/gene-tooltips/
 ### Nematode
 <GeneDemo genes="ced-3, ced-9, lin-4" species="Nematode" />
 ### Zebrafish
-<GeneDemo genes="noto, gata1a, sox2" species="zebrafish" />
+<GeneDemo genes="noto, gata1a, sox2" species="Zebrafish" />
 ### Thale cress
 <GeneDemo genes="AG, AP1, FLC" species="thale-cress" />
 ### Frog

@@ -12,7 +12,7 @@ export const speciesMap: Record<number, SpeciesInfo> = {
   10116: { common: "Rat", genus: "Rattus norvegicus", icon: "🐀", ideogramName: "rattus-norvegicus" },
   7227: { common: "Fruitfly", genus: "Drosophila melanogaster", icon: "🪰", ideogramName: "drosophila-melanogaster" },
   6239: { common: "Nematode", genus: "Caenorhabditis elegans", icon: "🪱", ideogramName: "caenorhabditis-elegans" },
-  7955: { common: "Zebrafish", genus: "Danio rerio", icon: "🐟", ideogramName: "zebrafish" },
+  7955: { common: "Zebrafish", genus: "Danio rerio", icon: "🐟", ideogramName: "danio-rerio" },
   3702: { common: "Thale cress", genus: "Arabidopsis thaliana", icon: "🌱", ideogramName: "arabidopsis-thaliana" },
   8364: { common: "Frog", genus: "Xenopus tropicalis", icon: "🐸", ideogramName: "xenopus-tropicalis" },
   9823: { common: "Pig", genus: "Sus scrofa", icon: "🐖", ideogramName: "sus-scrofa" },
