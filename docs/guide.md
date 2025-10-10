@@ -106,9 +106,26 @@ You can also specify any of the built in [Tippy themes](https://atomiks.github.i
 
 ```javascript
 GeneTooltip.init({
+    // The default theme is auto
+    // Valid options:
+    // theme: 'auto'
+    // theme: 'light'
+    // theme: 'light-border'
+    // theme: 'translucent'
+    // theme: 'material'
     theme: 'material'
 });
 ```
+
+Auto theme (default) will adjust to OS and site settings for light vs. dark: <GeneDemo genes="TP53" species="human" :config="{ theme: 'auto' }" />
+
+Light theme: <GeneDemo genes="TP53" species="human" :config="{ theme: 'light' }" />
+
+Light-border theme:  <GeneDemo genes="TP53" species="human" :config="{ theme: 'light-border' }" />
+
+Translucent theme:  <GeneDemo genes="TP53" species="human" :config="{ theme: 'translucent' }" />
+
+Material theme:  <GeneDemo genes="TP53" species="human" :config="{ theme: 'material' }" />
 
 ## How it works
 
