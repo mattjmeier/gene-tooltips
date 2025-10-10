@@ -23,6 +23,13 @@ export default {
         items: [
             { text: 'Demo Page', link: '/demo' },
         ]
+      },
+      {
+        text: "API Reference",
+        items: [
+          { text: "Description of props", link: '/api.md'},
+          { text: "Full API", link: '/api/modules'}
+        ]
       }
     ]
   }
