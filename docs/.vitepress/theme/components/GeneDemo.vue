@@ -1,38 +1,67 @@
 <template>
-  <div class="gene-demo-container">
-    <p style="font-size: 1.2em; line-height: 1.8;">
-      The protein encoded by <span class="gene-tooltip" data-species="human">TP53</span> is a tumor suppressor.
-      In mice, the ortholog is <span class="gene-tooltip" data-species="mouse">Trp53</span>.
-      This is a well-known gene from the fruit fly: <span class="gene-tooltip" data-species="7227">dib</span>.
-      Here is one from yeast: <span class="gene-tooltip" data-species="559292">RAD51</span>.
-    </p>
-  </div>
+  <span class="gene-demo-container">
+    <span :class="`gene-tooltip ${uniqueClass}`" :data-species="species">
+      {{ genes }}
+    </span>
+  </span>
 </template>
 
 <script setup>
-// Use Vue's onMounted lifecycle hook. This is the correct way to
-// run code after the component has been added to the page,
-// similar to 'DOMContentLoaded'.
-import { onMounted } from 'vue';
-
-// We can import the JS and CSS from the installed package
+import { onMounted, onUnmounted } from 'vue';
 import GeneTooltip from 'gene-tooltips';
 import 'gene-tooltips/style.css';
 
-onMounted(() => {
-  // Now, use the imported module directly instead of the window object.
-  if (GeneTooltip) {
-    GeneTooltip.init({
-      truncateSummary: 3,
-      display: {
-          ideogram: true
-      },
-      ideogram: {
-          enabled: true,
-          height: 100
-      }
-    });
+// 1. Define props
+const props = defineProps({
+  // A string of one or more genes (e.g., "TP53, BRCA1")
+  genes: {
+    type: String,
+    required: true
+  },
+  // The species for the data-attribute (e.g., "human" or "mouse")
+  species: {
+    type: String,
+    default: 'human'
+  },
+  // Pass in any custom GeneTooltip config
+  config: {
+    type: Object,
+    default: () => ({})
+  },
+  // Automatically generate a unique selector class
+  uniqueClass: {
+    type: String,
+    // Generate a random string here. This function runs separately
+    // for each instance and does not reference local script variables.
+    default: () => `gt-rand-${Math.random().toString(36).substring(2, 9)}` 
   }
 });
 
+onMounted(() => {
+  if (GeneTooltip) {
+    // 2. Construct the unique selector
+    const selector = `.gene-tooltip.${props.uniqueClass}`;
+    
+    // 3. Merge default/base config with the one passed via props
+    const finalConfig = {
+      selector: selector, // IMPORTANT: Isolate this instance
+      truncateSummary: 3,
+      display: {
+        ideogram: true,
+      },
+      ideogram: {
+        enabled: true,
+        height: 100
+      },
+      ...props.config
+    };
+
+    // 4. Initialize the library on the unique element
+    GeneTooltip.init(finalConfig);
+  }
+});
+
+onUnmounted(() => {
+  // Placeholder for cleanup
+});
 </script>

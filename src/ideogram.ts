@@ -81,6 +81,7 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
     }
 
     // Get the theme from the main instance
+    //const currentTheme = (instance.props as any).theme || 'auto';
     const parentInstance = instance;
 
     const configForIdeogram = {
@@ -120,11 +121,11 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
           allowHTML: true,
           placement: 'top',
           appendTo: instance.popper,
-          //theme: currentTheme, // Use the same theme as parent
+          // theme: currentTheme, // Use the same theme as parent
           animation: 'scale-subtle',
           zIndex: 99999,
           onShow(nestedInstance){
-            const currentParentTheme = (parentInstance.props as any).theme || 'auto';
+          const currentParentTheme = (parentInstance.props as any).theme || 'auto';
             nestedInstance.setProps({ theme: currentParentTheme });
           }
         });
