@@ -1,0 +1,23 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src"], // Point to your source directory
+  "entryPointStrategy": "expand", // Find all entry points in the directory
+
+  // This is the most important setting for a single file.
+  // It takes all the discovered modules and puts them into one file.
+  "outputFileStrategy": "modules",
+
+  "out": "docs/api", // The directory where the single file will be created
+
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-plugin-mdn-links",
+    "typedoc-plugin-mermaid"
+  ],
+  "hideBreadcrumbs": true,
+  "hidePageTitle": true,
+  "categorizeByGroup": false,
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": true
+}
