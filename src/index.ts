@@ -1,5 +1,5 @@
 import tippy, { type Instance } from 'tippy.js'; // Import the 'Instance' type
-import { defaultConfig, type GeneTooltipConfig } from './config.js';
+import { defaultConfig, type GeneTooltipConfig, MyGeneInfoResult } from './config.js';
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
 import { renderTooltipHTML } from './renderer.js';
@@ -64,20 +64,25 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
 
   interface TippyInstanceWithCustoms extends Instance {
     _nestedTippys?: Instance[];
+    _geneData?: MyGeneInfoResult | null;
   }
 
   const instances = tippy(geneElements, {
     ...config.tippyOptions,
     theme: config.theme, // Use top-level theme
     content: 'Loading...',
-    onShow(instance: Instance) {
-      const info = getGeneInfoFromElement(instance.reference as HTMLElement);
-      if (!info) {
-        instance.setContent('Invalid gene element');
-        return;
+    onShow(instance: TippyInstanceWithCustoms) {
+      if (instance.props.content !== 'Loading...') {
+          return; 
       }
 
-      const { symbol, taxid } = info; // <-- Use taxid now
+      const info = getGeneInfoFromElement(instance.reference as HTMLElement);
+      if (!info) {
+          instance.setContent('Invalid gene element');
+          return;
+      }
+
+      const { symbol, taxid } = info;
 
       const renderOptions = {
         truncate: config.truncateSummary,
@@ -92,49 +97,53 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         tooltipHeight: config.tooltipHeight,
       };
 
-      const cachedData = cache.get(symbol, taxid); // <-- Use taxid
-      if (typeof cachedData !== 'undefined') {
-
-        instance.setContent(renderTooltipHTML(cachedData, renderOptions));
+      const renderContent = (data: MyGeneInfoResult | null) => {
+        // STEP 1: Attach the data to the instance BEFORE rendering.
+        instance._geneData = data; 
         
-        if (config.ideogram?.enabled && cachedData?.genomic_pos) {
-          setTimeout(() => {
-            renderIdeogram(instance, cachedData, config.ideogram);
-          }, 0);
-        }
-        return;
-      }
-
-      fetchMyGeneBatch([symbol], String(taxid)).then(resultsMap => {
-        const data = resultsMap.get(symbol) || null;
-        cache.set(symbol, taxid, data);
         instance.setContent(renderTooltipHTML(data, renderOptions));
 
         if (config.ideogram?.enabled && data?.genomic_pos) {
-          setTimeout(() => {
-            renderIdeogram(instance, data, config.ideogram);
-          }, 0);
+            setTimeout(() => {
+                renderIdeogram(instance, data, config.ideogram);
+            }, 0);
         }
-      }).catch(error => {
-        console.error(`Failed to fetch data for ${symbol}`, error);
-        instance.setContent('Error loading data.');
-      });
-    },
-    onMount(instance: TippyInstanceWithCustoms) {
-      const info = getGeneInfoFromElement(instance.reference as HTMLElement);
-      if (!info) return;
+    };
 
-      const data = cache.get(info.symbol, info.taxid);
-      if (!data) return;
+    const cachedData = cache.get(symbol, taxid);
+    if (typeof cachedData !== 'undefined') {
+        renderContent(cachedData);
+        return;
+    }
 
-      if (config.display.geneTrack && data.exons) {
-          renderGeneTrack(instance, data);
-      }
+    fetchMyGeneBatch([symbol], String(taxid))
+        .then(resultsMap => {
+            const data = resultsMap.get(symbol) || null;
+            cache.set(symbol, taxid, data);
+            renderContent(data); // This will also attach the data to the instance
+        })
+        .catch(error => {
+            console.error(`Failed to fetch data for ${symbol}`, error);
+            instance.setContent('Error loading data.');
+        });
+},
 
-      instance._nestedTippys = [];
+onMount(instance: TippyInstanceWithCustoms) {
+    // STEP 2: Read the data DIRECTLY from the instance.
+    const data = instance._geneData; 
 
-      // Helper for creating nested tooltips
-      const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
+    // This check is now much more reliable.
+    if (!data) return;
+
+    // The rest of your onMount logic can now proceed with confidence.
+    if (config.display.geneTrack && data.exons) {
+        renderGeneTrack(instance, data);
+    }
+
+    instance._nestedTippys = [];
+
+    // The createNestedTippy helper will also work correctly as it uses 'data'
+    const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
         const button = instance.popper.querySelector<HTMLElement>(selector);
         if (button && items.length > 0) {
             const parentInstance = instance; // Keep a reference to the parent
