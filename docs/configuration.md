@@ -9,6 +9,7 @@ GeneTooltip.init({
     // Your configuration object here
 });
 ```
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" />
 
 ## General Behavior
 
@@ -35,7 +36,7 @@ GeneTooltip.init({
 });
 ```
 
-<GeneDemoConfigurable uniqueClass="demo-theme" :config="{ theme: 'material', tippyOptions: { placement: 'right' } }" />
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ theme: 'material', tippyOptions: { placement: 'right' } }" />
 
 ## Content and Display
 
@@ -85,7 +86,7 @@ GeneTooltip.init({
   }
 });
 ```
-<GeneDemoConfigurable uniqueClass="demo-display" :config="{ display: { species: false, ideogram: false, pathways: false, domains: false, geneTrack: false, transcripts: false, structures: false, generifs: false, links: { ensembl: false } } }" />
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ display: { species: false, ideogram: false, pathways: false, domains: false, geneTrack: false, transcripts: false, structures: false, generifs: false, links: { ensembl: false } } }" />
 
 ## Sizing and Truncation
 
@@ -101,17 +102,17 @@ These options control the size of the tooltip and how much content is shown init
 
 ### Example: Wider Tooltip with More Content
 
-Let's make a wider tooltip and show more pathways and a longer summary from the start.
+Let's make a wider, shorter tooltip and show more pathways and a longer summary from the start.
 
 ```javascript
 GeneTooltip.init({
-  tooltipWidth: 450,
+  tooltipWidth: 600,
+  tooltipHeight: 400,
   truncateSummary: 6,
   pathwayCount: 5,
-  domainCount: 5
 });
 ```
-<GeneDemoConfigurable uniqueClass="demo-sizing" :config="{ tooltipWidth: 450, truncateSummary: 6, pathwayCount: 5, domainCount: 5 }" />
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ tooltipWidth: 600, tooltipHeight: 400, truncateSummary: 6}" />
 
 ## Section-Specific Configuration
 
@@ -121,14 +122,15 @@ Some sections have their own dedicated configuration objects for more detailed c
 
 * `pathwaySource` ('reactome' | 'kegg' | 'wikipathways'): The database to use for pathway information. **Default:** `'reactome'`. *Note: The gene must have data available from the selected source.*
 
-### Example: Using KEGG for Pathways
+### Example: Using Wikipathways for Pathways
 
 ```javascript
 GeneTooltip.init({
-  pathwaySource: 'kegg'
+  pathwaySource: 'wikipathways'
 });
 ```
-<GeneDemoConfigurable uniqueClass="demo-pathway" :config="{ pathwaySource: 'kegg' }" />
+
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ pathwaySource: 'wikipathways' }" />
 
 ### Ideogram Configuration
 
@@ -156,4 +158,5 @@ GeneTooltip.init({
   }
 });
 ```
-<GeneDemoConfigurable uniqueClass="demo-ideogram" :config="{ ideogram: { height: 150, showLabels: true } }" />
+
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ ideogram: { height: 150, showLabels: true } }" />

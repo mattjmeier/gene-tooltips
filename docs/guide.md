@@ -2,7 +2,7 @@
 
 This guide will walk you through installing and configuring Gene Tooltip JS. Below is an example to illustrate what the library does.
 
-<GeneDemoConfigurable uniqueClass="getting-started" :config="{ tooltipWidth: 400, truncateSummary: 3, pathwayCount: 3, domainCount: 3 }" />
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ tooltipWidth: 400, truncateSummary: 3, pathwayCount: 3, domainCount: 3 }" />
 
 ## Installation
 
@@ -15,18 +15,29 @@ npm install gene-tooltips
 Or include it directly in your HTML from a CDN like unpkg:
 
 ```html
-<script src="https://unpkg.com/gene-tooltip/dist/gene-tooltips.global.js"></script>
+<script src="https://unpkg.com/gene-tooltips/dist/gene-tooltips.global.js"></script>
 ```
 
 ## Basic Usage
 
 Once the script is loaded, you can initialize it. Add the class `gene-tooltip` and a `data-species` attribute to any `<span>` element.
 
+To use all features, including the ideogram and exon maps, you should include ideogram.js and the d3 library as shown here.
+
+You must also include the CSS for proper styling and theme responsiveness.
+
 ```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gene-tooltips/dist/gene-tooltips.css">
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ideogram@1.53.0/dist/js/ideogram.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gene-tooltips/dist/gene-tooltips.global.js"></script>
+
 <p>
   Here is a human gene: <span class="gene-tooltip" data-species="human">TP53</span>.
   And here is a mouse gene: <span class="gene-tooltip" data-species="mouse">Trp53</span>.
 </p>
+
+<script src="https://unpkg.com/gene-tooltips/dist/gene-tooltips.global.js"></script>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -54,17 +65,20 @@ GeneTooltip.init({
 });
 ```
 
+> [!WARNING] If a section of the tooltip is returned empty from mygene.info, it will simply not be shown, rather than displaying an error (with some exceptions, like the Summary).
+
 ## Changing Pathway Source
 
-Show pathways from KEGG instead of the default Reactome.
+Show pathways from Reactome instead of the default KEGG.
 
 ```javascript
 GeneTooltip.init({
-    pathwaySource: 'kegg'
+    pathwaySource: 'reactome'
 });
 ```
 
-*Note: The gene must have KEGG pathway data available at mygene.info for this to display.*
+> [!NOTE]
+> The gene must have Reactome pathway data available at mygene.info for this to display.
 
 ## Adjusting Tooltip Size and Truncation
 

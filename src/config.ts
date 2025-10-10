@@ -132,7 +132,7 @@ export const defaultConfig: GeneTooltipConfig = {
     height: 100,
     showLabels: false,
   },
-  pathwaySource: 'reactome',
+  pathwaySource: 'kegg',
   pathwayCount: 3,
   domainCount: 3,
   transcriptCount: 3,
@@ -144,4 +144,3 @@ export const defaultConfig: GeneTooltipConfig = {
     placement: 'bottom',
   },
 };
-

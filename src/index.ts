@@ -70,6 +70,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
   const instances = tippy(geneElements, {
     ...config.tippyOptions,
     theme: config.theme, // Use top-level theme
+    maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
     content: 'Loading...',
     onShow(instance: TippyInstanceWithCustoms) {
       if (instance.props.content !== 'Loading...') {
@@ -93,7 +94,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
         transcriptCount: config.transcriptCount,
         structureCount: config.structureCount,
         generifCount: config.generifCount,
-        tooltipWidth: config.tooltipWidth,
         tooltipHeight: config.tooltipHeight,
       };
 

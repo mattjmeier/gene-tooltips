@@ -51,6 +51,7 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
       if (item.notfound) continue;
       resultsMap.set(item.query, item);
     }
+    console.log(resultsMap);
     return resultsMap;
 
   } catch (error) {

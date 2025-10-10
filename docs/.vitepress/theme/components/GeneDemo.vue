@@ -1,9 +1,9 @@
 <template>
-  <div class="gene-demo-container">
+  <span class="gene-demo-container">
     <span :class="`gene-tooltip ${uniqueClass}`" :data-species="species">
       {{ genes }}
     </span>
-  </div>
+  </span>
 </template>
 
 <script setup>
@@ -31,7 +31,7 @@ const props = defineProps({
   // Automatically generate a unique selector class
   uniqueClass: {
     type: String,
-    // FIX: Generate a random string here. This function runs separately 
+    // Generate a random string here. This function runs separately
     // for each instance and does not reference local script variables.
     default: () => `gt-rand-${Math.random().toString(36).substring(2, 9)}` 
   }
@@ -65,21 +65,3 @@ onUnmounted(() => {
   // Placeholder for cleanup
 });
 </script>
-
-<style scoped>
-/* * The line break is caused by the div's default 'display: block' behavior.
- * Setting it to 'inline-block' allows it to flow with text 
- * while still respecting width/height/margin/padding.
- */
-.gene-demo-container {
-  display: inline-block;
-  /* Optional: You may want to remove any default vertical margins */
-  /* margin: 0; */ 
-}
-
-/* Optional: Ensure the gene-tooltip span looks like part of the text */
-.gene-tooltip {
-    /* Prevents the browser from breaking the line between genes if they are close together */
-    white-space: nowrap; 
-}
-</style>
