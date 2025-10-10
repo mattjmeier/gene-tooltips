@@ -6,7 +6,7 @@
 
 ### GeneInfo
 
-Defined in: [parser.ts:6](https://github.com/mattjmeier/gene-tooltips/blob/fb2c10adf4ac9d71d1265e16b45e4b9909fd34e5/src/parser.ts#L6)
+Defined in: [parser.ts:6](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/parser.ts#L6)
 
 Defines the structure for gene information extracted from an element.
 
@@ -16,13 +16,13 @@ Defines the structure for gene information extracted from an element.
 
 > **symbol**: `string`
 
-Defined in: [parser.ts:7](https://github.com/mattjmeier/gene-tooltips/blob/fb2c10adf4ac9d71d1265e16b45e4b9909fd34e5/src/parser.ts#L7)
+Defined in: [parser.ts:7](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/parser.ts#L7)
 
 ##### taxid
 
 > **taxid**: `number`
 
-Defined in: [parser.ts:8](https://github.com/mattjmeier/gene-tooltips/blob/fb2c10adf4ac9d71d1265e16b45e4b9909fd34e5/src/parser.ts#L8)
+Defined in: [parser.ts:8](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/parser.ts#L8)
 
 ## Functions
 
@@ -30,7 +30,7 @@ Defined in: [parser.ts:8](https://github.com/mattjmeier/gene-tooltips/blob/fb2c1
 
 > **findGeneElements**(`selector`): [`HTMLElement`](https://developer.mozilla.org/docs/Web/API/HTMLElement)[]
 
-Defined in: [parser.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/fb2c10adf4ac9d71d1265e16b45e4b9909fd34e5/src/parser.ts#L16)
+Defined in: [parser.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/parser.ts#L16)
 
 Finds all elements matching the selector and expands gene lists.
 
@@ -54,7 +54,7 @@ An array of elements to attach tooltips to.
 
 > **getGeneInfoFromElement**(`el`): `null` \| [`GeneInfo`](#geneinfo)
 
-Defined in: [parser.ts:63](https://github.com/mattjmeier/gene-tooltips/blob/fb2c10adf4ac9d71d1265e16b45e4b9909fd34e5/src/parser.ts#L63)
+Defined in: [parser.ts:63](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/parser.ts#L63)
 
 Extracts gene information from a DOM element.
 

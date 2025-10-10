@@ -8,7 +8,7 @@
 
 > **renderGeneTrack**(`instance`, `data`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [gene-track.ts:34](https://github.com/mattjmeier/gene-tooltips/blob/fb2c10adf4ac9d71d1265e16b45e4b9909fd34e5/src/gene-track.ts#L34)
+Defined in: [gene-track.ts:34](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/gene-track.ts#L34)
 
 #### Parameters
 

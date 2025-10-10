@@ -2,7 +2,7 @@
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["src"], // Point to your source directory
   "entryPointStrategy": "expand", // Find all entry points in the directory
-
+  
   // This is the most important setting for a single file.
   // It takes all the discovered modules and puts them into one file.
   "outputFileStrategy": "modules",
@@ -19,5 +19,11 @@
   "categorizeByGroup": false,
   "excludeExternals": true,
   "excludePrivate": true,
-  "excludeProtected": true
+  "excludeProtected": true,
+
+  "exclude": [
+    "**/*.d.ts",
+    "**/*.test.ts",
+    "**/node_modules/**"
+  ]
 }

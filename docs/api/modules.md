@@ -15,6 +15,4 @@
 - [parser](parser.md)
 - [prefetch](prefetch.md)
 - [renderer](renderer.md)
-- [types/assets](types/assets/README.md)
-- [types/ideogram](types/ideogram.md)
 - [ui/summaryExpand](ui/summaryExpand.md)
