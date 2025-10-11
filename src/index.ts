@@ -19,6 +19,8 @@ function createNestedContent(items: { name: string; url: string }[]): string {
 }
 
 let allTippyInstances: Instance[] = [];
+let themeObserver: MutationObserver | null = null;
+let isSummaryHandlerEnabled = false;
 
 function setGlobalTippyTheme(theme: string): void {
   allTippyInstances.forEach(instance => {
@@ -29,7 +31,7 @@ function setGlobalTippyTheme(theme: string): void {
 }
 
 // The init function accepts a partial configuration
-function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
+function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void { 
   const config: GeneTooltipConfig = {
     ...defaultConfig,
     ...userConfig,
@@ -45,102 +47,104 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): void {
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
 
+  let effectiveTheme: string;
+
+  // Handle "auto" theme logic
   if (config.theme === 'auto' || typeof config.theme === 'undefined') {
     const isDark = document.documentElement.classList.contains('dark');
-    // Set the initial theme for Tippy.js
-    config.theme = isDark ? 'dark' : 'light'; 
+    effectiveTheme = isDark ? 'dark' : 'light';
 
-    const observer = new MutationObserver(() => {
+    if (!themeObserver) {
+      themeObserver = new MutationObserver(() => {
         const isNowDark = document.documentElement.classList.contains('dark');
-        setGlobalTippyTheme(isNowDark ? 'dark' : 'light');
-    });
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        const newTheme = isNowDark ? 'dark' : 'light';
+        setGlobalTippyTheme(newTheme);
+      });
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+      });
+    }
+  } else {
+    // Use explicit user theme
+    effectiveTheme = config.theme;
   }
 
+
   const geneElements = findGeneElements(config.selector);
-  if (geneElements.length === 0) return;
+  if (geneElements.length === 0) {
+    // Return a no-op cleanup function if nothing was initialized
+    return () => {};
+  }
 
   runPrefetch(config.prefetch, geneElements, config.prefetchThreshold);
 
   interface TippyInstanceWithCustoms extends Instance {
     _nestedTippys?: Instance[];
     _geneData?: MyGeneInfoResult | null;
+    _isFetching?: boolean;
   }
 
   const instances = tippy(geneElements, {
     ...config.tippyOptions,
-    theme: config.theme, // Use top-level theme
+    theme: effectiveTheme, // Use top-level theme
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
-    content: 'Loading...',
+    // content: 'Loading...',
     onShow(instance: TippyInstanceWithCustoms) {
-      if (instance.props.content !== 'Loading...') {
-          return; 
+      // If we already have data or are fetching, do nothing.
+      if (instance._geneData !== undefined || instance._isFetching === true) {
+        return;
       }
+
+      instance._isFetching = true;
+      instance.setContent('Loading...');
 
       const info = getGeneInfoFromElement(instance.reference as HTMLElement);
-      if (!info) {
-          instance.setContent('Invalid gene element');
-          return;
-      }
+      if (!info) { /* ... handle error ... */ return; }
 
       const { symbol, taxid } = info;
-
-      const renderOptions = {
-        truncate: config.truncateSummary,
-        display: config.display,
-        pathwaySource: config.pathwaySource,
-        pathwayCount: config.pathwayCount,
-        domainCount: config.domainCount,
-        transcriptCount: config.transcriptCount,
-        structureCount: config.structureCount,
-        generifCount: config.generifCount,
-        tooltipHeight: config.tooltipHeight,
+      const renderOptions = { /* ... */ };
+      
+      const renderContent = (data: MyGeneInfoResult | null) => {
+        instance._geneData = data;
+        instance.setContent(renderTooltipHTML(data, renderOptions));
+        instance._isFetching = false;
       };
 
-      const renderContent = (data: MyGeneInfoResult | null) => {
-        // STEP 1: Attach the data to the instance BEFORE rendering.
-        instance._geneData = data; 
-        
-        instance.setContent(renderTooltipHTML(data, renderOptions));
-
-        if (config.ideogram?.enabled && data?.genomic_pos) {
-            setTimeout(() => {
-                renderIdeogram(instance, data, config.ideogram);
-            }, 0);
-        }
-    };
-
-    const cachedData = cache.get(symbol, taxid);
-    if (typeof cachedData !== 'undefined') {
-        renderContent(cachedData);
+      const cachedData = cache.get(symbol, taxid);
+      if (typeof cachedData !== 'undefined') {
+        renderContent(cachedData); // Handle cached data
         return;
-    }
+      }
 
-    fetchMyGeneBatch([symbol], String(taxid))
+      fetchMyGeneBatch([symbol], String(taxid)) // Handle fetched data
         .then(resultsMap => {
-            const data = resultsMap.get(symbol) || null;
-            cache.set(symbol, taxid, data);
-            renderContent(data); // This will also attach the data to the instance
+          const data = resultsMap.get(symbol) || null;
+          cache.set(symbol, taxid, data);
+          renderContent(data);
         })
         .catch(error => {
             console.error(`Failed to fetch data for ${symbol}`, error);
             instance.setContent('Error loading data.');
         });
-},
+    },
 
-onMount(instance: TippyInstanceWithCustoms) {
-    // STEP 2: Read the data DIRECTLY from the instance.
-    const data = instance._geneData; 
+    onMount(instance: TippyInstanceWithCustoms) {
+      const data = instance._geneData; 
+      if (!data) return;
 
-    // This check is now much more reliable.
-    if (!data) return;
-
-    // The rest of your onMount logic can now proceed with confidence.
-    if (config.display.geneTrack && data.exons) {
+      if (config.display.geneTrack && data.exons) {
         renderGeneTrack(instance, data);
-    }
+      }
+      
+      if (config.ideogram?.enabled && data.genomic_pos) {
+        // This now runs safely after the main content is final.
+        renderIdeogram(instance, data, config.ideogram);
+      }
+      
+      // Your nested tippy logic can remain as is.
+      instance._nestedTippys = [];
 
-    instance._nestedTippys = [];
 
     // The createNestedTippy helper will also work correctly as it uses 'data'
     const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
@@ -186,13 +190,35 @@ onMount(instance: TippyInstanceWithCustoms) {
         instance._nestedTippys = [];
       }
     }
-  });
-    if (Array.isArray(instances)) {
-    allTippyInstances.push(...instances);
-  } else if (instances) {
-    allTippyInstances.push(instances);
+  }) as Instance[];
+  
+  // Add the new instances to the global list
+  allTippyInstances.push(...instances);
+  
+  // Only attach the event listener ONCE for the entire page.
+  if (!isSummaryHandlerEnabled) {
+    enableSummaryExpand();
+    isSummaryHandlerEnabled = true;
   }
-  enableSummaryExpand();
+
+  // --- Cleanup function ---
+  return () => {
+    // 1. Destroy the tippy instances created in *this* call
+    instances.forEach(instance => {
+      if (instance && instance.destroy) {
+        instance.destroy();
+      }
+    });
+
+    // 2. Remove them from the global array
+    allTippyInstances = allTippyInstances.filter(i => !instances.includes(i));
+    
+    // Optional: If no tooltips are left on the page, disconnect the observer
+    if (allTippyInstances.length === 0 && themeObserver) {
+      themeObserver.disconnect();
+      themeObserver = null;
+    }
+  };
 }
 
 export default {

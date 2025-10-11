@@ -83,6 +83,7 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
     // Get the theme from the main instance
     //const currentTheme = (instance.props as any).theme || 'auto';
     const parentInstance = instance;
+    let hasAttachedTippy = false;
 
     const configForIdeogram = {
       container: ideogramContainerSelector,
@@ -102,33 +103,39 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
       showAnnotTooltip: false,
       onClickAnnot: function() {},
       onDrawAnnots: function() {
-        const containerElement = instance.popper.querySelector(ideogramContainerSelector);
-
-        if (!containerElement) {
-            console.error(`[GeneTooltip] CRITICAL: Could not find the ideogram container element ('${ideogramContainerSelector}') after it was drawn.`);
-            return;
+        // If we've already run successfully, don't do anything on subsequent calls.
+        if (hasAttachedTippy) {
+          return;
         }
 
-        const annotElements = containerElement.querySelectorAll('.annot');
+        setTimeout(() => {
+          if (hasAttachedTippy) return;
 
-        if (annotElements.length === 0) {
-            console.warn('[GeneTooltip] Could not find any .annot elements to attach tooltips to.');
-            return;
-        }
+          const containerElement = instance.popper.querySelector(ideogramContainerSelector);
+          if (!containerElement) return;
 
-        tippy(annotElements, {
-          content: `<b>${data.symbol}</b><br>chr${chromosome}:${genomicPos.start.toLocaleString()}-${genomicPos.end.toLocaleString()}`,
-          allowHTML: true,
-          placement: 'top',
-          appendTo: instance.popper,
-          // theme: currentTheme, // Use the same theme as parent
-          animation: 'scale-subtle',
-          zIndex: 99999,
-          onShow(nestedInstance){
-          const currentParentTheme = (parentInstance.props as any).theme || 'auto';
-            nestedInstance.setProps({ theme: currentParentTheme });
+          const annotElements = containerElement.querySelectorAll('.annot');
+
+          // We only proceed and set the flag if we actually find the elements.
+          if (annotElements.length > 0) {
+            // This is our "one-shot" trigger.
+            hasAttachedTippy = true;
+
+            tippy(annotElements, {
+
+              content: `<b>${data.symbol}</b><br>chr${chromosome}:${genomicPos.start.toLocaleString()}-${genomicPos.end.toLocaleString()}`,
+              allowHTML: true,
+              placement: 'top',
+              appendTo: instance.popper,
+              animation: 'scale-subtle',
+              zIndex: 99999,
+              onShow(nestedInstance){
+                const currentParentTheme = (parentInstance.props as any).theme || 'auto';
+                nestedInstance.setProps({ theme: currentParentTheme });
+              }
+            });
           }
-        });
+        }, 0);
       },
     };
 
@@ -141,4 +148,3 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
     }
   }
 }
-

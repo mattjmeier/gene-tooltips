@@ -255,6 +255,7 @@ export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,
   options: RenderOptions = {}
 ): string {
+  console.log(`[GeneTooltip DEBUG] ==> renderTooltipHTML called for ${data?.symbol || 'not found'}`);
   if (!data) return '<p>Gene not found.</p>';
 
   const { 
