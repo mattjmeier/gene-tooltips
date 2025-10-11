@@ -8,8 +8,9 @@ The protein encoded by <GeneDemo genes="TP53" species="human" /> is a tumor supp
 
 ## Lists of genes
 
-You can also use delimiters (space, comma, semicolon) to separate lists of genes and use only one class tag for all of them:
+You can also use delimiters (space, comma, semicolon) to separate lists of genes and use only one class tag for all of them.
 
+::: details Show code
 ```html
 <p style="font-size: 1.2em; line-height: 1.8;">
     Here are a bunch of human genes, separated by commas:
@@ -18,6 +19,8 @@ You can also use delimiters (space, comma, semicolon) to separate lists of genes
     </div>
 </p>
 ```
+
+:::
 
 Here are a bunch of human genes, separated by commas: <GeneDemo genes="TP53, GADD45A, BRCA1, BRCA2, RAD51, ATM, XPA, NOTAGENE" species="human" />
 
@@ -34,14 +37,14 @@ The species in [`src/constants.ts`](https://github.com/mattjmeier/gene-tooltips/
 ### Fruitfly
 <GeneDemo genes="boss, Antp, dib" species="fruitfly" />
 ### Nematode
-<GeneDemo genes="ced-3, ced-9, lin-4" species="Nematode" />
+<GeneDemo genes="ced-3, ced-9, lin-4" species="nematode" />
 ### Zebrafish
-<GeneDemo genes="noto, wnt5b, sox2" species="Zebrafish" />
+<GeneDemo genes="noto, wnt5b, sox2" species="zebrafish" />
 ### Thale cress
-<GeneDemo genes="AG, AP1, FLC" species="thale-cress" />
+<GeneDemo genes="AG, AP1, FLC" species="thale cress" />
 ### Frog
 <GeneDemo genes="Nodal, Foxd3, Sox2" species="frog" />
 ### Pig
 <GeneDemo genes="CFTR, APOE, GGTA1" species="pig" />
 ### Yeast
-<GeneDemo genes="PHO5, GAL1, CDC28" species="559292" />
+<GeneDemo genes="PHO5, GAL1, CDC28" species="yeast" />

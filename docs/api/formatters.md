@@ -8,7 +8,7 @@
 
 > **FormattedItem** = `object`
 
-Defined in: [formatters.ts:14](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L14)
+Defined in: [formatters.ts:14](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L14)
 
 #### Properties
 
@@ -16,13 +16,13 @@ Defined in: [formatters.ts:14](https://github.com/mattjmeier/gene-tooltips/blob/
 
 > **name**: `string`
 
-Defined in: [formatters.ts:14](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L14)
+Defined in: [formatters.ts:14](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L14)
 
 ##### url
 
 > **url**: `string`
 
-Defined in: [formatters.ts:14](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L14)
+Defined in: [formatters.ts:14](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L14)
 
 ## Functions
 
@@ -30,7 +30,7 @@ Defined in: [formatters.ts:14](https://github.com/mattjmeier/gene-tooltips/blob/
 
 > **asArray**\<`T`\>(`data`): `T`[]
 
-Defined in: [formatters.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L4)
+Defined in: [formatters.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L4)
 
 #### Type Parameters
 
@@ -54,7 +54,7 @@ Defined in: [formatters.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/7
 
 > **formatDomains**(`domains`): [`FormattedItem`](#formatteditem)[]
 
-Defined in: [formatters.ts:31](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L31)
+Defined in: [formatters.ts:31](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L31)
 
 #### Parameters
 
@@ -72,7 +72,7 @@ Defined in: [formatters.ts:31](https://github.com/mattjmeier/gene-tooltips/blob/
 
 > **formatGeneRIFs**(`generifs`): [`FormattedItem`](#formatteditem)[]
 
-Defined in: [formatters.ts:53](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L53)
+Defined in: [formatters.ts:53](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L53)
 
 #### Parameters
 
@@ -90,7 +90,7 @@ Defined in: [formatters.ts:53](https://github.com/mattjmeier/gene-tooltips/blob/
 
 > **formatPathways**(`pathways`, `source`): [`FormattedItem`](#formatteditem)[]
 
-Defined in: [formatters.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L16)
+Defined in: [formatters.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L16)
 
 #### Parameters
 
@@ -112,7 +112,7 @@ Defined in: [formatters.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/
 
 > **formatStructures**(`pdbs`): [`FormattedItem`](#formatteditem)[]
 
-Defined in: [formatters.ts:46](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L46)
+Defined in: [formatters.ts:46](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L46)
 
 #### Parameters
 
@@ -130,7 +130,7 @@ Defined in: [formatters.ts:46](https://github.com/mattjmeier/gene-tooltips/blob/
 
 > **formatTranscripts**(`transcripts`): [`FormattedItem`](#formatteditem)[]
 
-Defined in: [formatters.ts:40](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L40)
+Defined in: [formatters.ts:40](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L40)
 
 #### Parameters
 
@@ -148,7 +148,7 @@ Defined in: [formatters.ts:40](https://github.com/mattjmeier/gene-tooltips/blob/
 
 > **getUniqueItems**\<`T`\>(`items`, `key`): `T`[]
 
-Defined in: [formatters.ts:10](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/formatters.ts#L10)
+Defined in: [formatters.ts:10](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/formatters.ts#L10)
 
 #### Type Parameters
 

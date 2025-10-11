@@ -8,7 +8,7 @@
 
 > **runPrefetch**(`strategy`, `elements`, `threshold`): `void`
 
-Defined in: [prefetch.ts:60](https://github.com/mattjmeier/gene-tooltips/blob/7d15e7541844d8a92c64035715067ebe47aab9e4/src/prefetch.ts#L60)
+Defined in: [prefetch.ts:60](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/prefetch.ts#L60)
 
 #### Parameters
 
