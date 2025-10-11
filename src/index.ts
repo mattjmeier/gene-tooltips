@@ -70,7 +70,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     effectiveTheme = config.theme;
   }
 
-
   const geneElements = findGeneElements(config.selector);
   if (geneElements.length === 0) {
     // Return a no-op cleanup function if nothing was initialized
@@ -100,10 +99,24 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       instance.setContent('Loading...');
 
       const info = getGeneInfoFromElement(instance.reference as HTMLElement);
-      if (!info) { /* ... handle error ... */ return; }
+      if (!info) {
+        instance.setContent('Invalid gene element');
+        instance._isFetching = false; // Reset state
+        return;
+      }
 
       const { symbol, taxid } = info;
-      const renderOptions = { /* ... */ };
+      const renderOptions = {
+        truncate: config.truncateSummary,
+        display: config.display,
+        pathwaySource: config.pathwaySource,
+        pathwayCount: config.pathwayCount,
+        domainCount: config.domainCount,
+        transcriptCount: config.transcriptCount,
+        structureCount: config.structureCount,
+        generifCount: config.generifCount,
+        tooltipHeight: config.tooltipHeight,
+      };
       
       const renderContent = (data: MyGeneInfoResult | null) => {
         instance._geneData = data;
@@ -144,7 +157,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       
       // Your nested tippy logic can remain as is.
       instance._nestedTippys = [];
-
 
     // The createNestedTippy helper will also work correctly as it uses 'data'
     const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
