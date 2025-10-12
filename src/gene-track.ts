@@ -31,12 +31,13 @@ Please ensure 'd3' is installed (it's a peer dependency) or the script is loaded
     return d3ModulePromise;
 }
 
-export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult) {
-    const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${data._id}`);
+export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult, uniqueId: string) {
+    const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${uniqueId}`);
     if (!container) {
-        console.error(`[GeneTooltip] Gene track container '#gene-tooltip-track-${data._id}' not found.`);
+        console.error(`[GeneTooltip] Gene track container '#gene-tooltip-track-${uniqueId}' not found.`);
         return;
     }
+    
     // Define the shape of our data object
     type ExonSegment = {
         coords: [number, number];
@@ -48,12 +49,6 @@ export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult
         if (!d3) {
           container.innerHTML = `<small>Gene track library (d3) not found.</small>`;
           return;
-        }
-
-
-        if (!container) {
-            console.error(`[GeneTooltip] Gene track container '#gene-tooltip-track-${data._id}' not found.`);
-            return;
         }
 
         if (!data.exons || data.exons.length === 0) {

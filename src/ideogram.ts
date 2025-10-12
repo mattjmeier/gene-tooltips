@@ -5,11 +5,6 @@ import tippy from 'tippy.js';
 
 let ideogramModulePromise: Promise<any> | null = null;
 
-// Generate a unique ID for each tooltip instance
-function generateUniqueId(): string {
-  return `ideo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-}
-
 //  Checking for module or global mode
 async function getIdeogram() {
   if (ideogramModulePromise) {
@@ -48,42 +43,30 @@ Please ensure 'ideogram' is installed (it's a peer dependency).`;
   return ideogramModulePromise;
 }
 
-// The render function with unique container IDs
-export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult, ideogramConfig: Partial<IdeogramConfig>) {
+// The render function with unique ID parameter
+export async function renderIdeogram(
+  instance: Instance, 
+  data: MyGeneInfoResult, 
+  ideogramConfig: Partial<IdeogramConfig>,
+  uniqueId: string
+) {
   
-  const ideoDivInPopper = instance.popper.querySelector(`.gene-tooltip-ideo`) as HTMLElement;
-
   try {
     const Ideogram = await getIdeogram();
     
     if (!Ideogram) {
-        if (ideoDivInPopper) ideoDivInPopper.innerHTML = '<small>Ideogram unavailable</small>';
-        return;
-    }
-
-    // Generate a unique ID for this specific tooltip instance
-    const uniqueId = generateUniqueId();
-    
-    // First, try to find by the data-based selector (for backward compatibility)
-    let ideoDiv = instance.popper.querySelector(`#gene-tooltip-ideo-${data._id}`) as HTMLElement;
-    
-    // If found, update its ID to be unique
-    if (ideoDiv) {
-      ideoDiv.id = `gene-tooltip-ideo-${uniqueId}`;
-    } else {
-      // Fallback: look for any element with the generic class
-      ideoDiv = instance.popper.querySelector('.gene-tooltip-ideo') as HTMLElement;
-      if (ideoDiv) {
-        ideoDiv.id = `gene-tooltip-ideo-${uniqueId}`;
-      }
-    }
-
-    if (!ideoDiv) {
-      console.error(`[GeneTooltip] CRITICAL: Ideogram container not found.`);
+      const ideoDivInPopper = instance.popper.querySelector(`.gene-tooltip-ideo`) as HTMLElement;
+      if (ideoDivInPopper) ideoDivInPopper.innerHTML = '<small>Ideogram unavailable</small>';
       return;
     }
 
     const ideogramContainerSelector = `#gene-tooltip-ideo-${uniqueId}`;
+    const ideoDiv = instance.popper.querySelector(ideogramContainerSelector) as HTMLElement;
+
+    if (!ideoDiv) {
+      console.error(`[GeneTooltip] CRITICAL: Ideogram container '${ideogramContainerSelector}' not found.`);
+      return;
+    }
 
     const genomicPos = Array.isArray(data.genomic_pos) ? data.genomic_pos[0] : data.genomic_pos!;
     if (!genomicPos) {
@@ -163,6 +146,7 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
 
   } catch (error) {
     console.error('[GeneTooltip] Ideogram failed to render:', error);
+    const ideoDivInPopper = instance.popper.querySelector(`.gene-tooltip-ideo`) as HTMLElement;
     if (ideoDivInPopper) {
       ideoDivInPopper.innerHTML = '<small>Ideogram not installed or failed to load.</small>';
     }

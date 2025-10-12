@@ -18,6 +18,7 @@ interface RenderOptions {
   generifCount?: number;
   tooltipWidth?: number;
   tooltipHeight?: number;
+  uniqueId?: string; // Add this parameter
 }
 
 // Generate a unique ID for this tooltip instance
@@ -269,7 +270,7 @@ export function renderTooltipHTML(
   if (!data) return '<p>Gene not found.</p>';
 
   // Generate a unique ID for this specific tooltip instance
-  const uniqueId = generateUniqueId();
+  const uniqueId = options.uniqueId || generateUniqueId();
 
   const { 
     truncate = 4, 
