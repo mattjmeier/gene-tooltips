@@ -14,11 +14,16 @@ export function enableSummaryExpand(): void {
     }
     // Case 2: Clicked "Show less"
     else if (target.matches('[id^="summary-less-"]')) {
-      // Find the paragraph by navigating from the button's container
       summaryP = target.closest('.gene-tooltip-section-container')?.querySelector('.gene-tooltip-summary') as HTMLElement;
       shouldExpand = false;
     }
-    // Case 3: Clicked the expanded summary paragraph itself
+
+    // Case 3: Clicked the truncated summary paragraph itself
+    else if (target.matches('.gene-tooltip-summary:not(.expanded)')) {
+      summaryP = target;
+      shouldExpand = true; // Tell it to expand
+    }
+    // Case 4: Clicked the expanded summary paragraph itself
     else if (target.matches('.gene-tooltip-summary.expanded')) {
       summaryP = target;
       shouldExpand = false;
@@ -39,8 +44,8 @@ export function enableSummaryExpand(): void {
   document.addEventListener("keydown", e => {
     if (e.key === "Enter" || e.key === " ") {
       const target = e.target as HTMLElement;
-      // Only act if the focused element is one of the interactive elements
-      if (target.matches('[id^="summary-more-"]') || target.matches('[id^="summary-less-"]') || target.matches('.gene-tooltip-summary.expanded')) {
+      // Also update the keyboard handler to allow expanding via text focus
+      if (target.matches('[id^="summary-more-"]') || target.matches('[id^="summary-less-"]') || target.matches('.gene-tooltip-summary')) {
         e.preventDefault();
         handleSummaryToggle(target);
       }
