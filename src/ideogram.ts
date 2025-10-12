@@ -6,7 +6,7 @@ import tippy from 'tippy.js';
 let ideogramModulePromise: Promise<any> | null = null;
 
 //  Checking for module or global mode
-async function getIdeogram() {
+export async function getIdeogram() {
   if (ideogramModulePromise) {
     return ideogramModulePromise;
   }
