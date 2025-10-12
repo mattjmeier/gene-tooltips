@@ -61,6 +61,7 @@ display: {
   links: {
     ncbi?: boolean;
     ensembl?: boolean;
+    wikipedia?: boolean;
   };
 }
 ```

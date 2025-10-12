@@ -45,6 +45,9 @@ export interface MyGeneInfoResult {
     transcript?: string[] | string;
   };
   pdb?: string[] | string;
+  wikipedia?: {
+    url_stub?: string;
+  };
   generif?: GeneRIF[] | GeneRIF;
 }
 
@@ -62,6 +65,7 @@ export interface TooltipDisplayConfig {
   links: {
     ncbi?: boolean;
     ensembl?: boolean;
+    wikipedia?: boolean;
   };
 }
 
@@ -125,6 +129,7 @@ export const defaultConfig: GeneTooltipConfig = {
     links: {
       ncbi: true,
       ensembl: true,
+      wikipedia: true,
     },
   },
   ideogram: {

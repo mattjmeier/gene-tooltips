@@ -6,6 +6,8 @@ export type FormattedItem = { name: string; url: string };
 import NCBILogoText from "./assets/NLM-square-logo.svg";
 const NCBILogo = `data:image/svg+xml,${encodeURIComponent(NCBILogoText)}`;
 import EnsemblLogo from "./assets/ebang-400dpi.png";
+import WikiLogoText from "./assets/Wikipedia-logo.svg";
+const WikiLogo = `data:image/svg+xml,${encodeURIComponent(WikiLogoText)}`;
 
 interface RenderOptions {
   truncate?: number;
@@ -131,6 +133,20 @@ function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConf
         </a>
       `);
     }
+
+    // Build Wikipedia links
+    if (display.links?.wikipedia !== false && data.wikipedia?.url_stub) {
+      const wikiStub = data.wikipedia.url_stub.replace(/\s+/g, '_');
+
+      linksToShow.push(`
+        <a href="https://en.wikipedia.org/wiki/${wikiStub}"
+          target="_blank" rel="noopener noreferrer" title="View on Wikipedia">
+          <img src="${WikiLogo}" alt="Wikipedia link" class="gene-tooltip-link-icon" />
+          <span>Wikipedia</span>
+        </a>
+      `);
+    }
+
 
     if (linksToShow.length === 0) return '';
 

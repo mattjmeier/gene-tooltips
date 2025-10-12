@@ -9,6 +9,10 @@ vi.mock('../src/assets/NLM-square-logo.svg', () => ({
 vi.mock('../src/assets/ebang-400dpi.png', () => ({
   default: 'mock-ensembl-logo.png',
 }));
+// vi.mock('../src/assets/Wikipedia-logo.svg', () => ({
+//   default: 'mock-wiki-logo.png',
+// }));
+// TODO - finish adding wikipedia tests
 
 // A complete mock object for thorough testing
 const mockGeneData: MyGeneInfoResult = {

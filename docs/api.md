@@ -94,6 +94,7 @@ Control which content sections are shown in the tooltip.
     links: {
       ncbi: true,
       ensembl: true,
+      wikipedia: true,
     },
   }
   ```
@@ -113,6 +114,7 @@ Control which content sections are shown in the tooltip.
 | `generifs` | `boolean` | `true` | Show GeneRIF functional annotations. |
 | `links.ncbi` | `boolean` | `true` | Show link to NCBI Gene page. |
 | `links.ensembl` | `boolean` | `true` | Show link to ENSEMBL Gene page. |
+| `links.wikipedia` | `boolean` | `true` | Show link to Wikipedia. |
 
 
 ## 🧬 Ideogram Configuration (`ideogram`)

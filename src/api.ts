@@ -30,7 +30,8 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
     'ensembl.protein',
     'ensembl.transcript',
     'pdb',
-    'generif'
+    'generif',
+    'wikipedia.url_stub'
   ].join(',');
 
 
