@@ -7,7 +7,7 @@ import type * as D3 from 'd3';
 let d3ModulePromise: Promise<typeof D3 | null> | null = null;
 
 // 2. Update the function signature to use the imported type
-async function getD3(): Promise<typeof D3 | null> {
+export async function getD3(): Promise<typeof D3 | null> {
     if (d3ModulePromise) {
         return d3ModulePromise;
     }

@@ -358,3 +358,29 @@
 .gene-tooltip-track line {
   stroke: var(--gt-border-color);
 }
+
+.gt-loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-size: 0.85em;
+  color: var(--gt-text-color-secondary);
+  opacity: 0.8;
+  min-height: 40px;
+}
+
+.gt-spinner {
+  border: 2px solid var(--gt-border-color);
+  border-top-color: var(--gt-accent-color);
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+  animation: gt-spin 0.8s linear infinite;
+}
+
+@keyframes gt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

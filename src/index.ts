@@ -9,6 +9,8 @@ import { enableSummaryExpand } from './ui/summaryExpand.js';
 import { renderIdeogram } from './ideogram.js';
 import { renderGeneTrack } from './gene-track.js';
 import { formatPathways, formatDomains, formatTranscripts, formatStructures, formatGeneRIFs } from './formatters.js';
+import { getD3 } from './gene-track.js';
+import { getIdeogram } from './ideogram.js';
 
 // --- Map to track in-flight requests ---
 const inFlightRequests = new Map<string, Promise<Map<string, MyGeneInfoResult>>>();
@@ -62,6 +64,16 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     ideogram: { ...defaultConfig.ideogram, ...userConfig.ideogram },
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
+
+  // If the config indicates that either of these features might be used,
+  // start loading the libraries now. We don't await them; we just want
+  // them to start downloading in the background.
+  if (config.display.geneTrack) {
+    getD3();
+  }
+  if (config.ideogram?.enabled) {
+    getIdeogram();
+  }
 
   let effectiveTheme: string;
   const isAutoTheme = config.theme === 'auto' || typeof config.theme === 'undefined';
