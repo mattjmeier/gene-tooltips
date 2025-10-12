@@ -26,7 +26,6 @@ html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material'
 */
 .tippy-box[data-theme~='dark'],
 html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):not([data-theme~='translucent']) {
-  --gt-background-color: #333;
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #58a6ff;
@@ -41,21 +40,20 @@ html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):no
   These should work correctly regardless of the light/dark mode of the page.
 */
 .tippy-box[data-theme~='material'] {
-  --gt-background-color: #424242;
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #80cbc4;
   --gt-exon-color: #80cbc4;
+  --gt-border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* --- TRANSLUCENT THEME --- */
 .tippy-box[data-theme~='translucent'] {
-    /* Translucent is tricky, but we can approximate */
-  --gt-background-color: rgba(20, 20, 20, 0.8);
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #8cb3f3;
   --gt-border-color: rgba(255, 255, 255, 0.25);
   --gt-hover-background-color: rgba(255, 255, 255, 0.15);
   --gt-exon-color: #8cb3f3;
+  --gt-border-color: rgba(255, 255, 255, 0.2);
 }
