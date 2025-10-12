@@ -173,7 +173,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
         renderIdeogram(instance, data, config.ideogram, instance._uniqueId);
       }
       
-      // Your nested tippy logic using the unique ID
+      // Nested tippy logic using the unique ID
       instance._nestedTippys = [];
 
       // The createNestedTippy helper now uses the unique ID
