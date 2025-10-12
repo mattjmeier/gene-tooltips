@@ -3,7 +3,7 @@ export default {
   description: 'A lightweight library for creating gene information tooltips.',
   base: '/gene-tooltips/',
   head: [
-    ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]
+    ['link', { rel: 'icon', type: 'image/png', href: '/gene-tooltips/favicon.png' }]
   ],
   themeConfig: {
     nav: [
