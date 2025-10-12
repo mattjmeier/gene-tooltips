@@ -45,6 +45,6 @@ The species in [`src/constants.ts`](https://github.com/mattjmeier/gene-tooltips/
 ### Frog
 <GeneDemo genes="Nodal, Foxd3, Sox2" species="frog" />
 ### Pig
-<GeneDemo genes="CFTR, APOE, GGTA1" species="pig" />
+<GeneDemo genes="ADCY4, APOE, GGTA1" species="pig" />
 ### Yeast
 <GeneDemo genes="PHO5, GAL1, CDC28" species="yeast" />

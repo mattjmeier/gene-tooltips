@@ -43,19 +43,24 @@ Please ensure 'ideogram' is installed (it's a peer dependency).`;
   return ideogramModulePromise;
 }
 
-// The render function remains mostly the same, but calls the new loader
-export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult, ideogramConfig: Partial<IdeogramConfig>) {
+// The render function with unique ID parameter
+export async function renderIdeogram(
+  instance: Instance, 
+  data: MyGeneInfoResult, 
+  ideogramConfig: Partial<IdeogramConfig>,
+  uniqueId: string
+) {
   
-  const ideoDivInPopper = instance.popper.querySelector(`.gene-tooltip-ideo`) as HTMLElement;
-
   try {
     const Ideogram = await getIdeogram();
     
     if (!Ideogram) {
-        if (ideoDivInPopper) ideoDivInPopper.innerHTML = '<small>Ideogram unavailable</small>';
-        return;
+      const ideoDivInPopper = instance.popper.querySelector(`.gene-tooltip-ideo`) as HTMLElement;
+      if (ideoDivInPopper) ideoDivInPopper.innerHTML = '<small>Ideogram unavailable</small>';
+      return;
     }
-    const ideogramContainerSelector = `#gene-tooltip-ideo-${data._id}`;
+
+    const ideogramContainerSelector = `#gene-tooltip-ideo-${uniqueId}`;
     const ideoDiv = instance.popper.querySelector(ideogramContainerSelector) as HTMLElement;
 
     if (!ideoDiv) {
@@ -81,8 +86,8 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
     }
 
     // Get the theme from the main instance
-    //const currentTheme = (instance.props as any).theme || 'auto';
     const parentInstance = instance;
+    let hasAttachedTippy = false;
 
     const configForIdeogram = {
       container: ideogramContainerSelector,
@@ -102,33 +107,38 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
       showAnnotTooltip: false,
       onClickAnnot: function() {},
       onDrawAnnots: function() {
-        const containerElement = instance.popper.querySelector(ideogramContainerSelector);
-
-        if (!containerElement) {
-            console.error(`[GeneTooltip] CRITICAL: Could not find the ideogram container element ('${ideogramContainerSelector}') after it was drawn.`);
-            return;
+        // If we've already run successfully, don't do anything on subsequent calls.
+        if (hasAttachedTippy) {
+          return;
         }
 
-        const annotElements = containerElement.querySelectorAll('.annot');
+        setTimeout(() => {
+          if (hasAttachedTippy) return;
 
-        if (annotElements.length === 0) {
-            console.warn('[GeneTooltip] Could not find any .annot elements to attach tooltips to.');
-            return;
-        }
+          const containerElement = instance.popper.querySelector(ideogramContainerSelector);
+          if (!containerElement) return;
 
-        tippy(annotElements, {
-          content: `<b>${data.symbol}</b><br>chr${chromosome}:${genomicPos.start.toLocaleString()}-${genomicPos.end.toLocaleString()}`,
-          allowHTML: true,
-          placement: 'top',
-          appendTo: instance.popper,
-          // theme: currentTheme, // Use the same theme as parent
-          animation: 'scale-subtle',
-          zIndex: 99999,
-          onShow(nestedInstance){
-          const currentParentTheme = (parentInstance.props as any).theme || 'auto';
-            nestedInstance.setProps({ theme: currentParentTheme });
+          const annotElements = containerElement.querySelectorAll('.annot');
+
+          // We only proceed and set the flag if we actually find the elements.
+          if (annotElements.length > 0) {
+            // This is our "one-shot" trigger.
+            hasAttachedTippy = true;
+
+            tippy(annotElements, {
+              content: `<b>${data.symbol}</b><br>chr${chromosome}:${genomicPos.start.toLocaleString()}-${genomicPos.end.toLocaleString()}`,
+              allowHTML: true,
+              placement: 'top',
+              appendTo: instance.popper,
+              animation: 'scale-subtle',
+              zIndex: 99999,
+              onShow(nestedInstance){
+                const currentParentTheme = (parentInstance.props as any).theme || 'auto';
+                nestedInstance.setProps({ theme: currentParentTheme });
+              }
+            });
           }
-        });
+        }, 0);
       },
     };
 
@@ -136,9 +146,9 @@ export async function renderIdeogram(instance: Instance, data: MyGeneInfoResult,
 
   } catch (error) {
     console.error('[GeneTooltip] Ideogram failed to render:', error);
+    const ideoDivInPopper = instance.popper.querySelector(`.gene-tooltip-ideo`) as HTMLElement;
     if (ideoDivInPopper) {
       ideoDivInPopper.innerHTML = '<small>Ideogram not installed or failed to load.</small>';
     }
   }
 }
-

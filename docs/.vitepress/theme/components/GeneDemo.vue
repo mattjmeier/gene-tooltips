@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import GeneTooltip from 'gene-tooltips';
 import 'gene-tooltips/style.css';
 
@@ -37,14 +37,15 @@ const props = defineProps({
   }
 });
 
+// A ref to hold the cleanup function
+const cleanupTooltip = ref(null);
+
 onMounted(() => {
-  if (GeneTooltip) {
-    // 2. Construct the unique selector
+  if (GeneTooltip && GeneTooltip.init) {
     const selector = `.gene-tooltip.${props.uniqueClass}`;
     
-    // 3. Merge default/base config with the one passed via props
     const finalConfig = {
-      selector: selector, // IMPORTANT: Isolate this instance
+      selector: selector,
       truncateSummary: 3,
       display: {
         ideogram: true,
@@ -58,10 +59,14 @@ onMounted(() => {
 
     // 4. Initialize the library on the unique element
     GeneTooltip.init(finalConfig);
+    // Store the returned cleanup function
+    cleanupTooltip.value = GeneTooltip.init(finalConfig);
   }
 });
 
 onUnmounted(() => {
-  // Placeholder for cleanup
+  if (cleanupTooltip.value) {
+    cleanupTooltip.value();
+  }
 });
 </script>

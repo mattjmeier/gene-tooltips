@@ -7,7 +7,9 @@
   --- DEFAULT (LIGHT) THEME VARIABLES ---
   This is the baseline. All tooltips get these styles unless overridden.
 */
-.tippy-box {
+/* Default (light) variables */
+.tippy-box[data-theme~='light'],
+html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material']):not([data-theme~='translucent']) {
   --gt-background-color: #fff;
   --gt-text-color: #222;
   --gt-text-color-secondary: rgba(0, 0, 0, 0.6);
@@ -17,13 +19,13 @@
   --gt-exon-color: #007bff;
 }
 
+
 /* 
   --- DARK THEME VARIABLES ---
   Defined once in a "mixin-like" fashion using a placeholder selector.
 */
-.tippy-box[data-theme~='dark'], /* Force dark when theme is 'dark' */
-html.dark .tippy-box:not([data-theme~='light']) /* Auto dark when page is dark, UNLESS theme is 'light' */
-{
+.tippy-box[data-theme~='dark'],
+html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):not([data-theme~='translucent']) {
   --gt-background-color: #333;
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
@@ -32,6 +34,7 @@ html.dark .tippy-box:not([data-theme~='light']) /* Auto dark when page is dark, 
   --gt-hover-background-color: rgba(255, 255, 255, 0.1);
   --gt-exon-color: #58a6ff;
 }
+
 
 /* 
   Overrides for other themes.
