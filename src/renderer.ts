@@ -20,6 +20,16 @@ interface RenderOptions {
   tooltipHeight?: number;
 }
 
+// Generate a unique ID for this tooltip instance
+function generateUniqueId(): string {
+  // Use crypto.randomUUID() if available (modern browsers), fallback for older browsers
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback for older browsers or environments without crypto.randomUUID
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
+}
+
 function renderSpecies(taxid: number): string {
   const species = speciesMap[taxid] ?? { common: "Unknown", genus: "", icon: "❓" };
   return `
@@ -30,8 +40,8 @@ function renderSpecies(taxid: number): string {
   `;
 }
 
-// Ideogram layout
-function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined, showIdeogram: boolean = false, geneId: string = ''): string {
+// Ideogram layout with unique ID
+function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined, showIdeogram: boolean = false, uniqueId: string = ''): string {
     if (!genomic_pos) return '';
 
     const pos = Array.isArray(genomic_pos) ? genomic_pos[0] : genomic_pos;
@@ -48,23 +58,23 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
               <span class="gene-tooltip-location-chr">chr${pos.chr}</span>
               <span class="gene-tooltip-location-pos">${start}-${end}</span>
             </div>
-            ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${geneId}"></div>` : ""}
+            ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${uniqueId}"></div>` : ""}
         </div>
       </div>
     `;
 }
 
-// Modified for Gene Track section layout
-function renderGeneTrackContainer(geneId: string): string {
+// Modified for Gene Track section layout with unique ID
+function renderGeneTrackContainer(uniqueId: string): string {
   return `
     <div class="gene-tooltip-section-container">
         <div class="gene-tooltip-section-header">Gene Model</div>
-        <div class="gene-tooltip-track" id="gene-tooltip-track-${geneId}"></div>
+        <div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}"></div>
     </div>
   `;
 }
 
-function renderSummary(summaryText: string | undefined, truncate: number, geneId: string): string {
+function renderSummary(summaryText: string | undefined, truncate: number, uniqueId: string): string {
   const summary = summaryText || "No summary available.";
   
   if (!summaryText || truncate <= 0) {
@@ -79,8 +89,8 @@ function renderSummary(summaryText: string | undefined, truncate: number, geneId
   const summaryClass = 'gene-tooltip-summary';
   const summaryStyle = `style="--line-clamp: ${truncate};"`;
   
-  const moreButtonId = `summary-more-${geneId}`;
-  const lessButtonId = `summary-less-${geneId}`;
+  const moreButtonId = `summary-more-${uniqueId}`;
+  const lessButtonId = `summary-less-${uniqueId}`;
   
   const moreButton = renderMoreButton(moreButtonId, 'Show more');
   const lessButton = renderCollapseButton(lessButtonId, 'Show less');
@@ -222,32 +232,32 @@ function renderListSection(
   `;
 }
 
-function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'wikipathways', count: number): string {
+function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'wikipathways', count: number, uniqueId: string): string {
     const pathways = formatPathways(data.pathway?.[source], source);
-    return renderParagraphSection('Pathways', pathways, count, `pathways-more-${data._id}`);
+    return renderParagraphSection('Pathways', pathways, count, `pathways-more-${uniqueId}`);
 }
 
-function renderDomains(data: MyGeneInfoResult, count: number): string {
+function renderDomains(data: MyGeneInfoResult, count: number, uniqueId: string): string {
   const domains = formatDomains(data.interpro);
-  return renderParagraphSection('Protein Domains', domains, count, `domains-more-${data._id}`);
+  return renderParagraphSection('Protein Domains', domains, count, `domains-more-${uniqueId}`);
 }
 
-function renderTranscripts(data: MyGeneInfoResult, count: number): string {
+function renderTranscripts(data: MyGeneInfoResult, count: number, uniqueId: string): string {
   const transcripts = formatTranscripts(data.ensembl?.transcript);
-  return renderParagraphSection('Transcripts', transcripts, count, `transcripts-more-${data._id}`);
+  return renderParagraphSection('Transcripts', transcripts, count, `transcripts-more-${uniqueId}`);
 }
 
-function renderStructures(data: MyGeneInfoResult, count: number): string {
+function renderStructures(data: MyGeneInfoResult, count: number, uniqueId: string): string {
   const structures = formatStructures(data.pdb);
-  return renderParagraphSection('PDB Structures', structures, count, `structures-more-${data._id}`);
+  return renderParagraphSection('PDB Structures', structures, count, `structures-more-${uniqueId}`);
 }
 
-function renderGeneRIFs(data: MyGeneInfoResult, count: number): string {
+function renderGeneRIFs(data: MyGeneInfoResult, count: number, uniqueId: string): string {
   // 1. Get the clean, formatted data
   const generifs = formatGeneRIFs(data.generif);
   
   // 2. Pass it to the appropriate generic renderer
-  const moreButtonId = `generifs-more-${data._id}`;
+  const moreButtonId = `generifs-more-${uniqueId}`;
   return renderListSection('GeneRIFs', generifs, count, moreButtonId);
 }
 
@@ -257,6 +267,9 @@ export function renderTooltipHTML(
 ): string {
   console.log(`[GeneTooltip DEBUG] ==> renderTooltipHTML called for ${data?.symbol || 'not found'}`);
   if (!data) return '<p>Gene not found.</p>';
+
+  // Generate a unique ID for this specific tooltip instance
+  const uniqueId = generateUniqueId();
 
   const { 
     truncate = 4, 
@@ -277,7 +290,7 @@ export function renderTooltipHTML(
   const inlineStyle = styleParts.length > 0 ? `style="${styleParts.join('; ')}"` : '';
 
   return `
-    <div class="gene-tooltip-content" ${inlineStyle}>
+    <div class="gene-tooltip-content" ${inlineStyle} data-tooltip-id="${uniqueId}">
       <div class="gene-tooltip-header">
         <div class="gene-tooltip-title">
           <strong>${data.symbol}</strong>
@@ -287,15 +300,15 @@ export function renderTooltipHTML(
 
       ${display.species !== false && data.taxid ? renderSpecies(data.taxid) : ''}
       
-      ${renderSummary(data.summary, truncate, data._id)}
+      ${renderSummary(data.summary, truncate, uniqueId)}
 
-      ${display.location !== false ? renderLocation(data.genomic_pos, display.ideogram, data._id) : ''}
-      ${display.geneTrack !== false && data.exons && data.exons.length > 0 ? renderGeneTrackContainer(data._id) : ''}
-      ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount) : ''}
-      ${display.domains !== false ? renderDomains(data, domainCount) : ''}
-      ${display.transcripts !== false ? renderTranscripts(data, transcriptCount) : ''}
-      ${display.structures !== false ? renderStructures(data, structureCount) : ''}
-      ${display.generifs !== false ? renderGeneRIFs(data, generifCount) : ''}
+      ${display.location !== false ? renderLocation(data.genomic_pos, display.ideogram, uniqueId) : ''}
+      ${display.geneTrack !== false && data.exons && data.exons.length > 0 ? renderGeneTrackContainer(uniqueId) : ''}
+      ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount, uniqueId) : ''}
+      ${display.domains !== false ? renderDomains(data, domainCount, uniqueId) : ''}
+      ${display.transcripts !== false ? renderTranscripts(data, transcriptCount, uniqueId) : ''}
+      ${display.structures !== false ? renderStructures(data, structureCount, uniqueId) : ''}
+      ${display.generifs !== false ? renderGeneRIFs(data, generifCount, uniqueId) : ''}
 
       ${renderLinks(data, display)}
     </div>
