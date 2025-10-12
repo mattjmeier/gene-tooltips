@@ -2,6 +2,9 @@ export default {
   title: 'Gene Tooltip JS',
   description: 'A lightweight library for creating gene information tooltips.',
   base: '/gene-tooltips/',
+  head: [
+    ['link', { rel: 'icon', type: 'image/png', href: '/favicon.png' }]
+  ],
   themeConfig: {
     nav: [
       { text: 'Guide', link: '/guide' },
