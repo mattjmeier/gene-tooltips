@@ -31,7 +31,13 @@ Please ensure 'd3' is installed (it's a peer dependency) or the script is loaded
     return d3ModulePromise;
 }
 
-export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult, uniqueId: string) {
+export async function renderGeneTrack(
+  instance: Instance, 
+  data: MyGeneInfoResult, 
+  uniqueId: string,
+  tooltipWidth?: number
+) {
+
     const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${uniqueId}`);
     if (!container) {
         console.error(`[GeneTooltip] Gene track container '#gene-tooltip-track-${uniqueId}' not found.`);
@@ -107,8 +113,11 @@ export async function renderGeneTrack(instance: Instance, data: MyGeneInfoResult
         });
 
         // --- D3 Drawing Logic ---
+        // Use the provided tooltipWidth, otherwise fall back to a default.
+        // Subtract margins and some padding for a good fit.
         const margin = { top: 20, right: 10, bottom: 5, left: 10 };
-        const width = 290 - margin.left - margin.right;
+        const availableWidth = tooltipWidth ? tooltipWidth - 30 : 290; 
+        const width = availableWidth - margin.left - margin.right;
         const height = 20;
         const exonHeight = 10;
         const yCenter = height / 2;

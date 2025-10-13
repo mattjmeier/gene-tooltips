@@ -183,7 +183,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       if (!data || !instance._uniqueId) return;
 
       if (config.display.geneTrack && data.exons) {
-        renderGeneTrack(instance, data, instance._uniqueId);
+        renderGeneTrack(instance, data, instance._uniqueId, config.tooltipWidth); 
       }
       
       if (config.ideogram?.enabled && data.genomic_pos) {
