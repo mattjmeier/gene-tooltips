@@ -82,12 +82,14 @@ GeneTooltip.init({
     structures: false,
     generifs: false,
     links: {
-      ensembl: false
+      ensembl: false,
+      ncbi: false,
+      wikipedia: false
     }
   }
 });
 ```
-Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ display: { species: false, ideogram: false, pathways: false, domains: false, geneTrack: false, transcripts: false, structures: false, generifs: false, links: { ensembl: false } } }" />
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ display: { species: false, ideogram: false, pathways: false, domains: false, geneTrack: false, transcripts: false, structures: false, generifs: false, links: { ensembl: false, ncbi: false, wikipedia: false } } }" />
 
 ## Sizing and Truncation
 
