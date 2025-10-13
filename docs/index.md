@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: Gene Tooltip JS
+  name: Gene Tooltips JS
   text: The flexible, backend-agnostic tooltip library for gene names.
   tagline: Add rich, contextual tooltips for gene names to any webpage with a few lines of code.
   actions:

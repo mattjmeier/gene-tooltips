@@ -1,5 +1,5 @@
 export default {
-  title: 'Gene Tooltip JS',
+  title: 'Gene Tooltips JS',
   description: 'A lightweight library for creating gene information tooltips.',
   base: '/gene-tooltips/',
   head: [

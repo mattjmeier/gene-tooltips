@@ -1,6 +1,6 @@
 # Framework Integration
 
-Gene Tooltip JS is framework-agnostic. Here's how to correctly initialize it in popular frameworks. The key is to call `GeneTooltip.init()` after the component has mounted and the DOM elements are available.
+Gene Tooltips JS is framework-agnostic. Here's how to correctly initialize it in popular frameworks. The key is to call `GeneTooltip.init()` after the component has mounted and the DOM elements are available.
 
 > [!WARNING]
 > Some examples are hypothetical and untested. Future releases may include working example files for all, but any that are absent from the [`examples`](https://github.com/mattjmeier/gene-tooltips/tree/main/examples) folder on GitHub should be considered untested and experimental for the time being.

@@ -19,7 +19,6 @@ html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material'
   --gt-exon-color: #007bff;
 }
 
-
 /* 
   --- DARK THEME VARIABLES ---
   Defined once in a "mixin-like" fashion using a placeholder selector.
@@ -33,7 +32,6 @@ html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):no
   --gt-hover-background-color: rgba(255, 255, 255, 0.1);
   --gt-exon-color: #58a6ff;
 }
-
 
 /* 
   Overrides for other themes.

@@ -8,8 +8,10 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
-import GeneTooltip from 'gene-tooltips';
 import 'gene-tooltips/style.css';
+import 'd3';
+import 'ideogram';
+import GeneTooltip from 'gene-tooltips';
 
 // Define props
 const props = defineProps({
