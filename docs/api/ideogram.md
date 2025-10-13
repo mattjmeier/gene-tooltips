@@ -4,11 +4,23 @@
 
 ## Functions
 
+### getIdeogram()
+
+> **getIdeogram**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`any`\>
+
+Defined in: [ideogram.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/ideogram.ts#L9)
+
+#### Returns
+
+[`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`any`\>
+
+***
+
 ### renderIdeogram()
 
-> **renderIdeogram**(`instance`, `data`, `ideogramConfig`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
+> **renderIdeogram**(`instance`, `data`, `ideogramConfig`, `uniqueId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [ideogram.ts:47](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/ideogram.ts#L47)
+Defined in: [ideogram.ts:47](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/ideogram.ts#L47)
 
 #### Parameters
 
@@ -23,6 +35,10 @@ Defined in: [ideogram.ts:47](https://github.com/mattjmeier/gene-tooltips/blob/e3
 ##### ideogramConfig
 
 [`Partial`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype)\<[`IdeogramConfig`](config.md#ideogramconfig)\>
+
+##### uniqueId
+
+`string`
 
 #### Returns
 

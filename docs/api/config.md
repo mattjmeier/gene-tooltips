@@ -6,7 +6,7 @@
 
 ### GeneRIF
 
-Defined in: [config.ts:21](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L21)
+Defined in: [config.ts:21](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L21)
 
 #### Properties
 
@@ -14,19 +14,19 @@ Defined in: [config.ts:21](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > **pubmed**: `number`
 
-Defined in: [config.ts:22](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L22)
+Defined in: [config.ts:22](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L22)
 
 ##### text
 
 > **text**: `string`
 
-Defined in: [config.ts:23](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L23)
+Defined in: [config.ts:23](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L23)
 
 ***
 
 ### GeneTooltipConfig
 
-Defined in: [config.ts:77](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L77)
+Defined in: [config.ts:81](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L81)
 
 #### Properties
 
@@ -34,109 +34,109 @@ Defined in: [config.ts:77](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > **api**: `"mygene"`
 
-Defined in: [config.ts:79](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L79)
+Defined in: [config.ts:83](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L83)
 
 ##### display
 
 > **display**: [`Partial`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype)\<[`TooltipDisplayConfig`](#tooltipdisplayconfig)\>
 
-Defined in: [config.ts:84](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L84)
+Defined in: [config.ts:88](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L88)
 
 ##### domainCount
 
 > **domainCount**: `number`
 
-Defined in: [config.ts:89](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L89)
+Defined in: [config.ts:93](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L93)
 
 ##### generifCount
 
 > **generifCount**: `number`
 
-Defined in: [config.ts:92](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L92)
+Defined in: [config.ts:96](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L96)
 
 ##### ideogram
 
 > **ideogram**: [`Partial`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype)\<[`IdeogramConfig`](#ideogramconfig)\>
 
-Defined in: [config.ts:85](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L85)
+Defined in: [config.ts:89](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L89)
 
 ##### pathwayCount
 
 > **pathwayCount**: `number`
 
-Defined in: [config.ts:88](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L88)
+Defined in: [config.ts:92](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L92)
 
 ##### pathwaySource
 
 > **pathwaySource**: `"reactome"` \| `"kegg"` \| `"wikipathways"`
 
-Defined in: [config.ts:87](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L87)
+Defined in: [config.ts:91](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L91)
 
 ##### prefetch
 
 > **prefetch**: `"smart"` \| `"all"` \| `"none"`
 
-Defined in: [config.ts:80](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L80)
+Defined in: [config.ts:84](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L84)
 
 ##### prefetchThreshold
 
 > **prefetchThreshold**: `number`
 
-Defined in: [config.ts:81](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L81)
+Defined in: [config.ts:85](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L85)
 
 ##### selector
 
 > **selector**: `string`
 
-Defined in: [config.ts:78](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L78)
+Defined in: [config.ts:82](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L82)
 
 ##### structureCount
 
 > **structureCount**: `number`
 
-Defined in: [config.ts:91](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L91)
+Defined in: [config.ts:95](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L95)
 
 ##### theme
 
 > **theme**: `string`
 
-Defined in: [config.ts:83](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L83)
+Defined in: [config.ts:87](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L87)
 
 ##### tippyOptions
 
 > **tippyOptions**: [`Partial`](https://www.typescriptlang.org/docs/handbook/utility-types.html#partialtype)\<`Props`\>
 
-Defined in: [config.ts:86](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L86)
+Defined in: [config.ts:90](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L90)
 
 ##### tooltipHeight?
 
 > `optional` **tooltipHeight**: `number`
 
-Defined in: [config.ts:94](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L94)
+Defined in: [config.ts:98](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L98)
 
 ##### tooltipWidth?
 
 > `optional` **tooltipWidth**: `number`
 
-Defined in: [config.ts:93](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L93)
+Defined in: [config.ts:97](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L97)
 
 ##### transcriptCount
 
 > **transcriptCount**: `number`
 
-Defined in: [config.ts:90](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L90)
+Defined in: [config.ts:94](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L94)
 
 ##### truncateSummary
 
 > **truncateSummary**: `number`
 
-Defined in: [config.ts:82](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L82)
+Defined in: [config.ts:86](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L86)
 
 ***
 
 ### GenomicPosition
 
-Defined in: [config.ts:3](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L3)
+Defined in: [config.ts:3](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L3)
 
 #### Properties
 
@@ -144,31 +144,31 @@ Defined in: [config.ts:3](https://github.com/mattjmeier/gene-tooltips/blob/e3bf1
 
 > **chr**: `string`
 
-Defined in: [config.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L4)
+Defined in: [config.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L4)
 
 ##### end
 
 > **end**: `number`
 
-Defined in: [config.ts:6](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L6)
+Defined in: [config.ts:6](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L6)
 
 ##### start
 
 > **start**: `number`
 
-Defined in: [config.ts:5](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L5)
+Defined in: [config.ts:5](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L5)
 
 ##### strand
 
 > **strand**: `number`
 
-Defined in: [config.ts:7](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L7)
+Defined in: [config.ts:7](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L7)
 
 ***
 
 ### IdeogramConfig
 
-Defined in: [config.ts:69](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L69)
+Defined in: [config.ts:73](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L73)
 
 #### Properties
 
@@ -176,31 +176,31 @@ Defined in: [config.ts:69](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > **enabled**: `boolean`
 
-Defined in: [config.ts:70](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L70)
+Defined in: [config.ts:74](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L74)
 
 ##### height
 
 > **height**: `number`
 
-Defined in: [config.ts:72](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L72)
+Defined in: [config.ts:76](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L76)
 
 ##### showLabels
 
 > **showLabels**: `boolean`
 
-Defined in: [config.ts:73](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L73)
+Defined in: [config.ts:77](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L77)
 
 ##### width
 
 > **width**: `number`
 
-Defined in: [config.ts:71](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L71)
+Defined in: [config.ts:75](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L75)
 
 ***
 
 ### MyGeneExon
 
-Defined in: [config.ts:96](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L96)
+Defined in: [config.ts:100](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L100)
 
 #### Properties
 
@@ -208,61 +208,61 @@ Defined in: [config.ts:96](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > **cdsend**: `number`
 
-Defined in: [config.ts:97](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L97)
+Defined in: [config.ts:101](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L101)
 
 ##### cdsstart
 
 > **cdsstart**: `number`
 
-Defined in: [config.ts:98](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L98)
+Defined in: [config.ts:102](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L102)
 
 ##### chr
 
 > **chr**: `string`
 
-Defined in: [config.ts:99](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L99)
+Defined in: [config.ts:103](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L103)
 
 ##### end?
 
 > `optional` **end**: `number`
 
-Defined in: [config.ts:105](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L105)
+Defined in: [config.ts:109](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L109)
 
 ##### position?
 
 > `optional` **position**: \[`number`, `number`\][]
 
-Defined in: [config.ts:103](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L103)
+Defined in: [config.ts:107](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L107)
 
 ##### start?
 
 > `optional` **start**: `number`
 
-Defined in: [config.ts:104](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L104)
+Defined in: [config.ts:108](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L108)
 
 ##### strand
 
 > **strand**: `number`
 
-Defined in: [config.ts:100](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L100)
+Defined in: [config.ts:104](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L104)
 
 ##### txend
 
 > **txend**: `number`
 
-Defined in: [config.ts:101](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L101)
+Defined in: [config.ts:105](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L105)
 
 ##### txstart
 
 > **txstart**: `number`
 
-Defined in: [config.ts:102](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L102)
+Defined in: [config.ts:106](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L106)
 
 ***
 
 ### MyGeneInfoResult
 
-Defined in: [config.ts:27](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L27)
+Defined in: [config.ts:27](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L27)
 
 #### Properties
 
@@ -270,13 +270,13 @@ Defined in: [config.ts:27](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > **\_id**: `string`
 
-Defined in: [config.ts:28](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L28)
+Defined in: [config.ts:28](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L28)
 
 ##### ensembl?
 
 > `optional` **ensembl**: `object`
 
-Defined in: [config.ts:42](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L42)
+Defined in: [config.ts:42](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L42)
 
 ###### gene
 
@@ -294,37 +294,37 @@ Defined in: [config.ts:42](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > `optional` **exons**: [`MyGeneExon`](#mygeneexon)[]
 
-Defined in: [config.ts:41](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L41)
+Defined in: [config.ts:41](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L41)
 
 ##### generif?
 
 > `optional` **generif**: [`GeneRIF`](#generif) \| [`GeneRIF`](#generif)[]
 
-Defined in: [config.ts:48](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L48)
+Defined in: [config.ts:51](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L51)
 
 ##### genomic\_pos?
 
 > `optional` **genomic\_pos**: [`GenomicPosition`](#genomicposition) \| [`GenomicPosition`](#genomicposition)[]
 
-Defined in: [config.ts:34](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L34)
+Defined in: [config.ts:34](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L34)
 
 ##### interpro?
 
 > `optional` **interpro**: [`MyGeneInterproDomain`](#mygeneinterprodomain) \| [`MyGeneInterproDomain`](#mygeneinterprodomain)[]
 
-Defined in: [config.ts:40](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L40)
+Defined in: [config.ts:40](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L40)
 
 ##### name
 
 > **name**: `string`
 
-Defined in: [config.ts:31](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L31)
+Defined in: [config.ts:31](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L31)
 
 ##### pathway?
 
 > `optional` **pathway**: `object`
 
-Defined in: [config.ts:35](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L35)
+Defined in: [config.ts:35](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L35)
 
 ###### kegg?
 
@@ -342,37 +342,47 @@ Defined in: [config.ts:35](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > `optional` **pdb**: `string` \| `string`[]
 
-Defined in: [config.ts:47](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L47)
+Defined in: [config.ts:47](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L47)
 
 ##### query
 
 > **query**: `string`
 
-Defined in: [config.ts:29](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L29)
+Defined in: [config.ts:29](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L29)
 
 ##### summary?
 
 > `optional` **summary**: `string`
 
-Defined in: [config.ts:32](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L32)
+Defined in: [config.ts:32](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L32)
 
 ##### symbol
 
 > **symbol**: `string`
 
-Defined in: [config.ts:30](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L30)
+Defined in: [config.ts:30](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L30)
 
 ##### taxid
 
 > **taxid**: `number`
 
-Defined in: [config.ts:33](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L33)
+Defined in: [config.ts:33](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L33)
+
+##### wikipedia?
+
+> `optional` **wikipedia**: `object`
+
+Defined in: [config.ts:48](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L48)
+
+###### url\_stub?
+
+> `optional` **url\_stub**: `string`
 
 ***
 
 ### MyGeneInterproDomain
 
-Defined in: [config.ts:15](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L15)
+Defined in: [config.ts:15](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L15)
 
 #### Properties
 
@@ -380,25 +390,25 @@ Defined in: [config.ts:15](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > **desc**: `string`
 
-Defined in: [config.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L16)
+Defined in: [config.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L16)
 
 ##### id
 
 > **id**: `string`
 
-Defined in: [config.ts:17](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L17)
+Defined in: [config.ts:17](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L17)
 
 ##### short\_desc
 
 > **short\_desc**: `string`
 
-Defined in: [config.ts:18](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L18)
+Defined in: [config.ts:18](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L18)
 
 ***
 
 ### MyGenePathway
 
-Defined in: [config.ts:10](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L10)
+Defined in: [config.ts:10](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L10)
 
 #### Properties
 
@@ -406,19 +416,19 @@ Defined in: [config.ts:10](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > **id**: `string`
 
-Defined in: [config.ts:12](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L12)
+Defined in: [config.ts:12](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L12)
 
 ##### name
 
 > **name**: `string`
 
-Defined in: [config.ts:11](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L11)
+Defined in: [config.ts:11](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L11)
 
 ***
 
 ### TooltipDisplayConfig
 
-Defined in: [config.ts:52](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L52)
+Defined in: [config.ts:55](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L55)
 
 #### Properties
 
@@ -426,31 +436,31 @@ Defined in: [config.ts:52](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > **domains**: `boolean`
 
-Defined in: [config.ts:57](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L57)
+Defined in: [config.ts:60](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L60)
 
 ##### generifs
 
 > **generifs**: `boolean`
 
-Defined in: [config.ts:61](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L61)
+Defined in: [config.ts:64](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L64)
 
 ##### geneTrack
 
 > **geneTrack**: `boolean`
 
-Defined in: [config.ts:58](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L58)
+Defined in: [config.ts:61](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L61)
 
 ##### ideogram
 
 > **ideogram**: `boolean`
 
-Defined in: [config.ts:55](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L55)
+Defined in: [config.ts:58](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L58)
 
 ##### links
 
 > **links**: `object`
 
-Defined in: [config.ts:62](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L62)
+Defined in: [config.ts:65](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L65)
 
 ###### ensembl?
 
@@ -460,35 +470,39 @@ Defined in: [config.ts:62](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > `optional` **ncbi**: `boolean`
 
+###### wikipedia?
+
+> `optional` **wikipedia**: `boolean`
+
 ##### location
 
 > **location**: `boolean`
 
-Defined in: [config.ts:54](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L54)
+Defined in: [config.ts:57](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L57)
 
 ##### pathways
 
 > **pathways**: `boolean`
 
-Defined in: [config.ts:56](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L56)
+Defined in: [config.ts:59](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L59)
 
 ##### species
 
 > **species**: `boolean`
 
-Defined in: [config.ts:53](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L53)
+Defined in: [config.ts:56](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L56)
 
 ##### structures
 
 > **structures**: `boolean`
 
-Defined in: [config.ts:60](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L60)
+Defined in: [config.ts:63](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L63)
 
 ##### transcripts
 
 > **transcripts**: `boolean`
 
-Defined in: [config.ts:59](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L59)
+Defined in: [config.ts:62](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L62)
 
 ## Variables
 
@@ -496,4 +510,4 @@ Defined in: [config.ts:59](https://github.com/mattjmeier/gene-tooltips/blob/e3bf
 
 > `const` **defaultConfig**: [`GeneTooltipConfig`](#genetooltipconfig)
 
-Defined in: [config.ts:108](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/config.ts#L108)
+Defined in: [config.ts:112](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/config.ts#L112)

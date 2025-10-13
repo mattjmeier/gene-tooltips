@@ -8,7 +8,7 @@
 
 > **FormattedItem** = `object`
 
-Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/renderer.ts#L4)
+Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/renderer.ts#L4)
 
 #### Properties
 
@@ -16,13 +16,13 @@ Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/e3b
 
 > **name**: `string`
 
-Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/renderer.ts#L4)
+Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/renderer.ts#L4)
 
 ##### url
 
 > **url**: `string`
 
-Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/renderer.ts#L4)
+Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/renderer.ts#L4)
 
 ## Functions
 
@@ -30,7 +30,7 @@ Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/e3b
 
 > **renderTooltipHTML**(`data`, `options`): `string`
 
-Defined in: [renderer.ts:254](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/renderer.ts#L254)
+Defined in: [renderer.ts:281](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/renderer.ts#L281)
 
 #### Parameters
 

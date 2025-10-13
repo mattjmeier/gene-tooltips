@@ -8,7 +8,7 @@
 
 > `const` **speciesMap**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`number`, `SpeciesInfo`\>
 
-Defined in: [constants.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/constants.ts#L9)
+Defined in: [constants.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/constants.ts#L9)
 
 ## Functions
 
@@ -16,7 +16,7 @@ Defined in: [constants.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/e3
 
 > **findSpecies**(`identifier`): `null` \| \{ `info`: `SpeciesInfo`; `taxid`: `number`; \}
 
-Defined in: [constants.ts:27](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/constants.ts#L27)
+Defined in: [constants.ts:27](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/constants.ts#L27)
 
 Finds species data by either taxid or common name (case-insensitive).
 

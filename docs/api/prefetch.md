@@ -6,9 +6,9 @@
 
 ### runPrefetch()
 
-> **runPrefetch**(`strategy`, `elements`, `threshold`): `void`
+> **runPrefetch**(`strategy`, `elements`, `threshold`, `inFlightRequests`): `void`
 
-Defined in: [prefetch.ts:60](https://github.com/mattjmeier/gene-tooltips/blob/e3bf189367972d2ad5cf7d85627194c1c8b8a570/src/prefetch.ts#L60)
+Defined in: [prefetch.ts:92](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/prefetch.ts#L92)
 
 #### Parameters
 
@@ -23,6 +23,10 @@ Defined in: [prefetch.ts:60](https://github.com/mattjmeier/gene-tooltips/blob/e3
 ##### threshold
 
 `number`
+
+##### inFlightRequests
+
+[`Map`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Map)\<`string`, [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`any`\>\>
 
 #### Returns
 
