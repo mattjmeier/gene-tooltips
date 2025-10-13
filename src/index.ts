@@ -65,16 +65,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
 
-  // If the config indicates that either of these features might be used,
-  // start loading the libraries now. We don't await them; we just want
-  // them to start downloading in the background.
-  if (config.display.geneTrack) {
-    getD3();
-  }
-  if (config.ideogram?.enabled) {
-    getIdeogram();
-  }
-
   let effectiveTheme: string;
   const isAutoTheme = config.theme === 'auto' || typeof config.theme === 'undefined';
 
@@ -259,14 +249,30 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   };
 }
 
+/**
+ * Preloads the optional heavy dependencies (d3, ideogram) so they
+ * are ready when tooltips are first shown. This is useful to call
+ * once in your application's entry point.
+ */
+function preload(): Promise<[PromiseSettledResult<any>, PromiseSettledResult<any>]> {
+  console.log('[GeneTooltip] Preloading optional dependencies...');
+  return Promise.allSettled([
+    getD3(),
+    getIdeogram()
+  ]);
+}
+
+// Export the new function alongside init
 export default {
   init,
+  preload,
 };
 
 declare global {
   interface Window {
     GeneTooltip: {
       init: (userConfig?: Partial<GeneTooltipConfig>) => void;
+      preload: () => Promise<[PromiseSettledResult<any>, PromiseSettledResult<any>]>;
     };
   }
 }

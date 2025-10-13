@@ -43,7 +43,9 @@ export async function renderGeneTrack(
         console.error(`[GeneTooltip] Gene track container '#gene-tooltip-track-${uniqueId}' not found.`);
         return;
     }
-    
+    // Show loader
+    container.innerHTML = `<div class="gt-loader-container"><div class="gt-spinner"></div><span>Loading...</span></div>`;
+
     // Define the shape of our data object
     type ExonSegment = {
         coords: [number, number];

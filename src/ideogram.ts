@@ -50,21 +50,24 @@ export async function renderIdeogram(
   ideogramConfig: Partial<IdeogramConfig>,
   uniqueId: string
 ) {
+  const ideogramContainerSelector = `#gene-tooltip-ideo-${uniqueId}`;
+  const ideoDiv = instance.popper.querySelector(ideogramContainerSelector) as HTMLElement;
+
+  if (!ideoDiv) {
+    console.error(`[GeneTooltip] CRITICAL: Ideogram container '${ideogramContainerSelector}' not found.`);
+    return;
+  }
   
+  // 1. IMMEDIATELY show a loading state.
+  ideoDiv.innerHTML = `<div class="gt-loader-container"><div class="gt-spinner"></div><span>Loading...</span></div>`;
+
   try {
+    // 2. Wait for the library to load.
     const Ideogram = await getIdeogram();
     
     if (!Ideogram) {
       const ideoDivInPopper = instance.popper.querySelector(`.gene-tooltip-ideo`) as HTMLElement;
       if (ideoDivInPopper) ideoDivInPopper.innerHTML = '<small>Ideogram unavailable</small>';
-      return;
-    }
-
-    const ideogramContainerSelector = `#gene-tooltip-ideo-${uniqueId}`;
-    const ideoDiv = instance.popper.querySelector(ideogramContainerSelector) as HTMLElement;
-
-    if (!ideoDiv) {
-      console.error(`[GeneTooltip] CRITICAL: Ideogram container '${ideogramContainerSelector}' not found.`);
       return;
     }
 
@@ -141,6 +144,9 @@ export async function renderIdeogram(
         }, 0);
       },
     };
+    // Before drawing, clear the container of the spinner.
+    //    This gives the Ideogram library a clean slate.
+    ideoDiv.innerHTML = '';
 
     new Ideogram(configForIdeogram);
 

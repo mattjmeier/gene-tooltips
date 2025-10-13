@@ -11,7 +11,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import GeneTooltip from 'gene-tooltips';
 import 'gene-tooltips/style.css';
 
-// 1. Define props
+// Define props
 const props = defineProps({
   // A string of one or more genes (e.g., "TP53, BRCA1")
   genes: {
@@ -57,8 +57,8 @@ onMounted(() => {
       ...props.config
     };
 
-    // 4. Initialize the library on the unique element
-    GeneTooltip.init(finalConfig);
+    // Initialize the library on the unique element
+    // GeneTooltip.init(finalConfig);
     // Store the returned cleanup function
     cleanupTooltip.value = GeneTooltip.init(finalConfig);
   }
@@ -67,6 +67,7 @@ onMounted(() => {
 onUnmounted(() => {
   if (cleanupTooltip.value) {
     cleanupTooltip.value();
+    cleanupTooltip.value = null; 
   }
 });
 </script>
