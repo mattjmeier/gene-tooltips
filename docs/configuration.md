@@ -74,6 +74,7 @@ Let's create a very simple tooltip that only shows the summary, location, and NC
 GeneTooltip.init({
   display: {
     species: false,
+    location: false,
     ideogram: false,
     pathways: false,
     domains: false,
@@ -89,7 +90,7 @@ GeneTooltip.init({
   }
 });
 ```
-Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ display: { species: false, ideogram: false, pathways: false, domains: false, geneTrack: false, transcripts: false, structures: false, generifs: false, links: { ensembl: false, ncbi: false, wikipedia: false } } }" />
+Hover over the gene to see the configured tooltip: <GeneDemo genes="TP53" species="human" :config="{ display: { species: false, location: false, ideogram: false, pathways: false, domains: false, geneTrack: false, transcripts: false, structures: false, generifs: false, links: { ensembl: false, ncbi: false, wikipedia: false } } }" />
 
 ## Sizing and Truncation
 
