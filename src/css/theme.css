@@ -11,7 +11,6 @@
 .tippy-box[data-theme~='light'],
 .tippy-box[data-theme~='light-border'], /* Add this line */
 html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material']):not([data-theme~='translucent']) {
-  --gt-background-color: #fff;
   --gt-text-color: #222;
   --gt-text-color-secondary: rgba(0, 0, 0, 0.6);
   --gt-accent-color: #007bff;

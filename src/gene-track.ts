@@ -168,7 +168,6 @@ export async function renderGeneTrack(
                     allowHTML: true,
                     arrow: true,
                     animation: 'scale-subtle',
-                    //theme: currentTheme,
                     onShow(nestedInstance) {
                         const currentParentTheme = (parentInstance.props as any).theme || 'auto';
                         nestedInstance.setProps({ theme: currentParentTheme });

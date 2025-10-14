@@ -111,6 +111,7 @@ GeneTooltip.init({
     // theme: 'auto'
     // theme: 'light'
     // theme: 'light-border'
+    // theme: 'dark'
     // theme: 'translucent'
     // theme: 'material'
     theme: 'material'
@@ -122,6 +123,8 @@ Auto theme (default) will adjust to OS and site settings for light vs. dark: <Ge
 Light theme: <GeneDemo genes="TP53" species="human" :config="{ theme: 'light' }" />
 
 Light-border theme:  <GeneDemo genes="TP53" species="human" :config="{ theme: 'light-border' }" />
+
+Dark theme:  <GeneDemo genes="TP53" species="human" :config="{ theme: 'dark' }" />
 
 Translucent theme:  <GeneDemo genes="TP53" species="human" :config="{ theme: 'translucent' }" />
 
