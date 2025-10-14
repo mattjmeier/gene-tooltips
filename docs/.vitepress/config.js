@@ -1,3 +1,5 @@
+import { defineConfig } from 'vite'
+
 export default {
   title: 'Gene Tooltips JS',
   description: 'A lightweight library for creating gene information tooltips.',
@@ -35,5 +37,15 @@ export default {
         ]
       }
     ]
+  },
+  build: {
+    rollupOptions: {
+      external: ['d3'],
+      output: {
+        globals: {
+          d3: 'd3'
+        }
+      }
+    }
   }
 }
