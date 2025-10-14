@@ -15,20 +15,7 @@ import { generateUniqueTooltipId, createNestedContent } from './utils.js';
 
 // --- Map to track in-flight requests ---
 const inFlightRequests = new Map<string, Promise<Map<string, MyGeneInfoResult>>>();
-
-let allTippyInstances: TippyInstanceWithCustoms[] = [];
-let themeObserver: MutationObserver | null = null;
 let isSummaryHandlerEnabled = false;
-
-// --- Targeted theme update ---
-function setGlobalTippyTheme(theme: string): void {
-  allTippyInstances.forEach(instance => {
-    // Only update instances that are set to 'auto'
-    if (instance._themeIntent === 'auto' && instance.props.theme !== theme) {
-      instance.setProps({ theme });
-    }
-  });
-}
 
 interface TippyInstanceWithCustoms extends Instance {
   _nestedTippys?: Instance[];
@@ -39,6 +26,11 @@ interface TippyInstanceWithCustoms extends Instance {
 }
 
 function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
+  // --- LOCAL STATE ---
+  let themeObserver: MutationObserver | null = null;
+  // FIX #2: Change 'const' to 'let' so we can clear it in the cleanup.
+  let instances: TippyInstanceWithCustoms[] = []; 
+
   const config: GeneTooltipConfig = {
     ...defaultConfig,
     ...userConfig,
@@ -51,41 +43,39 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
 
+  // The local theme setter now needs to be defined *after* `instances` is declared.
+  // It's a subtle but important detail for how closures work.
+  const setTippyTheme = (theme: string): void => {
+    instances.forEach(instance => {
+      if (instance._themeIntent === 'auto' && instance.props.theme !== theme) {
+        instance.setProps({ theme });
+      }
+    });
+  };
+
+  const geneElements = findGeneElements(config.selector);
+  if (geneElements.length === 0) {
+    return () => {};
+  }
+  
+  // We determine the theme *before* initializing Tippy.
   let effectiveTheme: string;
   const isAutoTheme = config.theme === 'auto' || typeof config.theme === 'undefined';
 
   if (isAutoTheme) {
     const isDark = document.documentElement.classList.contains('dark');
     effectiveTheme = isDark ? 'dark' : 'light';
-
-    if (!themeObserver) {
-      themeObserver = new MutationObserver(() => {
-        const isNowDark = document.documentElement.classList.contains('dark');
-        const newTheme = isNowDark ? 'dark' : 'light';
-        setGlobalTippyTheme(newTheme);
-      });
-      themeObserver.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['class'],
-      });
-    }
   } else {
     effectiveTheme = config.theme;
   }
 
-  const geneElements = findGeneElements(config.selector);
-  if (geneElements.length === 0) {
-    return () => {};
-  }
-
-  runPrefetch(config.prefetch, geneElements, config.prefetchThreshold, inFlightRequests);
-
-  const instances = tippy(geneElements, {
+  // Now, we create the instances with the correctly determined theme.
+  instances = tippy(geneElements, {
     ...config.tippyOptions,
-    theme: effectiveTheme,
+    theme: effectiveTheme, // `effectiveTheme` is now guaranteed to be assigned.
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
     onShow(instance: TippyInstanceWithCustoms) {
-      // We wrap the logic in an async IIFE (Immediately Invoked Function Expression)
+      // ... your onShow logic (unchanged)
       (async () => {
         if (!instance._uniqueId) {
           instance._uniqueId = generateUniqueTooltipId();
@@ -122,7 +112,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
           instance.setContent(renderTooltipHTML(data, renderOptions));
         };
 
-        // 1. Check cache first
         const cachedData = cache.get(symbol, taxid);
         if (typeof cachedData !== 'undefined') {
           renderContent(cachedData);
@@ -131,10 +120,8 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
 
         instance.setContent('Loading...');
 
-        // 2. Check for in-flight requests
         let fetchPromise = inFlightRequests.get(cacheKey);
 
-        // 3. If no in-flight request, create one
         if (!fetchPromise) {
           fetchPromise = fetchMyGeneBatch([symbol], String(taxid));
           inFlightRequests.set(cacheKey, fetchPromise);
@@ -149,10 +136,9 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
           console.error(`Failed to fetch data for ${symbol}`, error);
           instance.setContent('Error loading data.');
         } finally {
-          // Clean up the in-flight map once done
           inFlightRequests.delete(cacheKey);
         }
-      })(); // The IIFE is called immediately here
+      })();
     },
     onMount(instance: TippyInstanceWithCustoms) {
       const data = instance._geneData;
@@ -182,7 +168,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
               childInstance.setProps({ theme: currentParentTheme });
             }
           });
-          // Type assertion here because tippy's return type for single element is Instance, not Instance[]
           instance._nestedTippys?.push(nestedInstance as Instance);
         }
       };
@@ -199,6 +184,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       createNestedTippy(`#generifs-more-${instance._uniqueId}`, generifItems);
     },
     onHidden(instance: TippyInstanceWithCustoms) {
+      // ... your onHidden logic (unchanged)
       if (instance._nestedTippys) {
         instance._nestedTippys.forEach(nested => nested.destroy());
         instance._nestedTippys = [];
@@ -207,10 +193,25 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   }) as TippyInstanceWithCustoms[];
 
   instances.forEach(instance => {
-    instance._themeIntent = isAutoTheme ? 'auto' : config.theme; // Set the theme intent
+    instance._themeIntent = isAutoTheme ? 'auto' : config.theme;
   });
 
-  allTippyInstances.push(...instances);
+  // Now that instances are created, we can set up the observer if needed.
+  if (isAutoTheme) {
+    themeObserver = new MutationObserver(() => {
+      const isNowDark = document.documentElement.classList.contains('dark');
+      const newTheme = isNowDark ? 'dark' : 'light';
+      setTippyTheme(newTheme);
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  }
+  // The 'else' block for setting theme on non-auto instances is no longer needed
+  // because we already passed the correct `effectiveTheme` to tippy() directly.
+
+  runPrefetch(config.prefetch, geneElements, config.prefetchThreshold, inFlightRequests);
   
   if (!isSummaryHandlerEnabled) {
     enableSummaryExpand();
@@ -220,19 +221,13 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   return () => {
     instances.forEach(instance => {
       if (instance && instance.destroy) {
-        console.log("DESTROYING INSTANCE: ", instance);
         instance.destroy();
       }
     });
-
-    allTippyInstances = allTippyInstances.filter(i => !instances.includes(i));
-    
-    // Disconnect observer only if no more 'auto' instances exist
-    const hasAutoInstances = allTippyInstances.some(i => i._themeIntent === 'auto');
-    if (!hasAutoInstances && themeObserver) {
+    if (themeObserver) {
       themeObserver.disconnect();
-      themeObserver = null;
     }
+    instances = [];
   };
 }
 
