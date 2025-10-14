@@ -1,22 +1,15 @@
 <template>
   <span class="gene-demo-container">
-    <!-- Bind the ID directly. It will be null on the server and generated on the client -->
-    <span :id="uniqueId" class="gene-tooltip" :data-species="species">
+    <span ref="tooltipElement" class="gene-tooltip" :data-species="species">
       {{ genes }}
     </span>
   </span>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, onBeforeMount, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import 'gene-tooltips/style.css';
 import GeneTooltip from 'gene-tooltips';
-
-// Use the global window object for a truly shared counter on the client.
-// This is safe because `window` only exists in the browser.
-if (typeof window !== 'undefined' && typeof window.__GENE_TOOLTIP_ID_COUNTER__ === 'undefined') {
-  window.__GENE_TOOLTIP_ID_COUNTER__ = 0;
-}
 
 const props = defineProps({
   genes: { type: String, required: true },
@@ -24,20 +17,27 @@ const props = defineProps({
   config: { type: Object, default: () => ({}) },
 });
 
-// Initialize uniqueId as null. It will have no ID during server render.
-const uniqueId = ref(null);
+// 1. Create a ref to hold the DOM element. It's initialized to null.
+const tooltipElement = ref(null);
 let cleanupTooltip = null;
 
-// This hook ONLY runs on the client.
-onBeforeMount(() => {
-  // Generate the unique ID just before mounting.
-  uniqueId.value = `gene-tooltip-demo-${window.__GENE_TOOLTIP_ID_COUNTER__++}`;
-});
+// A simple utility to generate a unique enough ID without global state.
+// This is called once per component instance, so collisions are virtually impossible.
+const generateUniqueId = () => `gene-tooltip-${Math.random().toString(36).substring(2, 9)}`;
 
 onMounted(() => {
-  // The element now has its unique ID in the DOM.
-  if (GeneTooltip && GeneTooltip.init && uniqueId.value) {
-    const selector = `#${uniqueId.value}`;
+  // 2. By the time onMounted runs, Vue has mounted the component,
+  //    and `tooltipElement.value` will be the actual <span> DOM node.
+  if (GeneTooltip && GeneTooltip.init && tooltipElement.value) {
+
+    // 3. Generate a unique ID for this specific instance.
+    const uniqueId = generateUniqueId();
+    
+    // 4. Assign the ID directly to the element.
+    tooltipElement.value.id = uniqueId;
+
+    // 5. Now, initialize the library using the guaranteed-to-be-unique selector.
+    const selector = `#${uniqueId}`;
     
     const finalConfig = {
       selector: selector,
