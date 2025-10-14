@@ -11,24 +11,10 @@ import { renderGeneTrack } from './gene-track.js';
 import { formatPathways, formatDomains, formatTranscripts, formatStructures, formatGeneRIFs } from './formatters.js';
 import { getD3 } from './gene-track.js';
 import { getIdeogram } from './ideogram.js';
+import { generateUniqueTooltipId, createNestedContent } from './utils.js';
 
 // --- Map to track in-flight requests ---
 const inFlightRequests = new Map<string, Promise<Map<string, MyGeneInfoResult>>>();
-
-// Generate a unique ID for each tooltip instance
-function generateUniqueTooltipId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-  return `tooltip-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-}
-
-function createNestedContent(items: { name: string; url: string }[]): string {
-  const listItems = items
-    .map(item => `<li><a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a></li>`)
-    .join('');
-  return `<ul class="gene-tooltip-nested-list">${listItems}</ul>`;
-}
 
 let allTippyInstances: TippyInstanceWithCustoms[] = [];
 let themeObserver: MutationObserver | null = null;
