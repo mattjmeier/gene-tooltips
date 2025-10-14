@@ -70,7 +70,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   // Create tippy instances with the correct theme
   instances = tippy(geneElements, {
     ...config.tippyOptions,
-    theme: effectiveTheme,
+    theme: effectiveTheme, // `effectiveTheme` is now guaranteed to be assigned.
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
     onShow(instance: TippyInstanceWithCustoms) {
       (async () => {
@@ -181,6 +181,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       createNestedTippy(`#generifs-more-${instance._uniqueId}`, generifItems);
     },
     onHidden(instance: TippyInstanceWithCustoms) {
+      // ... your onHidden logic (unchanged)
       if (instance._nestedTippys) {
         instance._nestedTippys.forEach(nested => nested.destroy());
         instance._nestedTippys = [];
