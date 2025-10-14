@@ -9,6 +9,11 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import 'gene-tooltips/style.css';
+console.log('Preloading d3 and ideogram...');
+GeneTooltip.preload().then(() => {
+    console.log('Preloading complete! Libraries are ready.');
+});
+
 // import 'd3';
 // import 'ideogram';
 import GeneTooltip from 'gene-tooltips';
