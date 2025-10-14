@@ -1,6 +1,6 @@
 <template>
   <span class="gene-demo-container">
-    <span :class="`gene-tooltip ${uniqueClass}`" :data-species="species">
+    <span :class="`gene-tooltip`" :data-species="species">
       {{ genes }}
     </span>
   </span>
@@ -8,60 +8,38 @@
 
 <script setup>
 import { onMounted, onUnmounted } from 'vue';
-import GeneTooltip from 'gene-tooltips';
 import 'gene-tooltips/style.css';
+import GeneTooltip from 'gene-tooltips';
 
-// 1. Define props
 const props = defineProps({
-  // A string of one or more genes (e.g., "TP53, BRCA1")
-  genes: {
-    type: String,
-    required: true
-  },
-  // The species for the data-attribute (e.g., "human" or "mouse")
-  species: {
-    type: String,
-    default: 'human'
-  },
-  // Pass in any custom GeneTooltip config
-  config: {
-    type: Object,
-    default: () => ({})
-  },
-  // Automatically generate a unique selector class
-  uniqueClass: {
-    type: String,
-    // Generate a random string here. This function runs separately
-    // for each instance and does not reference local script variables.
-    default: () => `gt-rand-${Math.random().toString(36).substring(2, 9)}` 
-  }
+  genes: { type: String, required: true },
+  species: { type: String, default: 'human' },
+  config: { type: Object, default: () => ({}) },
 });
 
+let cleanupTooltip = null;
+
 onMounted(() => {
-  if (GeneTooltip) {
-    // 2. Construct the unique selector
-    const selector = `.gene-tooltip.${props.uniqueClass}`;
+  if (GeneTooltip && GeneTooltip.init) {
+    const selector = `.gene-tooltip`;
     
-    // 3. Merge default/base config with the one passed via props
     const finalConfig = {
-      selector: selector, // IMPORTANT: Isolate this instance
-      truncateSummary: 3,
-      display: {
-        ideogram: true,
-      },
-      ideogram: {
-        enabled: true,
-        height: 100
-      },
-      ...props.config
+      selector: selector,
+      // Default config for the demo
+      ideogram: { enabled: true },
+      ...props.config // Allow user overrides
     };
 
-    // 4. Initialize the library on the unique element
-    GeneTooltip.init(finalConfig);
+    // Initialize and store the cleanup function
+    cleanupTooltip = GeneTooltip.init(finalConfig);
   }
 });
 
 onUnmounted(() => {
-  // Placeholder for cleanup
+  // Use the cleanup function when the component is removed
+  if (cleanupTooltip) {
+    cleanupTooltip();
+    cleanupTooltip = null; 
+  }
 });
 </script>

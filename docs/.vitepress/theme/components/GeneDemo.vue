@@ -18,7 +18,6 @@ const props = defineProps({
   uniqueClass: { type: String, default: () => `gt-rand-${Math.random().toString(36).substring(2, 9)}` }
 });
 
-// IMPORTANT: Re-enable cleanup logic.
 let cleanupTooltip = null;
 
 onMounted(() => {
