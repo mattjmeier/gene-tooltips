@@ -220,6 +220,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   return () => {
     instances.forEach(instance => {
       if (instance && instance.destroy) {
+        console.log("DESTROYING INSTANCE: ", instance);
         instance.destroy();
       }
     });

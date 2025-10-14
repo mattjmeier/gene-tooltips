@@ -1,6 +1,6 @@
 <template>
   <span class="gene-demo-container">
-    <span :class="`gene-tooltip`" :data-species="species">
+    <span :class="`gene-tooltip ${uniqueClass}`" :data-species="species">
       {{ genes }}
     </span>
   </span>
@@ -15,13 +15,14 @@ const props = defineProps({
   genes: { type: String, required: true },
   species: { type: String, default: 'human' },
   config: { type: Object, default: () => ({}) },
+  uniqueClass: { type: String, default: () => `gt-rand-${Math.random().toString(36).substring(2, 9)}` }
 });
 
 let cleanupTooltip = null;
 
 onMounted(() => {
   if (GeneTooltip && GeneTooltip.init) {
-    const selector = `.gene-tooltip`;
+    const selector = `.gene-tooltip.${props.uniqueClass}`;
     
     const finalConfig = {
       selector: selector,
