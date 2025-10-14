@@ -7,45 +7,19 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
 import 'gene-tooltips/style.css';
-console.log('Preloading d3 and ideogram...');
-GeneTooltip.preload().then(() => {
-    console.log('Preloading complete! Libraries are ready.');
-});
-
-// import 'd3';
-// import 'ideogram';
 import GeneTooltip from 'gene-tooltips';
 
-// Define props
 const props = defineProps({
-  // A string of one or more genes (e.g., "TP53, BRCA1")
-  genes: {
-    type: String,
-    required: true
-  },
-  // The species for the data-attribute (e.g., "human" or "mouse")
-  species: {
-    type: String,
-    default: 'human'
-  },
-  // Pass in any custom GeneTooltip config
-  config: {
-    type: Object,
-    default: () => ({})
-  },
-  // Automatically generate a unique selector class
-  uniqueClass: {
-    type: String,
-    // Generate a random string here. This function runs separately
-    // for each instance and does not reference local script variables.
-    default: () => `gt-rand-${Math.random().toString(36).substring(2, 9)}` 
-  }
+  genes: { type: String, required: true },
+  species: { type: String, default: 'human' },
+  config: { type: Object, default: () => ({}) },
+  uniqueClass: { type: String, default: () => `gt-rand-${Math.random().toString(36).substring(2, 9)}` }
 });
 
-// A ref to hold the cleanup function
-// const cleanupTooltip = ref(null);
+// IMPORTANT: Re-enable cleanup logic.
+let cleanupTooltip = null;
 
 onMounted(() => {
   if (GeneTooltip && GeneTooltip.init) {
@@ -53,30 +27,21 @@ onMounted(() => {
     
     const finalConfig = {
       selector: selector,
-      truncateSummary: 3,
-      display: {
-        ideogram: true,
-      },
-      ideogram: {
-        enabled: true,
-        height: 100
-      },
-      ...props.config
+      // Default config for the demo
+      ideogram: { enabled: true },
+      ...props.config // Allow user overrides
     };
 
-    // Initialize the library on the unique element
-    // GeneTooltip.init(finalConfig);
-    // Store the returned cleanup function
-    // cleanupTooltip.value = GeneTooltip.init(finalConfig);
-    // GeneTooltip.preload();
-    GeneTooltip.init(finalConfig);
+    // Initialize and store the cleanup function
+    cleanupTooltip = GeneTooltip.init(finalConfig);
   }
 });
 
-// onUnmounted(() => {
-//   if (cleanupTooltip.value) {
-//     cleanupTooltip.value();
-//     cleanupTooltip.value = null; 
-//   }
-// });
+onUnmounted(() => {
+  // Use the cleanup function when the component is removed
+  if (cleanupTooltip) {
+    cleanupTooltip();
+    cleanupTooltip = null; 
+  }
+});
 </script>
