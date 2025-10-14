@@ -7,37 +7,34 @@ let ideogramModulePromise: Promise<any> | null = null;
 
 //  Checking for module or global mode
 export async function getIdeogram() {
+  // 1. Check for the cached promise first.
   if (ideogramModulePromise) {
     return ideogramModulePromise;
   }
-  
-  // Check for Ideogram as a global variable first
-  if ((window as any).Ideogram) {
-    return Promise.resolve((window as any).Ideogram);
-  }
-  
-  // Use a standard function to check the environment
-  const isGlobal = typeof window !== 'undefined' && typeof document !== 'undefined' && typeof window.GeneTooltip !== 'undefined';
-  
-  // For UMD/IIFE (browser global) builds, we can't rely on import() 
-  // because it's configured as 'external'.
-  if (isGlobal) {
-      const errorMsg = `[GeneTooltip] Ideogram global variable not found.
-Please ensure the Ideogram script is loaded on the page
-before initializing GeneTooltip, or use the ESM/CJS build.`;
-      console.error(errorMsg);
-      // Rejecting ensures the error handling in renderIdeogram is executed
-      return Promise.reject(new Error(errorMsg)); 
-  }
 
-  // 1. For ESM/CJS (Modern module) builds, use the dynamic import:
+  // 2. Check for the global variable.
+  // If found, cache the resolved promise and return it.
+  if ((window as any).Ideogram) {
+    console.log('[GeneTooltip] Found global Ideogram instance.');
+    ideogramModulePromise = Promise.resolve((window as any).Ideogram);
+    return ideogramModulePromise;
+  }
+  
+  // 3. If no global and no cache, fall back to dynamic import.
+  // The import will either work (in module environments)
+  // or fail gracefully.
+  console.log('[GeneTooltip] Global Ideogram not found. Attempting dynamic import...');
   ideogramModulePromise = import('ideogram')
-    .then(module => module.default)
+    .then(module => {
+      // Ideogram often exports as a default property
+      return module.default || module;
+    })
     .catch(error => {
-      const errorMsg = `[GeneTooltip] Failed to load Ideogram. 
-Please ensure 'ideogram' is installed (it's a peer dependency).`;
+      const errorMsg = `[GeneTooltip] Failed to load Ideogram. Please ensure 'ideogram' is installed or the script is loaded on the page.`;
       console.error(errorMsg, error);
-      return Promise.reject(new Error(errorMsg)); 
+      // Set promise to null so a retry is possible
+      ideogramModulePromise = null; 
+      return Promise.reject(new Error(errorMsg));
     });
 
   return ideogramModulePromise;
