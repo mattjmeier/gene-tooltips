@@ -9,6 +9,7 @@
 */
 /* Default (light) variables */
 .tippy-box[data-theme~='light'],
+.tippy-box[data-theme~='light-border'], /* Add this line */
 html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material']):not([data-theme~='translucent']) {
   --gt-background-color: #fff;
   --gt-text-color: #222;
@@ -24,7 +25,7 @@ html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material'
   Defined once in a "mixin-like" fashion using a placeholder selector.
 */
 .tippy-box[data-theme~='dark'],
-html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):not([data-theme~='translucent']) {
+html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):not([data-theme~='translucent']):not([data-theme~='light-border']) {
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #58a6ff;

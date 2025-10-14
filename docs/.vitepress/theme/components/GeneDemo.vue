@@ -66,10 +66,10 @@ onMounted(() => {
   }
 });
 
-onUnmounted(() => {
-  if (cleanupTooltip.value) {
-    cleanupTooltip.value();
-    cleanupTooltip.value = null; 
-  }
-});
+// onUnmounted(() => {
+//   if (cleanupTooltip.value) {
+//     cleanupTooltip.value();
+//     cleanupTooltip.value = null; 
+//   }
+// });
 </script>
