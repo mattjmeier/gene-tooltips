@@ -5,7 +5,22 @@ export default {
   description: 'A lightweight library for creating gene information tooltips.',
   base: '/gene-tooltips/',
   head: [
-    ['link', { rel: 'icon', type: 'image/png', href: '/gene-tooltips/favicon.png' }]
+    [
+      'link',
+      { rel: 'icon', type: 'image/png', href: '/gene-tooltips/favicon.png' }
+    ],
+    [
+      'script',
+      { src: 'https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js' }
+    ],
+    [
+      'script',
+      { src: 'https://cdn.jsdelivr.net/npm/ideogram@1.53.0/dist/js/ideogram.min.js' }
+    ],
+    [
+      'link',
+      { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/ideogram@1.53/dist/css/ideogram.min.css' }
+    ]
   ],
   themeConfig: {
     nav: [
@@ -38,14 +53,14 @@ export default {
       }
     ]
   },
-  build: {
-    rollupOptions: {
-      external: ['d3'],
-      output: {
-        globals: {
-          d3: 'd3'
-        }
-      }
-    }
-  }
+  // build: {
+  //   rollupOptions: {
+  //     external: ['d3'],
+  //     output: {
+  //       globals: {
+  //         d3: 'd3'
+  //       }
+  //     }
+  //   }
+  // }
 }
