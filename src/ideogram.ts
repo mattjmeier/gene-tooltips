@@ -89,9 +89,15 @@ export async function renderIdeogram(
     const parentInstance = instance;
     let hasAttachedTippy = false;
 
+    // Also get the current text color
+    const computedStyle = window.getComputedStyle(instance.popper);
+    const labelColor = computedStyle.getPropertyValue('--gt-text-color').trim();
+
     const configForIdeogram = {
       container: ideogramContainerSelector,
       organism,
+      chrLabelColor: labelColor,
+      annotationsColor: labelColor,
       chromosome: chromosome,
       chrHeight: ideogramConfig.height ?? 100,
       orientation: 'horizontal',
