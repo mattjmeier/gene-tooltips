@@ -40,10 +40,11 @@ export default {
   },
   build: {
     rollupOptions: {
-      external: ['d3'],
+      external: ['d3', 'ideogram'],
       output: {
         globals: {
-          d3: 'd3'
+          d3: 'd3',
+          Ideogram: 'Ideogram'
         }
       }
     }
