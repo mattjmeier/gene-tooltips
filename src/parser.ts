@@ -5,7 +5,7 @@ import { findSpecies } from './constants';
  */
 export interface GeneInfo {
   symbol: string;
-  taxid: number; // Changed from species: string to taxid: number
+  taxid: number;
 }
 
 /**
