@@ -28,7 +28,6 @@ interface TippyInstanceWithCustoms extends Instance {
 function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   // --- LOCAL STATE ---
   let themeObserver: MutationObserver | null = null;
-  // FIX #2: Change 'const' to 'let' so we can clear it in the cleanup.
   let instances: TippyInstanceWithCustoms[] = []; 
 
   const config: GeneTooltipConfig = {
@@ -43,8 +42,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
   };
 
-  // The local theme setter now needs to be defined *after* `instances` is declared.
-  // It's a subtle but important detail for how closures work.
+  // Local theme setter
   const setTippyTheme = (theme: string): void => {
     instances.forEach(instance => {
       if (instance._themeIntent === 'auto' && instance.props.theme !== theme) {
@@ -69,13 +67,12 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     effectiveTheme = config.theme;
   }
 
-  // Now, we create the instances with the correctly determined theme.
+  // Create tippy instances with the correct theme
   instances = tippy(geneElements, {
     ...config.tippyOptions,
     theme: effectiveTheme, // `effectiveTheme` is now guaranteed to be assigned.
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
     onShow(instance: TippyInstanceWithCustoms) {
-      // ... your onShow logic (unchanged)
       (async () => {
         if (!instance._uniqueId) {
           instance._uniqueId = generateUniqueTooltipId();
@@ -196,7 +193,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     instance._themeIntent = isAutoTheme ? 'auto' : config.theme;
   });
 
-  // Now that instances are created, we can set up the observer if needed.
+  // Set up theme observer
   if (isAutoTheme) {
     themeObserver = new MutationObserver(() => {
       const isNowDark = document.documentElement.classList.contains('dark');
@@ -208,8 +205,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       attributeFilter: ['class'],
     });
   }
-  // The 'else' block for setting theme on non-auto instances is no longer needed
-  // because we already passed the correct `effectiveTheme` to tippy() directly.
 
   runPrefetch(config.prefetch, geneElements, config.prefetchThreshold, inFlightRequests);
   
@@ -244,7 +239,6 @@ function preload(): Promise<[PromiseSettledResult<any>, PromiseSettledResult<any
   ]);
 }
 
-// Export the new function alongside init
 export default {
   init,
   preload,
