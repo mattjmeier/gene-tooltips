@@ -192,6 +192,14 @@
   min-width: 120px;
 }
 
+/* TODO - This doesn't work!! The SVG selector must be too specific - will come back to this problem later. */
+/* .tippy-box ._ideogram text { */
+  /* Use the theme's text color, with a fallback. Unfortunately, we need to use important */
+  /* because ideogram.js doesn't have an API method for setting these colors */
+  /* color: var(--gt-text-color, #222) !important;  */
+  /*font-size: 10px;  Optional: standardizing font size can prevent layout shifts */
+/* } */
+
 /* --- List-based Sections --- */
 
 .gene-tooltip-list-section.gene-tooltip-list-section {
@@ -199,10 +207,9 @@
   margin-left: 0;
 }
 
-.gene-tooltip-list-section ul {
+.tippy-box .gene-tooltip-list-section ul {
   list-style: none;
   padding: 0;
-  padding-left: 0;
   margin: 0;
   width: 100%;
 }
@@ -210,6 +217,7 @@
 .gene-tooltip-list-section li {
   /* font-size: 0.9em; */
   white-space: nowrap;
+  list-style: none;
   overflow: hidden;
   text-overflow: ellipsis;
   padding: 2px 0;
@@ -246,7 +254,7 @@
 
 /* --- Nested Tooltip List --- */
 
-.gene-tooltip-nested-list {
+ul.gene-tooltip-nested-list {
   list-style: none;
   padding: 5px;
   margin: 0;
@@ -257,6 +265,7 @@
 
 .gene-tooltip-nested-list li {
   padding: 3px 5px;
+  list-style: none;
 }
 
 .gene-tooltip-nested-list a {
