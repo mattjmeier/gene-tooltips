@@ -1,5 +1,3 @@
-import { defineConfig } from 'vite'
-
 export default {
   title: 'Gene Tooltips JS',
   description: 'A lightweight library for creating gene information tooltips.',
