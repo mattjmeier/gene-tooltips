@@ -9,8 +9,8 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import 'gene-tooltips/style.css';
-// import 'd3';
-// import 'ideogram';
+import 'd3';
+import 'ideogram';
 import GeneTooltip from 'gene-tooltips';
 
 // Define props
@@ -63,7 +63,7 @@ onMounted(() => {
     // GeneTooltip.init(finalConfig);
     // Store the returned cleanup function
     // cleanupTooltip.value = GeneTooltip.init(finalConfig);
-    GeneTooltip.preload();
+    // GeneTooltip.preload();
     GeneTooltip.init(finalConfig);
   }
 });
