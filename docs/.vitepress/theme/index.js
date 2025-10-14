@@ -1,7 +1,7 @@
 import DefaultTheme from 'vitepress/theme'
 import GeneDemo from './components/GeneDemo.vue'
-import 'd3';
-import 'ideogram';
+// import 'd3';
+// import 'ideogram';
 
 export default {
   // Use the Layout from the default theme
