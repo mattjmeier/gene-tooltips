@@ -118,7 +118,8 @@ export async function renderGeneTrack(
         // Use the provided tooltipWidth, otherwise fall back to a default.
         // Subtract margins and some padding for a good fit.
         const margin = { top: 20, right: 10, bottom: 5, left: 10 };
-        const availableWidth = tooltipWidth ? tooltipWidth - 30 : 290; 
+        const baseWidth = tooltipWidth || instance.popper.getBoundingClientRect().width;
+        const availableWidth = baseWidth - 30; // Subtract padding/margins 
         const width = availableWidth - margin.left - margin.right;
         const height = 20;
         const exonHeight = 10;
