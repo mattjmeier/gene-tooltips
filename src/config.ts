@@ -95,8 +95,10 @@ export interface GeneTooltipConfig {
   structureCount: number;
   generifCount: number;
   tooltipWidth?: number;
-  tooltipHeight?: number;
+  tooltipHeight?: number; // This is an explicit max-height
+  constrainToViewport: boolean;
 }
+
 export interface MyGeneExon {
   cdsend: number;
   cdsstart: number;
@@ -116,6 +118,7 @@ export const defaultConfig: GeneTooltipConfig = {
   prefetchThreshold: 15,
   truncateSummary: 4,
   theme: 'auto',
+  constrainToViewport: true,
   display: {
     species: true,
     location: true,
@@ -147,5 +150,18 @@ export const defaultConfig: GeneTooltipConfig = {
     allowHTML: true,
     interactive: true,
     placement: 'bottom',
-  },
+    popperOptions: {
+      strategy: 'fixed',
+      modifiers: [
+        {
+          name: 'preventOverflow',
+          options: { boundary: 'viewport', padding: 8 },
+        },
+        {
+          name: 'flip',
+          options: { fallbackPlacements: ['top', 'right', 'left'], boundary: 'viewport', padding: 8 },
+        }
+      ],
+    }
+  }
 };

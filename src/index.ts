@@ -70,9 +70,22 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   // Create tippy instances with the correct theme
   instances = tippy(geneElements, {
     ...config.tippyOptions,
-    theme: effectiveTheme, // `effectiveTheme` is now guaranteed to be assigned.
+    theme: effectiveTheme,
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
     onShow(instance: TippyInstanceWithCustoms) {
+      if (config.constrainToViewport) {
+        // Find the content wrapper inside the tooltip
+        const content = instance.popper.querySelector('.tippy-content');
+        if (content) {
+          // Get padding from the preventOverflow modifier, default to 8
+          const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
+            m => m.name === 'preventOverflow'
+          )?.options?.padding ?? 8;
+          
+          // Set max-height based on viewport height minus padding on both top and bottom
+          (content as HTMLElement).style.maxHeight = `${window.innerHeight - (padding * 2)}px`;
+        }
+      }
       (async () => {
         if (!instance._uniqueId) {
           instance._uniqueId = generateUniqueTooltipId();
