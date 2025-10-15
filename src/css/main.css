@@ -11,6 +11,9 @@
 @import './theme.css';
 
 .tippy-content {
+    /* Set the max-height using the dynamic viewport height unit */
+    /* We use calc() to subtract a bit of padding (e.g., 16px total) */
+    max-height: calc(100dvh - 16px);
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--gt-border-color) transparent;

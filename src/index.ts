@@ -1,5 +1,4 @@
-import tippy, { type Instance } from 'tippy.js';
-import type { Props } from 'tippy.js'
+import tippy, { type Instance, Props } from 'tippy.js';
 import { defaultConfig, type GeneTooltipConfig, MyGeneInfoResult } from './config.js';
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
@@ -7,11 +6,9 @@ import { renderTooltipHTML } from './renderer.js';
 import { findGeneElements, getGeneInfoFromElement } from './parser.js';
 import { runPrefetch } from './prefetch.js';
 import { enableSummaryExpand } from './ui/summaryExpand.js';
-import { renderIdeogram } from './ideogram.js';
-import { renderGeneTrack } from './gene-track.js';
+import { renderIdeogram, getIdeogram } from './ideogram.js';
+import { renderGeneTrack, getD3 } from './gene-track.js';
 import { formatPathways, formatDomains, formatTranscripts, formatStructures, formatGeneRIFs } from './formatters.js';
-import { getD3 } from './gene-track.js';
-import { getIdeogram } from './ideogram.js';
 import { generateUniqueTooltipId, createNestedContent } from './utils.js';
 
 // --- Map to track in-flight requests ---
@@ -84,8 +81,27 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
           )?.options?.padding ?? 8;
           
           // Set max-height based on viewport height minus padding on both top and bottom
-          (content as HTMLElement).style.maxHeight = `${window.innerHeight - (padding * 2)}px`;
+          // Use the Visual Viewport API if available, otherwise fall back to innerHeight.
+          const availableHeight = window.visualViewport?.height || window.innerHeight;
+          (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
         }
+      }
+      if (config.constrainToViewport && window.visualViewport) {
+        const content = instance.popper.querySelector('.tippy-content') as HTMLElement | null;
+        if (!content) return;
+        
+        const padding = config.tippyOptions?.popperOptions?.modifiers?.find(m => m.name === 'preventOverflow')?.options?.padding ?? 8;
+
+        // Define the handler function
+        const handleResize = () => {
+            content.style.maxHeight = `${window.visualViewport!.height - (padding * 2)}px`;
+        };
+
+        // Attach the handler
+        window.visualViewport.addEventListener('resize', handleResize);
+        
+        // Store the handler on the instance so we can remove it later
+        (instance as any)._visualViewportResizeHandler = handleResize;
       }
       (async () => {
         if (!instance._uniqueId) {
@@ -183,7 +199,8 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
               const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
                 m => m.name === 'preventOverflow'
               )?.options?.padding ?? 8;
-              (content as HTMLElement).style.maxHeight = `${window.innerHeight - (padding * 2)}px`;
+              const availableHeight = window.visualViewport?.height || window.innerHeight;
+              (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
             }
           }
         }
@@ -213,6 +230,10 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       createNestedTippy(`#generifs-more-${instance._uniqueId}`, generifItems);
     },
     onHidden(instance: TippyInstanceWithCustoms) {
+      if ((instance as any)._visualViewportResizeHandler && window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', (instance as any)._visualViewportResizeHandler);
+        delete (instance as any)._visualViewportResizeHandler;
+      }
       if (instance._nestedTippys) {
         instance._nestedTippys.forEach(nested => nested.destroy());
         instance._nestedTippys = [];
