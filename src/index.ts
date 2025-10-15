@@ -1,4 +1,5 @@
 import tippy, { type Instance } from 'tippy.js';
+import type { Props } from 'tippy.js'
 import { defaultConfig, type GeneTooltipConfig, MyGeneInfoResult } from './config.js';
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
@@ -70,9 +71,22 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   // Create tippy instances with the correct theme
   instances = tippy(geneElements, {
     ...config.tippyOptions,
-    theme: effectiveTheme, // `effectiveTheme` is now guaranteed to be assigned.
+    theme: effectiveTheme,
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
     onShow(instance: TippyInstanceWithCustoms) {
+      if (config.constrainToViewport) {
+        // Find the content wrapper inside the tooltip
+        const content = instance.popper.querySelector('.tippy-content');
+        if (content) {
+          // Get padding from the preventOverflow modifier, default to 8
+          const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
+            m => m.name === 'preventOverflow'
+          )?.options?.padding ?? 8;
+          
+          // Set max-height based on viewport height minus padding on both top and bottom
+          (content as HTMLElement).style.maxHeight = `${window.innerHeight - (padding * 2)}px`;
+        }
+      }
       (async () => {
         if (!instance._uniqueId) {
           instance._uniqueId = generateUniqueTooltipId();
@@ -150,20 +164,38 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       }
 
       instance._nestedTippys = [];
+
+      // 1. Define the shared options for all nested tooltips.
+      // Grab the popperOptions directly from the master config.
+      const nestedTippyOptions: Partial<Props> = {
+        allowHTML: true,
+        interactive: true,
+        trigger: 'mouseenter focus',
+        placement: 'right', // This is now correctly checked against the 'Placement' type
+        popperOptions: config.tippyOptions.popperOptions,
+        onShow(childInstance: Instance) {
+          const currentParentTheme = instance.props.theme || 'auto';
+          childInstance.setProps({ theme: currentParentTheme });
+
+          if (config.constrainToViewport) {
+            const content = childInstance.popper.querySelector('.tippy-content');
+            if (content) {
+              const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
+                m => m.name === 'preventOverflow'
+              )?.options?.padding ?? 8;
+              (content as HTMLElement).style.maxHeight = `${window.innerHeight - (padding * 2)}px`;
+            }
+          }
+        }
+      };
+
       const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
         const button = instance.popper.querySelector<HTMLElement>(selector);
         if (button && items.length > 0) {
-          const parentInstance = instance;
+          // This call is now type-safe and will not error
           const nestedInstance = tippy(button, {
+            ...nestedTippyOptions,
             content: createNestedContent(items),
-            allowHTML: true,
-            interactive: true,
-            trigger: 'mouseenter focus',
-            placement: 'right',
-            onShow(childInstance) {
-              const currentParentTheme = parentInstance.props.theme || 'auto';
-              childInstance.setProps({ theme: currentParentTheme });
-            }
           });
           instance._nestedTippys?.push(nestedInstance as Instance);
         }
@@ -181,7 +213,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       createNestedTippy(`#generifs-more-${instance._uniqueId}`, generifItems);
     },
     onHidden(instance: TippyInstanceWithCustoms) {
-      // ... your onHidden logic (unchanged)
       if (instance._nestedTippys) {
         instance._nestedTippys.forEach(nested => nested.destroy());
         instance._nestedTippys = [];

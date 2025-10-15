@@ -10,6 +10,12 @@
 /* 3. Import theme variables */
 @import './theme.css';
 
+.tippy-content {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gt-border-color) transparent;
+}
+
 /* --- Summary --- */
 .gene-tooltip-summary {
   display: -webkit-box;
