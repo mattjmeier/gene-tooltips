@@ -168,6 +168,39 @@
   font-size: 1.2em;
 }
 
+/* --- Nested Tooltip with Search --- */
+
+.gene-tooltip-nested-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.gene-tooltip-nested-search {
+  padding: 4px 8px;
+  margin: 5px;
+  border: 1px solid var(--gt-border-color);
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--gt-text-color);
+  font-size: 0.9em;
+}
+
+.gene-tooltip-nested-search:focus {
+  outline: none;
+  border-color: var(--gt-accent-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--gt-accent-color) 30%, transparent);
+}
+
+ul.gene-tooltip-nested-list {
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  text-align: left;
+  max-height: 200px;
+  overflow-y: auto;
+  flex-grow: 1; /* Allow the list to take up remaining space */
+}
+
 /* --- Location & Ideogram --- */
 
 .gene-tooltip-location {
