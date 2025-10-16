@@ -182,13 +182,14 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       instance._nestedTippys = [];
 
       // 1. Define the shared options for all nested tooltips.
-      // Grab the popperOptions directly from the master config.
       const nestedTippyOptions: Partial<Props> = {
+        appendTo: () => document.body,
         allowHTML: true,
         interactive: true,
         trigger: 'mouseenter focus',
-        placement: 'right', // This is now correctly checked against the 'Placement' type
+        placement: 'right', 
         popperOptions: config.tippyOptions.popperOptions,
+        zIndex: (config.tippyOptions.zIndex || 9999) + 1,
         onShow(childInstance: Instance) {
           const currentParentTheme = instance.props.theme || 'auto';
           childInstance.setProps({ theme: currentParentTheme });
@@ -209,7 +210,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
         const button = instance.popper.querySelector<HTMLElement>(selector);
         if (button && items.length > 0) {
-          // This call is now type-safe and will not error
           const nestedInstance = tippy(button, {
             ...nestedTippyOptions,
             content: createNestedContent(items),

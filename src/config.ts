@@ -150,16 +150,25 @@ export const defaultConfig: GeneTooltipConfig = {
     allowHTML: true,
     interactive: true,
     placement: 'bottom',
+    appendTo: () => document.body,
+    zIndex: 9999,
     popperOptions: {
-      strategy: 'fixed',
+      strategy: 'absolute', 
       modifiers: [
         {
           name: 'preventOverflow',
-          options: { boundary: 'viewport', padding: 8 },
+          options: {
+            boundary: 'viewport',
+            padding: 8
+          },
         },
         {
           name: 'flip',
-          options: { fallbackPlacements: ['top', 'right', 'left'], boundary: 'viewport', padding: 8 },
+          options: {
+            fallbackPlacements: ['top', 'right', 'left'],
+            boundary: 'viewport',
+            padding: 8
+          },
         }
       ],
     }
