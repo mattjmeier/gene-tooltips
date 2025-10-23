@@ -23,6 +23,8 @@ interface RenderOptions {
   uniqueId?: string; // Add this parameter
 }
 
+const loaderHTML = `<div class="gt-loader-container"><div class="gt-spinner"></div><span>Loading...</span></div>`;
+
 // Generate a unique ID for this tooltip instance
 function generateUniqueId(): string {
   // Use crypto.randomUUID() if available (modern browsers), fallback for older browsers
@@ -61,7 +63,7 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
               <span class="gene-tooltip-location-chr">chr${pos.chr}</span>
               <span class="gene-tooltip-location-pos">${start}-${end}</span>
             </div>
-            ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${uniqueId}"></div>` : ""}
+            ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${uniqueId}">${loaderHTML}</div>` : ""}
         </div>
       </div>
     `;
@@ -72,7 +74,7 @@ function renderGeneTrackContainer(uniqueId: string): string {
   return `
     <div class="gene-tooltip-section-container">
         <div class="gene-tooltip-section-header">Gene Model</div>
-        <div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}"></div>
+        <div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}">${loaderHTML}</div>
     </div>
   `;
 }

@@ -55,11 +55,10 @@ export async function renderIdeogram(
     return;
   }
   
-  // 1. IMMEDIATELY show a loading state.
-  ideoDiv.innerHTML = `<div class="gt-loader-container"><div class="gt-spinner"></div><span>Loading...</span></div>`;
+  // Loading message should already be set by the renderTooltipHTML function by this point.
 
   try {
-    // 2. Wait for the library to load.
+    // Wait for the library to load.
     const Ideogram = await getIdeogram();
     
     if (!Ideogram) {
@@ -148,7 +147,7 @@ export async function renderIdeogram(
       },
     };
     // Before drawing, clear the container of the spinner.
-    //    This gives the Ideogram library a clean slate.
+    // This gives the Ideogram library a clean slate.
     ideoDiv.innerHTML = '';
 
     new Ideogram(configForIdeogram);
