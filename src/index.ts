@@ -167,7 +167,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
         }
       })();
     },
-    onMount(instance: TippyInstanceWithCustoms) {
+    onShown(instance: TippyInstanceWithCustoms) {
       const data = instance._geneData;
       if (!data || !instance._uniqueId) return;
 
