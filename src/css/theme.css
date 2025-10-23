@@ -11,11 +11,12 @@
 .tippy-box[data-theme~='light'],
 .tippy-box[data-theme~='light-border'], /* Add this line */
 html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material']):not([data-theme~='translucent']) {
+  color-scheme: light;
   --gt-text-color: #222;
   --gt-text-color-secondary: rgba(0, 0, 0, 0.6);
   --gt-accent-color: #007bff;
   --gt-border-color: rgba(0, 0, 0, 0.1);
-  --gt-hover-background-color: rgba(0, 0, 0, 0.05);
+  /* --gt-hover-background-color: rgba(0, 0, 0, 0.05); */
   --gt-exon-color: #007bff;
 }
 
@@ -25,11 +26,12 @@ html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material'
 */
 .tippy-box[data-theme~='dark'],
 html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):not([data-theme~='translucent']):not([data-theme~='light-border']) {
+  color-scheme: dark;
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #58a6ff;
   --gt-border-color: rgba(255, 255, 255, 0.2);
-  --gt-hover-background-color: rgba(255, 255, 255, 0.1);
+  /* --gt-hover-background-color: rgba(255, 255, 255, 0.1); */
   --gt-exon-color: #58a6ff;
 }
 
@@ -38,6 +40,7 @@ html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):no
   These should work correctly regardless of the light/dark mode of the page.
 */
 .tippy-box[data-theme~='material'] {
+  color-scheme: dark;
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #80cbc4;
@@ -47,11 +50,12 @@ html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):no
 
 /* --- TRANSLUCENT THEME --- */
 .tippy-box[data-theme~='translucent'] {
+  color-scheme: dark;
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #8cb3f3;
   --gt-border-color: rgba(255, 255, 255, 0.25);
-  --gt-hover-background-color: rgba(255, 255, 255, 0.15);
+  /* --gt-hover-background-color: rgba(255, 255, 255, 0.15); */
   --gt-exon-color: #8cb3f3;
   --gt-border-color: rgba(255, 255, 255, 0.2);
 }

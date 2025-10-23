@@ -106,7 +106,8 @@ export interface MyGeneExon {
   strand: number;
   txend: number;
   txstart: number;
-  position?: [number, number][]; // Make all possible coordinate formats optional
+  transcript: string;
+  position?: [number, number][];
   start?: number;                 
   end?: number;                   
 }

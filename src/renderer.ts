@@ -69,11 +69,16 @@ function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undef
     `;
 }
 
-// Modified for Gene Track section layout with unique ID
+// Gene Track
 function renderGeneTrackContainer(uniqueId: string): string {
   return `
     <div class="gene-tooltip-section-container">
-        <div class="gene-tooltip-section-header">Gene Model</div>
+        <div class="gene-tooltip-section-header gene-track-header">
+            <span>Gene Model</span>
+            <div class="gene-tooltip-track-controls">
+                <select class="gt-transcript-selector" id="transcript-selector-${uniqueId}" style="display: none;"></select>
+            </div>
+        </div>
         <div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}">${loaderHTML}</div>
     </div>
   `;
