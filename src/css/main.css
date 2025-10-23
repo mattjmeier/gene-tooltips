@@ -417,13 +417,6 @@ ul.gene-tooltip-nested-list {
   border: 1px solid var(--gt-border-color);
   color: var(--gt-text-color);
   margin-left: 8px;
-  background-color: inherit;
-  color-scheme: inherit;
-}
-
-.tippy-box .gt-transcript-selector option {
-  background-color: inherit;
-  color-scheme: inherit;
 }
 
 .exon-rect {

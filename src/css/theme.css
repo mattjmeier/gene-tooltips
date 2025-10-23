@@ -9,7 +9,7 @@
 */
 /* Default (light) variables */
 .tippy-box[data-theme~='light'],
-.tippy-box[data-theme~='light-border'], /* Add this line */
+.tippy-box[data-theme~='light-border'],
 html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material']):not([data-theme~='translucent']) {
   color-scheme: light;
   --gt-text-color: #222;
@@ -58,4 +58,23 @@ html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):no
   /* --gt-hover-background-color: rgba(255, 255, 255, 0.15); */
   --gt-exon-color: #8cb3f3;
   --gt-border-color: rgba(255, 255, 255, 0.2);
+}
+
+
+
+/* Apply color-scheme to select within light tooltips */
+.tippy-box[data-theme~='light'] .gt-transcript-selector,
+.tippy-box[data-theme~='light-border'] .gt-transcript-selector,
+html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material']):not([data-theme~='translucent']) .gt-transcript-selector option {
+  color-scheme: light;
+}
+
+/* Apply color-scheme to select within dark tooltips */
+.tippy-box[data-theme~='dark'] .gt-transcript-selector,
+html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):not([data-theme~='translucent']):not([data-theme~='light-border']) .gt-transcript-selector option {
+  color-scheme: dark;
+}
+
+.tippy-box[data-theme~='translucent'] .gt-transcript-selector option {
+  color-scheme: dark;
 }
