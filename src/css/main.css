@@ -176,6 +176,7 @@
 .gene-tooltip-nested-container {
   display: flex;
   flex-direction: column;
+  scrollbar-width: thin;
 }
 
 .gene-tooltip-nested-search {

@@ -50,42 +50,47 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
         // --- All the nested tippy logic from your onShown goes here ---
         instance._nestedTippys = [];
         const baseNestedOptions = { ...config.nestedTippyOptions };
+
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+        const defaultPlacement = isMobile ? 'bottom' : 'right';
+
         const finalNestedTippyOptions: Partial<Props> = {
-        ...baseNestedOptions, // User options are the base
-        
-        // --- Required/Dynamic Properties (cannot be overridden) ---
-        appendTo: instance.popper,
-        popperOptions: config.tippyOptions.popperOptions, // Inherit from parent
-        zIndex: (config.tippyOptions.zIndex || 9999) + 1,
+          ...baseNestedOptions, // User options are the base
+          placement: baseNestedOptions.placement ?? defaultPlacement,
 
-        // --- Safe Callback Handling ---
-        onShow(childInstance: Instance) {
-            // Our essential logic:
-            instance._isChildTippyVisible = true;
-            const currentParentTheme = instance.props.theme || 'auto';
-            childInstance.setProps({ theme: currentParentTheme });
+          // --- Required/Dynamic Properties (cannot be overridden) ---
+          appendTo: instance.popper,
+          popperOptions: config.tippyOptions.popperOptions, // Inherit from parent
+          zIndex: (config.tippyOptions.zIndex || 9999) + 1,
 
-            if (config.constrainToViewport) {
-            const content = childInstance.popper.querySelector('.tippy-content');
-            if (content) {
-                const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
-                m => m.name === 'preventOverflow'
-                )?.options?.padding ?? 8;
-                const availableHeight = window.visualViewport?.height || window.innerHeight;
-                (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
-            }
-            }
-            
-            // Now, call the user's custom onShow, if they provided one.
-            baseNestedOptions.onShow?.(childInstance);
-        },
-        onHide(childInstance: Instance) {
-            // Our essential logic:
-            instance._isChildTippyVisible = false;
-            
-            // Call the user's custom onHide.
-            baseNestedOptions.onHide?.(childInstance);
-        }
+          // --- Safe Callback Handling ---
+          onShow(childInstance: Instance) {
+              // Our essential logic:
+              instance._isChildTippyVisible = true;
+              const currentParentTheme = instance.props.theme || 'auto';
+              childInstance.setProps({ theme: currentParentTheme });
+
+              if (config.constrainToViewport) {
+                const content = childInstance.popper.querySelector('.tippy-content');
+                if (content) {
+                    const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
+                    m => m.name === 'preventOverflow'
+                    )?.options?.padding ?? 8;
+                    const availableHeight = window.visualViewport?.height || window.innerHeight;
+                    (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
+                }
+              }
+              
+              // Now, call the user's custom onShow, if they provided one.
+              baseNestedOptions.onShow?.(childInstance);
+          },
+          onHide(childInstance: Instance) {
+              // Our essential logic:
+              instance._isChildTippyVisible = false;
+              
+              // Call the user's custom onHide.
+              baseNestedOptions.onHide?.(childInstance);
+          }
         };
 
         // Pass the final, merged options to the function
@@ -143,17 +148,18 @@ export function createOnShowHandler(
     instance._isFullyShown = false; // Reset the flag
     
     // Viewport constraint logic
-    if (config.constrainToViewport) {
-        // const content = childInstance.popper.querySelector('.tippy-content');
-        const content = instance.popper.querySelector('.tippy-content');
-        if (content) {
-            const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
-            m => m.name === 'preventOverflow'
-            )?.options?.padding ?? 8;
-            const availableHeight = window.visualViewport?.height || window.innerHeight;
-            (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
-        }
+    constrainTooltipHeight(instance, config);
+
+    // Add a resize listener to handle orientation changes or virtual keyboard
+    const resizeHandler = () => constrainTooltipHeight(instance, config);
+    (instance as any)._visualViewportResizeHandler = resizeHandler;
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', resizeHandler);
+    } else {
+      window.addEventListener('resize', resizeHandler); // Fallback for older browsers
     }
+
 
     // Async data fetching logic
     (async () => {
@@ -248,8 +254,13 @@ export function createOnHideHandler() {
     }
     
     // Cleanup viewport resize handler
-    if ((instance as any)._visualViewportResizeHandler && window.visualViewport) {
-      window.visualViewport.removeEventListener('resize', (instance as any)._visualViewportResizeHandler);
+    const resizeHandler = (instance as any)._visualViewportResizeHandler;
+    if (resizeHandler) {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', resizeHandler);
+      } else {
+        window.removeEventListener('resize', resizeHandler);
+      }
       delete (instance as any)._visualViewportResizeHandler;
     }
     
@@ -259,4 +270,25 @@ export function createOnHideHandler() {
       instance._nestedTippys = [];
     }
   };
+}
+
+/**
+ * Calculates and applies the max-height to a tippy instance's content
+ * to ensure it doesn't overflow the visual viewport.
+ */
+function constrainTooltipHeight(instance: TippyInstanceWithCustoms, config: GeneTooltipConfig) {
+  if (!config.constrainToViewport) return;
+
+  const content = instance.popper.querySelector('.tippy-content');
+  if (!content) return;
+
+  // Use the padding value from your popperOptions for accurate calculation
+  const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
+    m => m.name === 'preventOverflow'
+  )?.options?.padding ?? 8;
+
+  // visualViewport is more accurate on mobile than window.innerHeight
+  const availableHeight = window.visualViewport?.height || window.innerHeight;
+  
+  (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
 }

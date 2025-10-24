@@ -47,7 +47,7 @@
     "build": "npm run clean && npm-run-all --parallel build:js-css build:types",
     "// DOCS & TESTING": "---------------------------------------------",
     "docs:generate": "typedoc",
-    "docs:dev": "vitepress dev docs",
+    "docs:dev": "vitepress dev docs --host",
     "docs:build": "npm run docs:generate && vitepress build docs",
     "docs:preview": "vitepress preview docs",
     "test": "vitest",
