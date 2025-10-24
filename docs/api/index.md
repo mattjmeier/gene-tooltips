@@ -8,7 +8,7 @@
 
 > **default**: `object`
 
-Defined in: [index.ts:105](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/index.ts#L105)
+Defined in: [index.ts:105](https://github.com/mattjmeier/gene-tooltips/blob/547536637276ecddcde4082e6f81e07f2bdbbbf9/src/index.ts#L105)
 
 #### Type Declaration
 

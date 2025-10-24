@@ -8,7 +8,7 @@
 
 > **createNestedContent**(`items`): `string`
 
-Defined in: [utils.ts:10](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/utils.ts#L10)
+Defined in: [utils.ts:10](https://github.com/mattjmeier/gene-tooltips/blob/547536637276ecddcde4082e6f81e07f2bdbbbf9/src/utils.ts#L10)
 
 #### Parameters
 
@@ -26,7 +26,7 @@ Defined in: [utils.ts:10](https://github.com/mattjmeier/gene-tooltips/blob/02903
 
 > **generateUniqueTooltipId**(): `string`
 
-Defined in: [utils.ts:2](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/utils.ts#L2)
+Defined in: [utils.ts:2](https://github.com/mattjmeier/gene-tooltips/blob/547536637276ecddcde4082e6f81e07f2bdbbbf9/src/utils.ts#L2)
 
 #### Returns
 

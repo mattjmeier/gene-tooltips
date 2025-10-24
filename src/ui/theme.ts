@@ -16,7 +16,7 @@ export function getEffectiveTheme(configTheme: 'light' | 'dark' | 'auto' | 'mate
 type ThemeObserverCleanup = () => void;
 
 /**
- * Sets up a MutationObserver to watch for theme changes on the <html> element
+ * Sets up a MutationObserver to watch for theme changes on the `<html>` element
  * and updates the tippy instances accordingly.
  * @returns A cleanup function to disconnect the observer.
  */
