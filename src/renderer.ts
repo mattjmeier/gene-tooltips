@@ -99,17 +99,14 @@ function renderSummary(summaryText: string | undefined, truncate: number, unique
   const summaryClass = 'gene-tooltip-summary';
   const summaryStyle = `style="--line-clamp: ${truncate};"`;
   
-  const moreButtonId = `summary-more-${uniqueId}`;
   const lessButtonId = `summary-less-${uniqueId}`;
   
-  const moreButton = renderMoreButton(moreButtonId, 'Show more');
   const lessButton = renderCollapseButton(lessButtonId, 'Show less');
 
   return `
     <div class="gene-tooltip-section-container">
         <div class="gene-tooltip-section-header">Summary</div>
         <p class="${summaryClass}" ${summaryStyle}>${summary}</p>
-        ${moreButton}
         ${lessButton}
     </div>
   `;
@@ -124,7 +121,9 @@ function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConf
         linksToShow.push(`
           <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}"
             target="_blank" rel="noopener noreferrer" title="View on NCBI Gene">
-            <img src="${NCBILogo}" alt="NCBI Gene link" class="gene-tooltip-link-icon" />
+            <span class="gene-tooltip-link-icon-wrapper">
+              <img src="${NCBILogo}" alt="NCBI Gene link" class="gene-tooltip-link-icon" />
+            </span>
             <span>NCBI</span>
           </a>
         `);
@@ -135,7 +134,9 @@ function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConf
       linksToShow.push(`
         <a href="https://www.ensembl.org/id/${data.ensembl.gene}"
           target="_blank" rel="noopener noreferrer" title="View on Ensembl">
-          <img src="${EnsemblLogo}" alt="Ensembl link" class="gene-tooltip-link-icon" />
+          <span class="gene-tooltip-link-icon-wrapper">
+            <img src="${EnsemblLogo}" alt="Ensembl link" class="gene-tooltip-link-icon" />
+          </span>
           <span>Ensembl</span>
         </a>
       `);
@@ -144,11 +145,12 @@ function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConf
     // Build Wikipedia links
     if (display.links?.wikipedia !== false && data.wikipedia?.url_stub) {
       const wikiStub = data.wikipedia.url_stub.replace(/\s+/g, '_');
-
       linksToShow.push(`
         <a href="https://en.wikipedia.org/wiki/${wikiStub}"
           target="_blank" rel="noopener noreferrer" title="View on Wikipedia">
-          <img src="${WikiLogo}" alt="Wikipedia link" class="gene-tooltip-link-icon" />
+          <span class="gene-tooltip-link-icon-wrapper">
+            <img src="${WikiLogo}" alt="Wikipedia link" class="gene-tooltip-link-icon" />
+          </span>
           <span>Wikipedia</span>
         </a>
       `);

@@ -1,3 +1,5 @@
+import type { Instance } from 'tippy.js';
+
 // Generate a unique ID for each tooltip instance
 export function generateUniqueTooltipId(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -26,4 +28,26 @@ export function createNestedContent(items: { name: string; url: string }[]): str
       <ul id="${listId}" class="gene-tooltip-nested-list">${listItems}</ul>
     </div>
   `;
+}
+
+/**
+ * Gets the computed background color from a Tippy instance's popper.
+ * @param instance The Tippy instance to inspect.
+ * @returns The background color string (e.g., 'rgb(255, 255, 255)') or null if not found.
+ */
+export function getTippyBackgroundColor(instance: Instance): string | null {
+  const tippyBox = instance.popper.querySelector<HTMLElement>('.tippy-box');
+  if (tippyBox) {
+    return window.getComputedStyle(tippyBox).backgroundColor;
+  }
+  return null;
+}
+
+export function syncNestedTooltipTheme(parentInstance: Instance, nestedInstance: Instance): void {
+  const parentBgColor = getTippyBackgroundColor(parentInstance);
+  const nestedBox = nestedInstance.popper.querySelector<HTMLElement>('.tippy-box');
+  
+  if (parentBgColor && nestedBox) {
+    nestedBox.style.backgroundColor = parentBgColor;
+  }
 }
