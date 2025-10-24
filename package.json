@@ -85,8 +85,5 @@
     "ideogram": {
       "optional": true
     }
-  },
-  "dependencies": {
-    "tom-select": "^2.4.3"
   }
 }
