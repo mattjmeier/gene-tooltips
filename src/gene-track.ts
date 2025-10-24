@@ -31,7 +31,6 @@ Please ensure 'd3' is installed (it's a peer dependency) or the script is loaded
     return d3ModulePromise;
 }
 
-
 /**
  * The core D3 drawing logic, now simplified to accept a SINGLE transcript object.
  * @param svg - The D3 selection for the SVG group element.
@@ -41,7 +40,7 @@ Please ensure 'd3' is installed (it's a peer dependency) or the script is loaded
  */
 function drawTranscript(
     svg: D3.Selection<SVGGElement, unknown, null, undefined>,
-    transcript: MyGeneExon, // <-- Key Change: Receives one transcript object
+    transcript: MyGeneExon,
     xScale: D3.ScaleLinear<number, number>,
     instance: Instance
 ) {

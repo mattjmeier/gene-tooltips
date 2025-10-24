@@ -22,6 +22,7 @@ interface TippyInstanceWithCustoms extends Instance {
   _uniqueId?: string;
   _themeIntent?: 'auto' | string;
   _isChildTippyVisible?: boolean;
+  _isFullyShown?: boolean;
 }
 
 function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
@@ -41,6 +42,113 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
     nestedTippyOptions: { ...defaultConfig.nestedTippyOptions, ...userConfig.nestedTippyOptions },
   };
+
+  async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms) {
+    try {
+      const data = instance._geneData;
+      if (!data || !instance._uniqueId) return;
+
+      // Create promises for both rendering tasks
+      const renderPromises = [];
+      if (config.display.geneTrack && data.exons) {
+        renderPromises.push(renderGeneTrack(instance, data, instance._uniqueId, config.tooltipWidth));
+      }
+      
+      if (config.ideogram?.enabled && data.genomic_pos) {
+        renderPromises.push(renderIdeogram(instance, data, config.ideogram, instance._uniqueId));
+      }
+
+      // Wait for both visualizations to finish rendering or fail
+      await Promise.allSettled(renderPromises);
+
+      // If the tooltip was hidden while async tasks were running, abort
+      if (!instance.state.isShown) {
+        return;
+      }
+
+      // --- All the nested tippy logic from your onShown goes here ---
+      instance._nestedTippys = [];
+      const baseNestedOptions = { ...config.nestedTippyOptions };
+      const finalNestedTippyOptions: Partial<Props> = {
+        ...baseNestedOptions, // User options are the base
+        
+        // --- Required/Dynamic Properties (cannot be overridden) ---
+        appendTo: instance.popper,
+        popperOptions: config.tippyOptions.popperOptions, // Inherit from parent
+        zIndex: (config.tippyOptions.zIndex || 9999) + 1,
+
+        // --- Safe Callback Handling ---
+        onShow(childInstance: Instance) {
+          // Our essential logic:
+          instance._isChildTippyVisible = true;
+          const currentParentTheme = instance.props.theme || 'auto';
+          childInstance.setProps({ theme: currentParentTheme });
+
+          if (config.constrainToViewport) {
+            const content = childInstance.popper.querySelector('.tippy-content');
+            if (content) {
+              const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
+                m => m.name === 'preventOverflow'
+              )?.options?.padding ?? 8;
+              const availableHeight = window.visualViewport?.height || window.innerHeight;
+              (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
+            }
+          }
+          
+          // Now, call the user's custom onShow, if they provided one.
+          baseNestedOptions.onShow?.(childInstance);
+        },
+        onHide(childInstance: Instance) {
+          // Our essential logic:
+          instance._isChildTippyVisible = false;
+          
+          // Call the user's custom onHide.
+          baseNestedOptions.onHide?.(childInstance);
+        }
+      };
+
+      // Pass the final, merged options to the function
+      const createNestedTippy = (
+        currentInstance: TippyInstanceWithCustoms,
+        options: Partial<Props>,
+        selector: string,
+        items: { name: string; url: string }[]
+      ) => {
+        const button = currentInstance.popper.querySelector<HTMLElement>(selector);
+        if (button && items.length > 0) {
+          const nestedInstance = tippy(button, {
+            ...options, // Use the passed-in options
+            content: createNestedContent(items),
+          });
+          currentInstance._nestedTippys?.push(nestedInstance as Instance);
+        }
+      };
+
+      
+      const uniqueId = instance._uniqueId;
+      const pathwayItems = formatPathways(data.pathway?.[config.pathwaySource], config.pathwaySource);
+      createNestedTippy(instance, finalNestedTippyOptions, `#pathways-more-${uniqueId}`, pathwayItems);
+      
+      const domainItems = formatDomains(data.interpro);
+      createNestedTippy(instance, finalNestedTippyOptions, `#domains-more-${uniqueId}`, domainItems);
+      
+      const transcriptItems = formatTranscripts(data.ensembl?.transcript);
+      createNestedTippy(instance, finalNestedTippyOptions, `#transcripts-more-${uniqueId}`, transcriptItems);
+      
+      const structureItems = formatStructures(data.pdb);
+      createNestedTippy(instance, finalNestedTippyOptions, `#structures-more-${uniqueId}`, structureItems);
+      
+      const generifItems = formatGeneRIFs(data.generif);
+      createNestedTippy(instance, finalNestedTippyOptions, `#generifs-more-${uniqueId}`, generifItems);
+
+    } catch (error) {
+        console.error('[GeneTooltip] A critical error occurred during post-render lifecycle.', error);
+        if (instance.state.isShown) {
+          instance.setContent('An error occurred rendering this tooltip.');
+        }
+    }
+  }
+
 
   // Local theme setter
   const setTippyTheme = (theme: string): void => {
@@ -73,6 +181,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     theme: effectiveTheme,
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
     onHide(instance: TippyInstanceWithCustoms) {
+      instance._isFullyShown = false; // Reset the flag on hide
       // If a child tippy is visible, prevent the parent from hiding.
       if (instance._isChildTippyVisible) {
         return false;
@@ -88,6 +197,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       }
     },
     onShow(instance: TippyInstanceWithCustoms) {
+      instance._isFullyShown = false; // Reset the flag on hide
       if (config.constrainToViewport) {
         // Find the content wrapper inside the tooltip
         const content = instance.popper.querySelector('.tippy-content');
@@ -154,6 +264,11 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
         const renderContent = (data: MyGeneInfoResult | null) => {
           instance._geneData = data;
           instance.setContent(renderTooltipHTML(data, renderOptions));
+          // Use a microtask to ensure the DOM has updated from setContent
+          // queueMicrotask(() => {
+          if (instance._isFullyShown) {
+            renderVisualsAndNestedTippys(instance);
+          }
         };
 
         const cachedData = cache.get(symbol, taxid);
@@ -185,107 +300,9 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
       })();
     },
     onShown: async (instance: TippyInstanceWithCustoms) => {
-      try {
-        const data = instance._geneData;
-        if (!data || !instance._uniqueId) return;
-
-        // Create promises for both rendering tasks
-        const renderPromises = [];
-        if (config.display.geneTrack && data.exons) {
-          renderPromises.push(renderGeneTrack(instance, data, instance._uniqueId, config.tooltipWidth));
-        }
-        
-        if (config.ideogram?.enabled && data.genomic_pos) {
-          renderPromises.push(renderIdeogram(instance, data, config.ideogram, instance._uniqueId));
-        }
-
-        // Wait for both visualizations to finish rendering or fail
-        await Promise.allSettled(renderPromises);
-
-        // If the tooltip was hidden while async tasks were running, abort
-        if (!instance.state.isShown) {
-          return;
-        }
-
-        instance._nestedTippys = [];
-        const baseNestedOptions = { ...config.nestedTippyOptions };
-        const finalNestedTippyOptions: Partial<Props> = {
-          ...baseNestedOptions, // User options are the base
-          
-          // --- Required/Dynamic Properties (cannot be overridden) ---
-          appendTo: instance.popper,
-          popperOptions: config.tippyOptions.popperOptions, // Inherit from parent
-          zIndex: (config.tippyOptions.zIndex || 9999) + 1,
-
-          // --- Safe Callback Handling ---
-          onShow(childInstance: Instance) {
-            // Our essential logic:
-            instance._isChildTippyVisible = true;
-            const currentParentTheme = instance.props.theme || 'auto';
-            childInstance.setProps({ theme: currentParentTheme });
-
-            if (config.constrainToViewport) {
-              const content = childInstance.popper.querySelector('.tippy-content');
-              if (content) {
-                const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
-                  m => m.name === 'preventOverflow'
-                )?.options?.padding ?? 8;
-                const availableHeight = window.visualViewport?.height || window.innerHeight;
-                (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
-              }
-            }
-            
-            // Now, call the user's custom onShow, if they provided one.
-            baseNestedOptions.onShow?.(childInstance);
-          },
-          onHide(childInstance: Instance) {
-            // Our essential logic:
-            instance._isChildTippyVisible = false;
-            
-            // Call the user's custom onHide.
-            baseNestedOptions.onHide?.(childInstance);
-          }
-        };
-
-        // Pass the final, merged options to the function
-        const createNestedTippy = (
-          currentInstance: TippyInstanceWithCustoms,
-          options: Partial<Props>,
-          selector: string,
-          items: { name: string; url: string }[]
-        ) => {
-          const button = currentInstance.popper.querySelector<HTMLElement>(selector);
-          if (button && items.length > 0) {
-            const nestedInstance = tippy(button, {
-              ...options, // Use the passed-in options
-              content: createNestedContent(items),
-            });
-            currentInstance._nestedTippys?.push(nestedInstance as Instance);
-          }
-        };
-
-        const uniqueId = instance._uniqueId;
-        const pathwayItems = formatPathways(data.pathway?.[config.pathwaySource], config.pathwaySource);
-        // vvv Use the new final options object here vvv
-        createNestedTippy(instance, finalNestedTippyOptions, `#pathways-more-${uniqueId}`, pathwayItems);
-        
-        const domainItems = formatDomains(data.interpro);
-        createNestedTippy(instance, finalNestedTippyOptions, `#domains-more-${uniqueId}`, domainItems);
-        
-        const transcriptItems = formatTranscripts(data.ensembl?.transcript);
-        createNestedTippy(instance, finalNestedTippyOptions, `#transcripts-more-${uniqueId}`, transcriptItems);
-        
-        const structureItems = formatStructures(data.pdb);
-        createNestedTippy(instance, finalNestedTippyOptions, `#structures-more-${uniqueId}`, structureItems);
-        
-        const generifItems = formatGeneRIFs(data.generif);
-        createNestedTippy(instance, finalNestedTippyOptions, `#generifs-more-${uniqueId}`, generifItems);
-
-      } catch (error) {
-          console.error('[GeneTooltip] A critical error occurred during the onShown lifecycle.', error);
-          if (instance.state.isShown) {
-            instance.setContent('An error occurred rendering this tooltip.');
-          }
+      instance._isFullyShown = true;
+      if (instance._geneData !== undefined) {
+        renderVisualsAndNestedTippys(instance);
       }
     },
   }) as TippyInstanceWithCustoms[];
@@ -333,7 +350,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
  * once in your application's entry point.
  */
 function preload(): Promise<[PromiseSettledResult<any>, PromiseSettledResult<any>]> {
-  console.log('[GeneTooltip] Preloading optional dependencies...');
   return Promise.allSettled([
     getD3(),
     getIdeogram()

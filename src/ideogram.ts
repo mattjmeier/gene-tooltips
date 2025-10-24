@@ -15,7 +15,6 @@ export async function getIdeogram() {
   // 2. Check for the global variable.
   // If found, cache the resolved promise and return it.
   if ((window as any).Ideogram) {
-    console.log('[GeneTooltip] Found global Ideogram instance.');
     ideogramModulePromise = Promise.resolve((window as any).Ideogram);
     return ideogramModulePromise;
   }
@@ -23,7 +22,6 @@ export async function getIdeogram() {
   // 3. If no global and no cache, fall back to dynamic import.
   // The import will either work (in module environments)
   // or fail gracefully.
-  console.log('[GeneTooltip] Global Ideogram not found. Attempting dynamic import...');
   ideogramModulePromise = import('ideogram')
     .then(module => {
       // Ideogram often exports as a default property
@@ -36,7 +34,6 @@ export async function getIdeogram() {
       ideogramModulePromise = null; 
       return Promise.reject(new Error(errorMsg));
     });
-
   return ideogramModulePromise;
 }
 

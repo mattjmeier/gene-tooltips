@@ -289,7 +289,6 @@ export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,
   options: RenderOptions = {}
 ): string {
-  console.log(`[GeneTooltip DEBUG] ==> renderTooltipHTML called for ${data?.symbol || 'not found'}`);
   if (!data) return '<p>Gene not found.</p>';
 
   // Generate a unique ID for this specific tooltip instance
@@ -312,7 +311,7 @@ export function renderTooltipHTML(
   if (tooltipWidth) styleParts.push(`max-width: ${tooltipWidth}px`);
   if (tooltipHeight) styleParts.push(`max-height: ${tooltipHeight}px`, `overflow-y: auto`);
   const inlineStyle = styleParts.length > 0 ? `style="${styleParts.join('; ')}"` : '';
-
+  
   return `
     <div class="gene-tooltip-content" ${inlineStyle} data-tooltip-id="${uniqueId}">
       <div class="gene-tooltip-header">
