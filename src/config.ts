@@ -106,7 +106,8 @@ export interface MyGeneExon {
   strand: number;
   txend: number;
   txstart: number;
-  position?: [number, number][]; // Make all possible coordinate formats optional
+  transcript: string;
+  position?: [number, number][];
   start?: number;                 
   end?: number;                   
 }
@@ -151,6 +152,7 @@ export const defaultConfig: GeneTooltipConfig = {
     interactive: true,
     placement: 'bottom',
     appendTo: () => document.body,
+    hideOnClick: false,
     zIndex: 9999,
     popperOptions: {
       strategy: 'absolute', 
