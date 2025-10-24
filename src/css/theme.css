@@ -18,6 +18,7 @@ html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material'
   --gt-border-color: rgba(0, 0, 0, 0.1);
   /* --gt-hover-background-color: rgba(0, 0, 0, 0.05); */
   --gt-exon-color: #007bff;
+  --gt-background-color-subtle: rgba(142, 150, 170, 0.14);
 }
 
 /* 
@@ -33,6 +34,7 @@ html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):no
   --gt-border-color: rgba(255, 255, 255, 0.2);
   /* --gt-hover-background-color: rgba(255, 255, 255, 0.1); */
   --gt-exon-color: #58a6ff;
+  --gt-background-color-subtle: rgba(255, 255, 255, 0.05);
 }
 
 /* 
@@ -46,6 +48,7 @@ html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):no
   --gt-accent-color: #80cbc4;
   --gt-exon-color: #80cbc4;
   --gt-border-color: rgba(255, 255, 255, 0.2);
+  --gt-background-color-subtle: rgba(255, 255, 255, 0.05);
 }
 
 /* --- TRANSLUCENT THEME --- */
@@ -58,4 +61,5 @@ html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):no
   /* --gt-hover-background-color: rgba(255, 255, 255, 0.15); */
   --gt-exon-color: #8cb3f3;
   --gt-border-color: rgba(255, 255, 255, 0.2);
+  --gt-background-color-subtle: rgba(255, 255, 255, 0.05);
 }
