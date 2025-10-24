@@ -1,265 +1,48 @@
-import tippy, { type Instance, Props } from 'tippy.js';
-import { defaultConfig, type GeneTooltipConfig, MyGeneInfoResult } from './config.js';
-import * as cache from './cache.js';
-import { fetchMyGeneBatch } from './api.js';
-import { renderTooltipHTML } from './renderer.js';
-import { findGeneElements, getGeneInfoFromElement } from './parser.js';
+import tippy from 'tippy.js';
+import { type GeneTooltipConfig, mergeConfig, MyGeneInfoResult } from './config.js';
+import { findGeneElements } from './parser.js';
 import { runPrefetch } from './prefetch.js';
 import { enableSummaryExpand } from './ui/summaryExpand.js';
-import { renderIdeogram, getIdeogram } from './ideogram.js';
-import { renderGeneTrack, getD3 } from './gene-track.js';
-import { formatPathways, formatDomains, formatTranscripts, formatStructures, formatGeneRIFs } from './formatters.js';
-import { generateUniqueTooltipId, createNestedContent } from './utils.js';
+import { getIdeogram } from './ideogram.js';
+import { getD3 } from './gene-track.js';
+import { getEffectiveTheme, initializeThemeObserver } from './ui/theme.js';
+import { 
+  createOnShowHandler, 
+  createOnShownHandler, 
+  createOnHideHandler, 
+  TippyInstanceWithCustoms 
+} from './lifecycle.js';
 
 // --- Map to track in-flight requests ---
 const inFlightRequests = new Map<string, Promise<Map<string, MyGeneInfoResult>>>();
 let isSummaryHandlerEnabled = false;
 
-interface TippyInstanceWithCustoms extends Instance {
-  _nestedTippys?: Instance[];
-  _geneData?: MyGeneInfoResult | null;
-  _isFetching?: boolean;
-  _uniqueId?: string;
-  _themeIntent?: 'auto' | string; // Track the user's intended theme
-}
-
 function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
-  // --- LOCAL STATE ---
-  let themeObserver: MutationObserver | null = null;
-  let instances: TippyInstanceWithCustoms[] = []; 
-
-  const config: GeneTooltipConfig = {
-    ...defaultConfig,
-    ...userConfig,
-    display: {
-      ...defaultConfig.display,
-      ...userConfig.display,
-      links: { ...defaultConfig.display.links, ...userConfig.display?.links },
-    },
-    ideogram: { ...defaultConfig.ideogram, ...userConfig.ideogram },
-    tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
-  };
-
-  // Local theme setter
-  const setTippyTheme = (theme: string): void => {
-    instances.forEach(instance => {
-      if (instance._themeIntent === 'auto' && instance.props.theme !== theme) {
-        instance.setProps({ theme });
-      }
-    });
-  };
-
+  const config = mergeConfig(userConfig);
+  let instances: TippyInstanceWithCustoms[] = [];
+  
   const geneElements = findGeneElements(config.selector);
   if (geneElements.length === 0) {
-    return () => {};
+    return () => {}; // No elements found, return no-op cleanup
   }
-  
-  // We determine the theme *before* initializing Tippy.
-  let effectiveTheme: string;
+
+  const effectiveTheme = getEffectiveTheme(config.theme);
   const isAutoTheme = config.theme === 'auto' || typeof config.theme === 'undefined';
 
-  if (isAutoTheme) {
-    const isDark = document.documentElement.classList.contains('dark');
-    effectiveTheme = isDark ? 'dark' : 'light';
-  } else {
-    effectiveTheme = config.theme;
-  }
-
-  // Create tippy instances with the correct theme
   instances = tippy(geneElements, {
     ...config.tippyOptions,
     theme: effectiveTheme,
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
-    onShow(instance: TippyInstanceWithCustoms) {
-      if (config.constrainToViewport) {
-        // Find the content wrapper inside the tooltip
-        const content = instance.popper.querySelector('.tippy-content');
-        if (content) {
-          // Get padding from the preventOverflow modifier, default to 8
-          const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
-            m => m.name === 'preventOverflow'
-          )?.options?.padding ?? 8;
-          
-          // Set max-height based on viewport height minus padding on both top and bottom
-          // Use the Visual Viewport API if available, otherwise fall back to innerHeight.
-          const availableHeight = window.visualViewport?.height || window.innerHeight;
-          (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
-        }
-      }
-      if (config.constrainToViewport && window.visualViewport) {
-        const content = instance.popper.querySelector('.tippy-content') as HTMLElement | null;
-        if (!content) return;
-        
-        const padding = config.tippyOptions?.popperOptions?.modifiers?.find(m => m.name === 'preventOverflow')?.options?.padding ?? 8;
-
-        // Define the handler function
-        const handleResize = () => {
-            content.style.maxHeight = `${window.visualViewport!.height - (padding * 2)}px`;
-        };
-
-        // Attach the handler
-        window.visualViewport.addEventListener('resize', handleResize);
-        
-        // Store the handler on the instance so we can remove it later
-        (instance as any)._visualViewportResizeHandler = handleResize;
-      }
-      (async () => {
-        if (!instance._uniqueId) {
-          instance._uniqueId = generateUniqueTooltipId();
-        }
-
-        if (instance._geneData !== undefined) {
-          return;
-        }
-
-        const info = getGeneInfoFromElement(instance.reference as HTMLElement);
-        if (!info) {
-          instance.setContent('Invalid gene element');
-          return;
-        }
-
-        const { symbol, taxid } = info;
-        const cacheKey = cache.getCacheKey(symbol, taxid);
-
-        const renderOptions = {
-          truncate: config.truncateSummary,
-          display: config.display,
-          pathwaySource: config.pathwaySource,
-          pathwayCount: config.pathwayCount,
-          domainCount: config.domainCount,
-          transcriptCount: config.transcriptCount,
-          structureCount: config.structureCount,
-          generifCount: config.generifCount,
-          tooltipHeight: config.tooltipHeight,
-          uniqueId: instance._uniqueId,
-        };
-
-        const renderContent = (data: MyGeneInfoResult | null) => {
-          instance._geneData = data;
-          instance.setContent(renderTooltipHTML(data, renderOptions));
-        };
-
-        const cachedData = cache.get(symbol, taxid);
-        if (typeof cachedData !== 'undefined') {
-          renderContent(cachedData);
-          return;
-        }
-
-        instance.setContent('Loading...');
-
-        let fetchPromise = inFlightRequests.get(cacheKey);
-
-        if (!fetchPromise) {
-          fetchPromise = fetchMyGeneBatch([symbol], String(taxid));
-          inFlightRequests.set(cacheKey, fetchPromise);
-        }
-
-        try {
-          const resultsMap = await fetchPromise;
-          const data = resultsMap.get(symbol) || null;
-          cache.set(symbol, taxid, data);
-          renderContent(data);
-        } catch (error) {
-          console.error(`Failed to fetch data for ${symbol}`, error);
-          instance.setContent('Error loading data.');
-        } finally {
-          inFlightRequests.delete(cacheKey);
-        }
-      })();
-    },
-    onShown(instance: TippyInstanceWithCustoms) {
-      const data = instance._geneData;
-      if (!data || !instance._uniqueId) return;
-
-      if (config.display.geneTrack && data.exons) {
-        renderGeneTrack(instance, data, instance._uniqueId, config.tooltipWidth); 
-      }
-      
-      if (config.ideogram?.enabled && data.genomic_pos) {
-        renderIdeogram(instance, data, config.ideogram, instance._uniqueId);
-      }
-
-      instance._nestedTippys = [];
-
-      // 1. Define the shared options for all nested tooltips.
-      const nestedTippyOptions: Partial<Props> = {
-        appendTo: () => document.body,
-        allowHTML: true,
-        interactive: true,
-        trigger: 'mouseenter focus',
-        hideOnClick: false,
-        interactiveBorder: 20,
-        interactiveDebounce: 75,
-        placement: 'right', 
-        popperOptions: config.tippyOptions.popperOptions,
-        zIndex: (config.tippyOptions.zIndex || 9999) + 1,
-        onShow(childInstance: Instance) {
-          const currentParentTheme = instance.props.theme || 'auto';
-          childInstance.setProps({ theme: currentParentTheme });
-
-          if (config.constrainToViewport) {
-            const content = childInstance.popper.querySelector('.tippy-content');
-            if (content) {
-              const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
-                m => m.name === 'preventOverflow'
-              )?.options?.padding ?? 8;
-              const availableHeight = window.visualViewport?.height || window.innerHeight;
-              (content as HTMLElement).style.maxHeight = `${availableHeight - (padding * 2)}px`;
-            }
-          }
-        }
-      };
-
-      const createNestedTippy = (selector: string, items: { name: string; url: string }[]) => {
-        const button = instance.popper.querySelector<HTMLElement>(selector);
-        if (button && items.length > 0) {
-          const nestedInstance = tippy(button, {
-            ...nestedTippyOptions,
-            content: createNestedContent(items),
-          });
-          instance._nestedTippys?.push(nestedInstance as Instance);
-        }
-      };
-
-      const pathwayItems = formatPathways(data.pathway?.[config.pathwaySource], config.pathwaySource);
-      createNestedTippy(`#pathways-more-${instance._uniqueId}`, pathwayItems);
-      const domainItems = formatDomains(data.interpro);
-      createNestedTippy(`#domains-more-${instance._uniqueId}`, domainItems);
-      const transcriptItems = formatTranscripts(data.ensembl?.transcript);
-      createNestedTippy(`#transcripts-more-${instance._uniqueId}`, transcriptItems);
-      const structureItems = formatStructures(data.pdb);
-      createNestedTippy(`#structures-more-${instance._uniqueId}`, structureItems);
-      const generifItems = formatGeneRIFs(data.generif);
-      createNestedTippy(`#generifs-more-${instance._uniqueId}`, generifItems);
-    },
-    onHidden(instance: TippyInstanceWithCustoms) {
-      if ((instance as any)._visualViewportResizeHandler && window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', (instance as any)._visualViewportResizeHandler);
-        delete (instance as any)._visualViewportResizeHandler;
-      }
-      if (instance._nestedTippys) {
-        instance._nestedTippys.forEach(nested => nested.destroy());
-        instance._nestedTippys = [];
-      }
-    }
+    onShow: createOnShowHandler(config, inFlightRequests),
+    onShown: createOnShownHandler(config),
+    onHide: createOnHideHandler(),
   }) as TippyInstanceWithCustoms[];
 
   instances.forEach(instance => {
     instance._themeIntent = isAutoTheme ? 'auto' : config.theme;
   });
 
-  // Set up theme observer
-  if (isAutoTheme) {
-    themeObserver = new MutationObserver(() => {
-      const isNowDark = document.documentElement.classList.contains('dark');
-      const newTheme = isNowDark ? 'dark' : 'light';
-      setTippyTheme(newTheme);
-    });
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class'],
-    });
-  }
+  const disconnectThemeObserver = initializeThemeObserver(instances, isAutoTheme);
 
   runPrefetch(config.prefetch, geneElements, config.prefetchThreshold, inFlightRequests);
   
@@ -268,15 +51,14 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
     isSummaryHandlerEnabled = true;
   }
 
+  // Return the master cleanup function
   return () => {
     instances.forEach(instance => {
       if (instance && instance.destroy) {
         instance.destroy();
       }
     });
-    if (themeObserver) {
-      themeObserver.disconnect();
-    }
+    disconnectThemeObserver();
     instances = [];
   };
 }
@@ -287,7 +69,6 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
  * once in your application's entry point.
  */
 function preload(): Promise<[PromiseSettledResult<any>, PromiseSettledResult<any>]> {
-  console.log('[GeneTooltip] Preloading optional dependencies...');
   return Promise.allSettled([
     getD3(),
     getIdeogram()

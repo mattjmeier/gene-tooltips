@@ -34,7 +34,6 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
     'wikipedia.url_stub'
   ].join(',');
 
-
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -52,7 +51,6 @@ export async function fetchMyGeneBatch(geneSymbols: string[], species: string): 
       if (item.notfound) continue;
       resultsMap.set(item.query, item);
     }
-    console.log(resultsMap);
     return resultsMap;
 
   } catch (error) {

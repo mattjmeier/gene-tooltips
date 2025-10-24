@@ -84,10 +84,11 @@ export interface GeneTooltipConfig {
   prefetch: 'smart' | 'all' | 'none';
   prefetchThreshold: number;
   truncateSummary: number;
-  theme: string;
+  theme: 'light' | 'dark' | 'auto' | 'material' | 'translucent'| 'light-border' | undefined;
   display: Partial<TooltipDisplayConfig>;
   ideogram: Partial<IdeogramConfig>;
   tippyOptions: Partial<Props>;
+  nestedTippyOptions: Partial<Props>;
   pathwaySource: 'reactome' | 'kegg' | 'wikipathways';
   pathwayCount: number;
   domainCount: number;
@@ -152,6 +153,7 @@ export const defaultConfig: GeneTooltipConfig = {
     interactive: true,
     placement: 'bottom',
     appendTo: () => document.body,
+    interactiveDebounce: 75,
     hideOnClick: false,
     zIndex: 9999,
     popperOptions: {
@@ -174,5 +176,29 @@ export const defaultConfig: GeneTooltipConfig = {
         }
       ],
     }
+  },
+  nestedTippyOptions: {
+    allowHTML: true,
+    interactive: true,
+    trigger: 'mouseenter focus',
+    hideOnClick: false,
+    interactiveBorder: 20,
+    interactiveDebounce: 75,
+    placement: 'right',
   }
 };
+
+export function mergeConfig(userConfig: Partial<GeneTooltipConfig> = {}): GeneTooltipConfig {
+    return {
+        ...defaultConfig,
+        ...userConfig,
+        display: {
+            ...defaultConfig.display,
+            ...userConfig.display,
+            links: { ...defaultConfig.display.links, ...userConfig.display?.links },
+        },
+        ideogram: { ...defaultConfig.ideogram, ...userConfig.ideogram },
+        tippyOptions: { ...defaultConfig.tippyOptions, ...userConfig.tippyOptions },
+        nestedTippyOptions: { ...defaultConfig.nestedTippyOptions, ...userConfig.nestedTippyOptions },
+    };
+}
