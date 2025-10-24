@@ -3,6 +3,8 @@ import type { MyGeneInfoResult, MyGeneExon } from './config';
 import tippy from 'tippy.js';
 // 1. Import the D3 type definitions
 import type * as D3 from 'd3';
+// import TomSelect from 'tom-select';
+// import 'tom-select/dist/css/tom-select.bootstrap5.css'; 
 
 let d3ModulePromise: Promise<typeof D3 | null> | null = null;
 
@@ -147,6 +149,11 @@ export async function renderGeneTrack(
                 selector.appendChild(option);
             }
             selector.style.display = 'inline-block';
+            const tippyBox = instance.popper.querySelector('.tippy-box');
+            if (tippyBox) {
+                const computedBg = window.getComputedStyle(tippyBox).backgroundColor;
+                selector.style.backgroundColor = computedBg;
+            }
         } else {
             selector.style.display = 'none';
         }

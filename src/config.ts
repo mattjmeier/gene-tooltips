@@ -152,6 +152,7 @@ export const defaultConfig: GeneTooltipConfig = {
     interactive: true,
     placement: 'bottom',
     appendTo: () => document.body,
+    hideOnClick: false,
     zIndex: 9999,
     popperOptions: {
       strategy: 'absolute', 
