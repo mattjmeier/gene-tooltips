@@ -1,5 +1,6 @@
 import type { Instance } from 'tippy.js';
 import type { MyGeneInfoResult, MyGeneExon } from './config';
+import { getTippyBackgroundColor } from './utils'; 
 import tippy from 'tippy.js';
 // 1. Import the D3 type definitions
 import type * as D3 from 'd3';
@@ -104,7 +105,6 @@ export async function renderGeneTrack(
   instance: Instance, 
   data: MyGeneInfoResult, 
   uniqueId: string,
-  tooltipWidth?: number
 ) {
     const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${uniqueId}`);
     const selector = instance.popper.querySelector<HTMLSelectElement>(`#transcript-selector-${uniqueId}`);
@@ -146,24 +146,34 @@ export async function renderGeneTrack(
                 selector.appendChild(option);
             }
             selector.style.display = 'inline-block';
-            const tippyBox = instance.popper.querySelector('.tippy-box');
-            if (tippyBox) {
-                const computedBg = window.getComputedStyle(tippyBox).backgroundColor;
-                selector.style.backgroundColor = computedBg;
+            
+            // const tippyBox = instance.popper.querySelector('.tippy-box');
+            const tippyBg = getTippyBackgroundColor(instance);
+            if (tippyBg) {
+                selector.style.backgroundColor = tippyBg;
             }
+            // This still somehow doesn't fix translucent theme - need to dig into it more
+            // It should be using the computed color, and it seems to work for the option tags.
+            // Very confusing.
+            Object.assign(selector.style, { backgroundColor: tippyBg});
         } else {
             selector.style.display = 'none';
         }
 
         // --- D3 Setup ---
         const margin = { top: 20, right: 10, bottom: 5, left: 10 };
-        const baseWidth = tooltipWidth || instance.popper.getBoundingClientRect().width;
-        const width = baseWidth - 30 - margin.left - margin.right;
+
+        // Measure the actual container the SVG will live in.
+        const availableWidth = container.getBoundingClientRect().width;
+
+        // The drawing area width is the container's width minus our D3 margins.
+        const width = availableWidth - margin.left - margin.right;
         const height = 20;
 
         container.innerHTML = '';
         const svgRoot = d3.select(container).append("svg")
-            .attr("width", width + margin.left + margin.right)
+            // The SVG element itself should take up the full available width.
+            .attr("width", availableWidth)
             .attr("height", height + margin.top + margin.bottom);
         
         const g = svgRoot.append("g").attr("transform", `translate(${margin.left},${margin.top})`);

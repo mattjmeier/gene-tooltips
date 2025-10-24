@@ -32,7 +32,7 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
         // Create promises for both rendering tasks
         const renderPromises = [];
         if (config.display.geneTrack && data.exons) {
-        renderPromises.push(renderGeneTrack(instance, data, instance._uniqueId, config.tooltipWidth));
+        renderPromises.push(renderGeneTrack(instance, data, instance._uniqueId));
         }
         
         if (config.ideogram?.enabled && data.genomic_pos) {
@@ -65,8 +65,8 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
 
           // --- Safe Callback Handling ---
           onShow(childInstance: Instance) {
-              // Our essential logic:
               instance._isChildTippyVisible = true;
+              // syncNestedTooltipTheme(instance, childInstance);
               const currentParentTheme = instance.props.theme || 'auto';
               childInstance.setProps({ theme: currentParentTheme });
 
@@ -95,10 +95,10 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
 
         // Pass the final, merged options to the function
         const createNestedTippy = (
-        currentInstance: TippyInstanceWithCustoms,
-        options: Partial<Props>,
-        selector: string,
-        items: { name: string; url: string }[]
+          currentInstance: TippyInstanceWithCustoms,
+          options: Partial<Props>,
+          selector: string,
+          items: { name: string; url: string }[]
         ) => {
         const button = currentInstance.popper.querySelector<HTMLElement>(selector);
         if (button && items.length > 0) {

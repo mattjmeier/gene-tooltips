@@ -99,17 +99,14 @@ function renderSummary(summaryText: string | undefined, truncate: number, unique
   const summaryClass = 'gene-tooltip-summary';
   const summaryStyle = `style="--line-clamp: ${truncate};"`;
   
-  const moreButtonId = `summary-more-${uniqueId}`;
   const lessButtonId = `summary-less-${uniqueId}`;
   
-  const moreButton = renderMoreButton(moreButtonId, 'Show more');
   const lessButton = renderCollapseButton(lessButtonId, 'Show less');
 
   return `
     <div class="gene-tooltip-section-container">
         <div class="gene-tooltip-section-header">Summary</div>
         <p class="${summaryClass}" ${summaryStyle}>${summary}</p>
-        ${moreButton}
         ${lessButton}
     </div>
   `;
