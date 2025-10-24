@@ -8,7 +8,7 @@
 
 > **getIdeogram**(): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`any`\>
 
-Defined in: [ideogram.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/ideogram.ts#L9)
+Defined in: [ideogram.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/ideogram.ts#L9)
 
 #### Returns
 
@@ -20,7 +20,7 @@ Defined in: [ideogram.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/4f5
 
 > **renderIdeogram**(`instance`, `data`, `ideogramConfig`, `uniqueId`): [`Promise`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<`void`\>
 
-Defined in: [ideogram.ts:47](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/ideogram.ts#L47)
+Defined in: [ideogram.ts:41](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/ideogram.ts#L41)
 
 #### Parameters
 

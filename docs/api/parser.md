@@ -6,7 +6,7 @@
 
 ### GeneInfo
 
-Defined in: [parser.ts:6](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/parser.ts#L6)
+Defined in: [parser.ts:6](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/parser.ts#L6)
 
 Defines the structure for gene information extracted from an element.
 
@@ -16,13 +16,13 @@ Defines the structure for gene information extracted from an element.
 
 > **symbol**: `string`
 
-Defined in: [parser.ts:7](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/parser.ts#L7)
+Defined in: [parser.ts:7](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/parser.ts#L7)
 
 ##### taxid
 
 > **taxid**: `number`
 
-Defined in: [parser.ts:8](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/parser.ts#L8)
+Defined in: [parser.ts:8](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/parser.ts#L8)
 
 ## Functions
 
@@ -30,7 +30,7 @@ Defined in: [parser.ts:8](https://github.com/mattjmeier/gene-tooltips/blob/4f541
 
 > **findGeneElements**(`selector`): [`HTMLElement`](https://developer.mozilla.org/docs/Web/API/HTMLElement)[]
 
-Defined in: [parser.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/parser.ts#L16)
+Defined in: [parser.ts:16](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/parser.ts#L16)
 
 Finds all elements matching the selector and expands gene lists.
 
@@ -52,9 +52,9 @@ An array of elements to attach tooltips to.
 
 ### getGeneInfoFromElement()
 
-> **getGeneInfoFromElement**(`el`): `null` \| [`GeneInfo`](#geneinfo)
+> **getGeneInfoFromElement**(`el`): [`GeneInfo`](#geneinfo) \| `null`
 
-Defined in: [parser.ts:63](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/parser.ts#L63)
+Defined in: [parser.ts:63](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/parser.ts#L63)
 
 Extracts gene information from a DOM element.
 
@@ -68,6 +68,6 @@ The DOM element.
 
 #### Returns
 
-`null` \| [`GeneInfo`](#geneinfo)
+[`GeneInfo`](#geneinfo) \| `null`
 
 An object with symbol and taxid, or null.

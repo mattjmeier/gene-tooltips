@@ -8,7 +8,7 @@
 
 > **FormattedItem** = `object`
 
-Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/renderer.ts#L4)
+Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/renderer.ts#L4)
 
 #### Properties
 
@@ -16,13 +16,13 @@ Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f5
 
 > **name**: `string`
 
-Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/renderer.ts#L4)
+Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/renderer.ts#L4)
 
 ##### url
 
 > **url**: `string`
 
-Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/renderer.ts#L4)
+Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/renderer.ts#L4)
 
 ## Functions
 
@@ -30,13 +30,13 @@ Defined in: [renderer.ts:4](https://github.com/mattjmeier/gene-tooltips/blob/4f5
 
 > **renderTooltipHTML**(`data`, `options`): `string`
 
-Defined in: [renderer.ts:281](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/renderer.ts#L281)
+Defined in: [renderer.ts:288](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/renderer.ts#L288)
 
 #### Parameters
 
 ##### data
 
-`undefined` | `null` | [`MyGeneInfoResult`](config.md#mygeneinforesult)
+[`MyGeneInfoResult`](config.md#mygeneinforesult) | `null` | `undefined`
 
 ##### options
 

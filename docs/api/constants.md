@@ -8,15 +8,15 @@
 
 > `const` **speciesMap**: [`Record`](https://www.typescriptlang.org/docs/handbook/utility-types.html#recordkeys-type)\<`number`, `SpeciesInfo`\>
 
-Defined in: [constants.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/constants.ts#L9)
+Defined in: [constants.ts:9](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/constants.ts#L9)
 
 ## Functions
 
 ### findSpecies()
 
-> **findSpecies**(`identifier`): `null` \| \{ `info`: `SpeciesInfo`; `taxid`: `number`; \}
+> **findSpecies**(`identifier`): \{ `info`: `SpeciesInfo`; `taxid`: `number`; \} \| `null`
 
-Defined in: [constants.ts:27](https://github.com/mattjmeier/gene-tooltips/blob/4f54137499aa7b703b4b8e3178c63f142ff8a2c3/src/constants.ts#L27)
+Defined in: [constants.ts:27](https://github.com/mattjmeier/gene-tooltips/blob/02903aa6fd000f5a8bab700871e228a8f0234aea/src/constants.ts#L27)
 
 Finds species data by either taxid or common name (case-insensitive).
 
@@ -26,10 +26,10 @@ Finds species data by either taxid or common name (case-insensitive).
 
 The taxid (number) or common name (string).
 
-`undefined` | `string` | `number`
+`string` | `number` | `undefined`
 
 #### Returns
 
-`null` \| \{ `info`: `SpeciesInfo`; `taxid`: `number`; \}
+\{ `info`: `SpeciesInfo`; `taxid`: `number`; \} \| `null`
 
 An object with the taxid and the SpeciesInfo, or null if not found.

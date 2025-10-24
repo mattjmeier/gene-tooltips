@@ -12,6 +12,9 @@ export function getEffectiveTheme(configTheme: 'light' | 'dark' | 'auto' | 'mate
     return configTheme;
 }
 
+
+type ThemeObserverCleanup = () => void;
+
 /**
  * Sets up a MutationObserver to watch for theme changes on the <html> element
  * and updates the tippy instances accordingly.
@@ -20,7 +23,7 @@ export function getEffectiveTheme(configTheme: 'light' | 'dark' | 'auto' | 'mate
 export function initializeThemeObserver(
     instances: TippyInstanceWithCustoms[], 
     isAutoTheme: boolean
-): () => void {
+): ThemeObserverCleanup {
     if (!isAutoTheme) {
         // If not auto, there's nothing to observe. Return a no-op cleanup.
         return () => {};
