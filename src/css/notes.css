@@ -1,0 +1,117 @@
+/*
+ * Style the main TomSelect wrapper. This is the container that
+ * replaces your original <select>.
+ */
+.tippy-box .ts-wrapper.gt-transcript-selector {
+  font-size: 11px;
+}
+
+/*
+ * Style the control box (the part you click on). This is where
+ * borders, backgrounds, and padding should go.
+ */
+.tippy-box .ts-wrapper.gt-transcript-selector .ts-control {
+  padding: 2px 6px;
+  border-radius: 4px;
+  
+  /* Use theme variables for consistency */
+  border: 1px solid var(--gt-border-color);
+  color: var(--gt-text-color);
+  background-color: var(--gt-background-color-subtle);
+
+  /* TomSelect generates its own arrow, so we don't need a background image */
+  box-shadow: none; /* Remove default TomSelect shadow if you don't want it */
+}
+
+/*
+ * Style the text of the selected item inside the control box.
+ */
+.tippy-box .ts-wrapper.gt-transcript-selector .ts-control .item {
+  color: var(--gt-text-color);
+  padding-right: 10px; /* Give some space for the arrow */
+}
+
+/* Style the dropdown menu itself */
+.tippy-box .ts-wrapper.gt-transcript-selector .ts-dropdown {
+  background: var(--gt-background-color);
+  border: 1px solid var(--gt-border-color);
+  color: var(--gt-text-color);
+}
+
+/* Style the options inside the dropdown */
+.tippy-box .ts-wrapper.gt-transcript-selector .ts-dropdown .option {
+  padding: 4px 6px;
+}
+
+/* Style the highlighted/active option */
+.tippy-box .ts-wrapper.gt-transcript-selector .ts-dropdown .option.active {
+  background-color: var(--gt-highlight-color);
+  color: var(--gt-text-color-highlight);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+ * Tom Select theming to match the Gene Tooltip container.
+ * The .gene-tooltip-content prefix increases specificity to override defaults.
+*/
+
+/* The main control wrapper */
+.gene-tooltip-content .ts-wrapper .ts-control {
+  background-color: var(--gt-secondary-bg-color, #f1f1f1); /* A slightly different bg for inputs */
+  color: var(--gt-text-color, #333);
+  border: 1px solid var(--gt-border-color, #ccc);
+  border-radius: 4px;
+  box-shadow: none;
+  padding: 4px 8px;
+  font-size: 0.9em;
+}
+
+/* Style when focused */
+.gene-tooltip-content .ts-wrapper.focus .ts-control {
+  box-shadow: none;
+  border-color: var(--gt-primary-color, #007bff);
+}
+
+/* The dropdown panel itself */
+.gene-tooltip-content .ts-dropdown {
+  background-color: var(--gt-bg-color, #fff);
+  color: var(--gt-text-color, #333);
+  border: 1px solid var(--gt-border-color, #ccc);
+  border-top: none; /* Often looks better without the top border */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Individual options in the dropdown */
+.gene-tooltip-content .ts-dropdown .option {
+  padding: 6px 8px;
+}
+
+/* The hovered/active option in the dropdown */
+.gene-tooltip-content .ts-dropdown .option.active,
+.gene-tooltip-content .ts-dropdown .option:hover {
+  background-color: var(--gt-primary-color, #007bff);
+  color: var(--gt-primary-text-color, #fff);
+}
+
+/* The input caret color */
+.gene-tooltip-content .ts-wrapper .ts-control > input::placeholder {
+    color: var(--gt-secondary-text-color, #888);
+}
+.gene-tooltip-content .ts-wrapper.input-active .ts-control > input {
+    color: var(--gt-text-color, #333);
+}

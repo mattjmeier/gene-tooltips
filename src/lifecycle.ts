@@ -1,5 +1,6 @@
 import { type Instance, Props } from 'tippy.js';
 import { type GeneTooltipConfig, MyGeneInfoResult } from './config.js';
+import TomSelect from 'tom-select'; 
 import * as cache from './cache.js';
 import { fetchMyGeneBatch } from './api.js';
 import { renderTooltipHTML } from './renderer.js';
@@ -18,6 +19,7 @@ export interface TippyInstanceWithCustoms extends Instance {
   _themeIntent?: 'auto' | string;
   _isChildTippyVisible?: boolean;
   _isFullyShown?: boolean;
+  _tomselect?: TomSelect | null;
 }
 
 /**
@@ -66,7 +68,6 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
           // --- Safe Callback Handling ---
           onShow(childInstance: Instance) {
               instance._isChildTippyVisible = true;
-              // syncNestedTooltipTheme(instance, childInstance);
               const currentParentTheme = instance.props.theme || 'auto';
               childInstance.setProps({ theme: currentParentTheme });
 
@@ -252,6 +253,15 @@ export function createOnHideHandler() {
     if (instance._isChildTippyVisible) {
       return false;
     }
+
+    // maybe we should add considerations in onHide for ideogram and d3 too??
+    if (instance._tomselect) {
+      // Destroy the TomSelect instance to clean up its DOM and event listeners
+      instance._tomselect.destroy();
+      // Clear the reference to prevent memory leaks and confusion
+      instance._tomselect = null; 
+    }
+
     
     // Cleanup viewport resize handler
     const resizeHandler = (instance as any)._visualViewportResizeHandler;

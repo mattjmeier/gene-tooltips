@@ -35,19 +35,10 @@ export function createNestedContent(items: { name: string; url: string }[]): str
  * @param instance The Tippy instance to inspect.
  * @returns The background color string (e.g., 'rgb(255, 255, 255)') or null if not found.
  */
-export function getTippyBackgroundColor(instance: Instance): string | null {
-  const tippyBox = instance.popper.querySelector<HTMLElement>('.tippy-box');
-  if (tippyBox) {
-    return window.getComputedStyle(tippyBox).backgroundColor;
+export function getSectionBackgroundColor(instance: Instance): string | null {
+  const section = instance.popper.querySelector<HTMLElement>('.gene-tooltip-section-container');
+  if (section) {
+    return window.getComputedStyle(section).backgroundColor;
   }
   return null;
-}
-
-export function syncNestedTooltipTheme(parentInstance: Instance, nestedInstance: Instance): void {
-  const parentBgColor = getTippyBackgroundColor(parentInstance);
-  const nestedBox = nestedInstance.popper.querySelector<HTMLElement>('.tippy-box');
-  
-  if (parentBgColor && nestedBox) {
-    nestedBox.style.backgroundColor = parentBgColor;
-  }
 }

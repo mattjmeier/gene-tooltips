@@ -7,6 +7,9 @@
 @import 'tippy.js/themes/material.css';
 @import 'tippy.js/themes/translucent.css';
 
+/* Import Tom select CSS */
+@import "tom-select/dist/css/tom-select.default.css";
+
 /* 3. Import theme variables */
 @import './theme.css';
 
@@ -428,20 +431,8 @@ ul.gene-tooltip-nested-list {
   align-items: center;
 }
 
-.tippy-box .gt-transcript-selector {
-  font-size: 11px;
-  padding: 2px 4px;
-  border-radius: 4px;
-  border: 1px solid var(--gt-border-color);
-  color: var(--gt-text-color);
-  margin-left: 8px;
-  background-color: var(--gt-background-color-subtle);
-}
 
-.tippy-box .gt-transcript-selector option {
-  background-color: inherit;
-  color: inherit;
-}
+
 
 .exon-rect {
   fill: var(--gt-exon-color);

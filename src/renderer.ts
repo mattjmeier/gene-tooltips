@@ -76,7 +76,7 @@ function renderGeneTrackContainer(uniqueId: string): string {
         <div class="gene-tooltip-section-header gene-track-header">
             <span>Gene Model</span>
             <div class="gene-tooltip-track-controls">
-                <select class="gt-transcript-selector" id="transcript-selector-${uniqueId}" style="display: none;"></select>
+                <select class="gt-transcript-selector" id="transcript-selector-${uniqueId}" ></select>
             </div>
         </div>
         <div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}">${loaderHTML}</div>
