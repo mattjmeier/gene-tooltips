@@ -7,7 +7,10 @@
 @import 'tippy.js/themes/material.css';
 @import 'tippy.js/themes/translucent.css';
 
-/* 3. Import theme variables */
+/* Import Tom Select CSS classes */
+@import "tom-select/dist/css/tom-select.css";
+
+/* Import your own theme variables/styles (global) */
 @import './theme.css';
 
 .tippy-content {
@@ -259,7 +262,6 @@ ul.gene-tooltip-nested-list {
 }
 
 .gene-tooltip-list-section li {
-  /* font-size: 0.9em; */
   white-space: nowrap;
   list-style: none;
   overflow: hidden;
@@ -278,7 +280,7 @@ ul.gene-tooltip-nested-list {
 
 /* Style for the "... and X more" button */
 .gene-tooltip-more-btn {
-  font-size: 0.85em;
+  font-size: 0.9em;
   /* Make text subtle with opacity */
   color: var(--gt-text-color-secondary);
   opacity: 0.7;
@@ -428,19 +430,157 @@ ul.gene-tooltip-nested-list {
   align-items: center;
 }
 
-.tippy-box .gt-transcript-selector {
-  font-size: 11px;
-  padding: 2px 4px;
-  border-radius: 4px;
-  border: 1px solid var(--gt-border-color);
-  color: var(--gt-text-color);
-  margin-left: 8px;
-  background-color: var(--gt-background-color-subtle);
+/* 
+  Tom Select Overrides
+  Scoped within the tippy-box to avoid affecting other Tom Select instances on the page.
+*/
+.gene-tooltip-track-controls {
+  .ts-wrapper {
+    font-size: 0.8em;
+    
+    /* ===== CONTROL STYLING ===== */
+    .ts-control {
+      background-color: var(--gt-background-color-subtle);
+      color: var(--gt-text-color);
+      border: 1px solid var(--gt-border-color);
+      border-radius: 4px;
+      padding: 6px 28px 6px 12px; /* Combined padding with right space for arrow */
+      
+      /* Dropdown arrow */
+      &::after {
+        content: '▼';
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gt-text-color-secondary);
+        font-size: 0.75em;
+        pointer-events: none;
+        transition: transform 0.2s ease, color 0.2s ease;
+      }
+      
+      /* Focus state */
+      &:focus {
+        border-color: var(--gt-accent-color);
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--gt-accent-color) 20%, transparent);
+      }
+    }
+    
+    /* Fix white background for all active states */
+    &.focus .ts-control,
+    &.input-active .ts-control,
+    &.dropdown-active .ts-control {
+      background-color: var(--gt-background-color-subtle) !important;
+      border-color: var(--gt-accent-color);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--gt-accent-color) 20%, transparent);
+    }
+
+    /* Rotate arrow when dropdown is open */
+    &.dropdown-active .ts-control::after {
+      transform: translateY(-50%) rotate(180deg);
+      color: var(--gt-accent-color);
+    }
+    
+    /* ===== INPUT STYLING ===== */
+    .ts-input {
+      color: var(--gt-text-color);
+      
+      &::placeholder {
+        color: var(--gt-text-color-secondary);
+      }
+    }
+    
+    /* ===== DROPDOWN STYLING ===== */
+    .ts-dropdown {
+      background-color: var(--gt-background-color-subtle);
+      border: 1px solid var(--gt-border-color);
+      border-radius: 4px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-top: 4px;
+      z-index: 10001;
+
+      .ts-dropdown-content {
+        z-index: 10001;
+        max-height: 300px;
+        overflow-y: auto;
+        
+        /* Style scrollbar */
+        scrollbar-width: thin;
+        scrollbar-color: var(--gt-border-color) transparent;
+        
+        &::-webkit-scrollbar {
+          width: 8px;
+        }
+        
+        &::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+          background-color: var(--gt-border-color);
+          border-radius: 4px;
+        }
+      }
+      
+      /* Option items */
+      .option {
+        z-index: 10001;
+        padding: 8px 12px;
+        color: var(--gt-text-color);
+        cursor: pointer;
+        
+        &:hover,
+        &.active {
+          background-color: color-mix(in srgb, var(--gt-background-color-subtle) 90%, var(--gt-text-color));
+        }
+        
+        /* Selected state */
+        &.selected {
+          background-color: var(--gt-background-color-subtle);
+          color: var(--gt-accent-color);
+          font-weight: 500;
+          border-left: 2px solid var(--gt-accent-color);
+          padding-left: 10px;
+        }
+      }
+    }
+    
+    /* ===== MULTI-SELECT ITEMS (TAGS) ===== */
+    .item {
+      background-color: var(--gt-background-color-subtle);
+      color: var(--gt-text-color);
+      border-radius: 3px;
+      padding: 2px 8px;
+      margin-right: 4px;
+      
+      .remove {
+        border-left: 1px solid var(--gt-border-color);
+        padding-left: 6px;
+        margin-left: 6px;
+        
+        &:hover {
+          background-color: color-mix(in srgb, var(--gt-background-color-subtle) 80%, var(--gt-text-color));
+        }
+      }
+    }
+    
+    /* ===== STATE VARIATIONS ===== */
+    &.disabled .ts-control {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    &.loading .ts-control::after {
+      content: '⟳';
+      animation: spin 1s linear infinite;
+    }
+  }
 }
 
-.tippy-box .gt-transcript-selector option {
-  background-color: inherit;
-  color: inherit;
+@keyframes spin {
+  from { transform: translateY(-50%) rotate(0deg); }
+  to { transform: translateY(-50%) rotate(360deg); }
 }
 
 .exon-rect {

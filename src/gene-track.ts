@@ -1,7 +1,9 @@
 import type { Instance } from 'tippy.js';
 import type { MyGeneInfoResult, MyGeneExon } from './config';
-import { getTippyBackgroundColor } from './utils'; 
+// import { getSectionBackgroundColor } from './utils'; 
+import TomSelect from 'tom-select';
 import tippy from 'tippy.js';
+import { TippyInstanceWithCustoms } from './lifecycle';
 // 1. Import the D3 type definitions
 import type * as D3 from 'd3';
 
@@ -99,23 +101,22 @@ function drawTranscript(
 }
 
 /**
- * Main rendering function, rewritten to correctly interpret the data structure.
+ * Main rendering function
  */
 export async function renderGeneTrack(
-  instance: Instance, 
+  instance: TippyInstanceWithCustoms, 
   data: MyGeneInfoResult, 
   uniqueId: string,
 ) {
     const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${uniqueId}`);
-    const selector = instance.popper.querySelector<HTMLSelectElement>(`#transcript-selector-${uniqueId}`);
+    const selectorEl = instance.popper.querySelector<HTMLSelectElement>(`#transcript-selector-${uniqueId}`);
 
-    if (!container || !selector) return;
+    if (!container || !selectorEl ) return;
 
     try {
         const d3 = await getD3();
         if (!d3) throw new Error("D3 library not loaded.");
 
-        // The "exons" array is actually an array of transcripts.
         const transcripts = data.exons;
 
         if (!transcripts || transcripts.length === 0) {
@@ -123,88 +124,74 @@ export async function renderGeneTrack(
             return;
         }
 
-        // Find the transcript with the most exons (segments in the 'position' array) to be the default.
         const longestTranscript = transcripts.reduce((longest, current) => {
             return (current.position?.length || 0) > (longest.position?.length || 0) ? current : longest;
         }, transcripts[0]);
 
-        // --- Populate Dropdown ---
-        if (transcripts.length > 1) {
-            selector.innerHTML = '';
-            // Sort transcripts alphabetically for a consistent order
-            const sortedTranscripts = [...transcripts].sort((a, b) => a.transcript.localeCompare(b.transcript));
-
-            for (const tx of sortedTranscripts) {
-                const option = document.createElement('option');
-                option.value = tx.transcript;
-                // Correctly count exons from the length of the position array
-                const exonCount = tx.position?.length || 0;
-                option.textContent = `${tx.transcript} (${exonCount} exons)`;
-                if (tx.transcript === longestTranscript.transcript) {
-                    option.selected = true;
-                }
-                selector.appendChild(option);
-            }
-            selector.style.display = 'inline-block';
-            
-            // const tippyBox = instance.popper.querySelector('.tippy-box');
-            const tippyBg = getTippyBackgroundColor(instance);
-            if (tippyBg) {
-                selector.style.backgroundColor = tippyBg;
-            }
-            // This still somehow doesn't fix translucent theme - need to dig into it more
-            // It should be using the computed color, and it seems to work for the option tags.
-            // Very confusing.
-            Object.assign(selector.style, { backgroundColor: tippyBg});
-        } else {
-            selector.style.display = 'none';
-        }
-
         // --- D3 Setup ---
         const margin = { top: 20, right: 10, bottom: 5, left: 10 };
-
-        // Measure the actual container the SVG will live in.
         const availableWidth = container.getBoundingClientRect().width;
-
-        // The drawing area width is the container's width minus our D3 margins.
         const width = availableWidth - margin.left - margin.right;
         const height = 20;
 
-        container.innerHTML = '';
+        container.innerHTML = ''; // Clear the loader
         const svgRoot = d3.select(container).append("svg")
-            // The SVG element itself should take up the full available width.
             .attr("width", availableWidth)
             .attr("height", height + margin.top + margin.bottom);
         
         const g = svgRoot.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
         
-        // Use the start/end of all transcripts to create a stable scale
         const allTxStarts = transcripts.map(tx => tx.txstart);
         const allTxEnds = transcripts.map(tx => tx.txend);
         const geneStart = Math.min(...allTxStarts);
         const geneEnd = Math.max(...allTxEnds);
         const xScale = d3.scaleLinear().domain([geneStart, geneEnd]).range([0, width]);
         
-        // Add gene symbol and direction arrow once
         const directionArrow = longestTranscript.strand === -1 ? '←' : '→';
         svgRoot.append("text")
             .attr("x", margin.left).attr("y", 12)
             .attr("font-family", "sans-serif").attr("font-size", "12px")
             .html(`<tspan font-weight="bold">${data.symbol}</tspan> <tspan>${directionArrow}</tspan>`);
 
-        // --- Initial Draw & Event Listener ---
+        // --- Initial Draw (common to all cases) ---
         drawTranscript(g, longestTranscript, xScale, instance);
+        
+        // --- Conditionally Initialize Dropdown ---
+        if (transcripts.length > 1) {
+            const sortedTranscripts = [...transcripts].sort((a, b) => a.transcript.localeCompare(b.transcript));
 
-        selector.addEventListener('change', (event) => {
-            const selectedId = (event.target as HTMLSelectElement).value;
-            const selectedTranscript = transcripts.find(tx => tx.transcript === selectedId);
-            if (selectedTranscript) {
-                drawTranscript(g, selectedTranscript, xScale, instance);
-            }
-        });
+            const tomSelectOptions = sortedTranscripts.map(tx => {
+                const exonCount = tx.position?.length || 0;
+                return {
+                    value: tx.transcript,
+                    text: `${tx.transcript} (${exonCount} exons)`
+                };
+            });
+
+            // Initialize TomSelect
+            const tomselect = new TomSelect(`#${selectorEl.id}`, {
+                options: tomSelectOptions,
+                items: [longestTranscript.transcript], // Pre-select the longest
+                create: false,
+                // dropdownParent: `#${instance.popper.id}`,
+                plugins: ['dropdown_input'],
+                onChange: (selectedValue: string) => {
+                    const selectedTranscript = transcripts.find(tx => tx.transcript === selectedValue);
+                    if (selectedTranscript) {
+                        drawTranscript(g, selectedTranscript, xScale, instance);
+                    }
+                }
+            });
+            // Store the instance for the onHide handler to clean up
+            instance._tomselect = tomselect;
+
+        } else {
+            // If there's only one transcript, just hide the selector dropdown
+            selectorEl.style.display = 'none';
+        }
 
     } catch (error) {
-        console.error(error);
+        console.error("Error during gene track rendering:", error);
         if (container) container.innerHTML = `<small>Error rendering gene track.</small>`;
     }
 }

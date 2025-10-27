@@ -1,65 +1,112 @@
 /* 
   Custom properties for Gene Tooltips.
-  These are designed to work WITH Tippy.js themes, not replace them.
+  This file "captures" the active Tippy.js theme colors into CSS variables
+  that our custom components can then consume.
 */
 
 /* 
-  --- DEFAULT (LIGHT) THEME VARIABLES ---
-  This is the baseline. All tooltips get these styles unless overridden.
+  --- DEFAULT (LIGHT) THEME LOGIC ---
+  This is our baseline for light mode. It targets Tippy's default appearance
+  when NO dark theme is specified and the <html> tag does NOT have class="dark".
+  Tippy's base styles without a theme are dark, so we must define light mode defaults.
 */
-/* Default (light) variables */
-.tippy-box[data-theme~='light'],
-.tippy-box[data-theme~='light-border'],
 html:not(.dark) .tippy-box:not([data-theme~='dark']):not([data-theme~='material']):not([data-theme~='translucent']) {
   color-scheme: light;
+
+  /* 1. Define a base background for the default light mode experience. #fff is a safe bet. */
+  --gt-background-color-base: #fff;
+  
+  /* 2. Programmatically generate the subtle background by mixing in a little black. */
+  --gt-background-color-subtle: color-mix(in srgb, var(--gt-background-color-base) 95%, #000);
+
+  /* 3. Define the rest of our light theme variables. */
   --gt-text-color: #222;
   --gt-text-color-secondary: rgba(0, 0, 0, 0.6);
   --gt-accent-color: #007bff;
   --gt-border-color: rgba(0, 0, 0, 0.1);
-  /* --gt-hover-background-color: rgba(0, 0, 0, 0.05); */
   --gt-exon-color: #007bff;
-  --gt-background-color-subtle: rgba(142, 150, 170, 0.14);
 }
 
 /* 
-  --- DARK THEME VARIABLES ---
-  Defined once in a "mixin-like" fashion using a placeholder selector.
+  --- DARK THEME  ---
+  When a Tippy box has the 'dark' theme, or when the page is in dark mode and
+  no specific light theme is applied.
 */
 .tippy-box[data-theme~='dark'],
-html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='material']):not([data-theme~='translucent']):not([data-theme~='light-border']) {
+html.dark .tippy-box:not([data-theme~='light']):not([data-theme~='light-border']):not([data-theme~='material']):not([data-theme~='translucent']) {
   color-scheme: dark;
+
+  /* 1. Capture Tippy's default dark background color (#333). */
+  --gt-background-color-base: #333;
+
+  /* 2. Programmatically generate the subtle background by mixing in a little white. */
+  --gt-background-color-subtle: color-mix(in srgb, var(--gt-background-color-base) 90%, #fff);
+
+  /* 3. Define the rest of our dark theme variables. */
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #58a6ff;
   --gt-border-color: rgba(255, 255, 255, 0.2);
-  /* --gt-hover-background-color: rgba(255, 255, 255, 0.1); */
   --gt-exon-color: #58a6ff;
-  --gt-background-color-subtle: rgba(255, 255, 255, 0.05);
 }
 
 /* 
-  Overrides for other themes.
-  These should work correctly regardless of the light/dark mode of the page.
+  --- SPECIFIC THEME OVERRIDES & CAPTURES ---
 */
+
+/* --- LIGHT & LIGHT-BORDER THEME --- */
+.tippy-box[data-theme~='light'],
+.tippy-box[data-theme~='light-border'] {
+  color-scheme: light;
+
+  /* 1. Capture Tippy's light theme background color (white). */
+  --gt-background-color-base: white;
+
+  /* 2. Programmatically generate the subtle background. */
+  --gt-background-color-subtle: color-mix(in srgb, var(--gt-background-color-base) 95%, #000); /* e.g., #f2f2f2 */
+
+  /* 3. Define the rest of our light theme variables. */
+  --gt-text-color: #222;
+  --gt-text-color-secondary: rgba(0, 0, 0, 0.6);
+  --gt-accent-color: #007bff;
+  --gt-border-color: rgba(0, 0, 0, 0.1);
+  --gt-exon-color: #007bff;
+}
+
+/* --- MATERIAL THEME --- */
 .tippy-box[data-theme~='material'] {
   color-scheme: dark;
+
+  /* 1. Capture Tippy's material theme background color. */
+  --gt-background-color-base: #505355;
+
+  /* 2. Programmatically generate the subtle background. */
+  --gt-background-color-subtle: color-mix(in srgb, var(--gt-background-color-base) 90%, #fff);
+
+  /* 3. Define the rest of our material-specific variables. */
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #80cbc4;
   --gt-exon-color: #80cbc4;
   --gt-border-color: rgba(255, 255, 255, 0.2);
-  --gt-background-color-subtle: rgba(255, 255, 255, 0.05);
 }
 
 /* --- TRANSLUCENT THEME --- */
 .tippy-box[data-theme~='translucent'] {
   color-scheme: dark;
+
+  /* 
+    This theme is semi-transparent
+  */
+  --gt-background-color-base: rgba(0, 0, 0, 0.7);
+
+  /* 2. Programmatically generate the subtle background from our chosen base. */
+  --gt-background-color-subtle: color-mix(in srgb, var(--gt-background-color-base) 90%, #fff);
+
+  /* 3. Define the rest of our translucent-specific variables. */
   --gt-text-color: #fff;
   --gt-text-color-secondary: rgba(255, 255, 255, 0.7);
   --gt-accent-color: #8cb3f3;
   --gt-border-color: rgba(255, 255, 255, 0.25);
-  /* --gt-hover-background-color: rgba(255, 255, 255, 0.15); */
   --gt-exon-color: #8cb3f3;
-  --gt-border-color: rgba(255, 255, 255, 0.2);
-  --gt-background-color-subtle: rgba(255, 255, 255, 0.05);
 }
