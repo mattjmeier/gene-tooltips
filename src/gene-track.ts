@@ -3,6 +3,7 @@ import type { MyGeneInfoResult, MyGeneExon } from './config';
 // import { getSectionBackgroundColor } from './utils'; 
 import TomSelect from 'tom-select';
 import tippy from 'tippy.js';
+import { TippyInstanceWithCustoms } from './lifecycle';
 // 1. Import the D3 type definitions
 import type * as D3 from 'd3';
 
@@ -103,15 +104,14 @@ function drawTranscript(
  * Main rendering function
  */
 export async function renderGeneTrack(
-  instance: Instance, 
+  instance: TippyInstanceWithCustoms, 
   data: MyGeneInfoResult, 
   uniqueId: string,
 ) {
     const container = instance.popper.querySelector<HTMLElement>(`#gene-tooltip-track-${uniqueId}`);
     const selectorEl = instance.popper.querySelector<HTMLSelectElement>(`#transcript-selector-${uniqueId}`);
 
-    if (!container || !selectorEl) return;
-
+    if (!container || !selectorEl ) return;
 
     try {
         const d3 = await getD3();
@@ -167,16 +167,14 @@ export async function renderGeneTrack(
                     text: `${tx.transcript} (${exonCount} exons)`
                 };
             });
-            
-            selectorEl.style.display = 'block';
 
-            // Initialize TomSelect ONCE
-            const tomselect = new TomSelect(selectorEl, {
+            // Initialize TomSelect
+            const tomselect = new TomSelect(`#${selectorEl.id}`, {
                 options: tomSelectOptions,
                 items: [longestTranscript.transcript], // Pre-select the longest
                 create: false,
-                dropdownParent: `#${instance.popper.id}`,
-                wrapperClass: 'form-control-sm',
+                // dropdownParent: `#${instance.popper.id}`,
+                plugins: ['dropdown_input'],
                 onChange: (selectedValue: string) => {
                     const selectedTranscript = transcripts.find(tx => tx.transcript === selectedValue);
                     if (selectedTranscript) {
@@ -184,9 +182,8 @@ export async function renderGeneTrack(
                     }
                 }
             });
-            
             // Store the instance for the onHide handler to clean up
-            (instance as any)._tomselect = tomselect;
+            instance._tomselect = tomselect;
 
         } else {
             // If there's only one transcript, just hide the selector dropdown

@@ -34,11 +34,11 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
         // Create promises for both rendering tasks
         const renderPromises = [];
         if (config.display.geneTrack && data.exons) {
-        renderPromises.push(renderGeneTrack(instance, data, instance._uniqueId));
+          renderPromises.push(renderGeneTrack(instance, data, instance._uniqueId));
         }
         
         if (config.ideogram?.enabled && data.genomic_pos) {
-        renderPromises.push(renderIdeogram(instance, data, config.ideogram, instance._uniqueId));
+          renderPromises.push(renderIdeogram(instance, data, config.ideogram, instance._uniqueId));
         }
 
         // Wait for both visualizations to finish rendering or fail
@@ -46,7 +46,7 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
 
         // If the tooltip was hidden while async tasks were running, abort
         if (!instance.state.isShown) {
-        return;
+          return;
         }
 
         // --- All the nested tippy logic from your onShown goes here ---
@@ -101,14 +101,14 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
           selector: string,
           items: { name: string; url: string }[]
         ) => {
-        const button = currentInstance.popper.querySelector<HTMLElement>(selector);
-        if (button && items.length > 0) {
-            const nestedInstance = tippy(button, {
-            ...options, // Use the passed-in options
-            content: createNestedContent(items),
-            });
-            currentInstance._nestedTippys?.push(nestedInstance as Instance);
-        }
+          const button = currentInstance.popper.querySelector<HTMLElement>(selector);
+          if (button && items.length > 0) {
+              const nestedInstance = tippy(button, {
+              ...options, // Use the passed-in options
+              content: createNestedContent(items),
+              });
+              currentInstance._nestedTippys?.push(nestedInstance as Instance);
+          }
         };
 
         
@@ -160,7 +160,6 @@ export function createOnShowHandler(
     } else {
       window.addEventListener('resize', resizeHandler); // Fallback for older browsers
     }
-
 
     // Async data fetching logic
     (async () => {
