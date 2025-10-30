@@ -619,3 +619,11 @@ ul.gene-tooltip-nested-list {
     transform: rotate(360deg);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-spinner {
+    border-top-color: currentColor;
+    animation: none;
+    content: '⏳';
+  }
+}
