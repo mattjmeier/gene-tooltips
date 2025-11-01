@@ -142,15 +142,6 @@
 
 /* --- Reusable Section Components --- */
 
-.gt-collapsible-header {
-  display: flex;
-  align-items: center;
-  gap: 0.25em;
-  cursor: pointer;
-  position: relative;
-  user-select: none;
-}
-
 .gt-section-arrow::after {
   content: '▼';
   display: inline-block;
@@ -182,11 +173,6 @@
   /* No more display: none; */
 }
 
-.gene-tooltip-section-header {
-  cursor: pointer;
-  user-select: none;
-}
-
 .gene-tooltip-section-container {
   /* Use a subtle border that adapts to theme, without dimming content */
   /* border-top: 1px solid var(--gt-border-color); */
@@ -197,14 +183,30 @@
   padding: 0.5em 0.75em;
 }
 
+/* This rule now applies to ALL section headers, collapsible or not,
+   giving them the correct font, size, color, etc. */
 .gene-tooltip-section-header {
   font-weight: bold;
   font-size: 0.9em;
-  /* Inherit the main text color from the theme */
   color: var(--gt-text-color);
   margin-bottom: 0.3em;
-  /* Make it slightly less prominent than the main title */
   opacity: 0.9;
+  /* cursor: pointer; */ /* This was correctly removed before */
+  user-select: none;
+}
+
+/* This rule ALSO applies to ALL headers, giving them the flexbox layout
+   needed to align the (optional) arrow and the title. */
+.gt-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  position: relative;
+}
+
+/* And this rule ONLY applies to INTERACTIVE headers, adding the pointer. */
+.gt-collapsible-header.gt-is-collapsible {
+  cursor: pointer;
 }
 
 .gene-tooltip-section {

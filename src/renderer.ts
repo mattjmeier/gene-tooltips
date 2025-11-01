@@ -39,16 +39,20 @@ function renderCollapsibleSection(
 
   // Add ARIA attributes for accessibility
   const contentId = `gt-content-${uniqueId}-${title.replace(/\s+/g, '-').toLowerCase()}`;
+  let headerClasses = 'gene-tooltip-section-header gt-collapsible-header';
+  if (collapsible) {
+    headerClasses += ' gt-is-collapsible';
+  }
 
   return `
     <div class="gene-tooltip-section-container ${collapsible ? 'gt-collapsible' : ''}" 
          data-collapsed="${isCollapsed ? 'true' : 'false'}"
          data-section="${title.replace(/\s+/g, '-').toLowerCase()}">
-      
-      <div class="gene-tooltip-section-header gt-collapsible-header" 
-           role="button" 
-           tabindex="0" 
-           aria-expanded="${!isCollapsed}" 
+
+      <div class="${headerClasses}" 
+           role="${collapsible ? 'button' : 'heading'}"
+           tabindex="${collapsible ? '0' : '-1'}"
+           aria-expanded="${collapsible ? !isCollapsed : 'true'}"
            aria-controls="${contentId}">
         ${arrow}
         <span class="gt-section-title">${title}</span>

@@ -133,8 +133,8 @@ export const defaultConfig: GeneTooltipConfig = {
     transcripts: true,
     structures: true,
     generifs: true,
-    collapsible: true,
-    collapsedByDefault: false,
+    collapsible: false,
+    collapsedByDefault: true,
     links: {
       ncbi: true,
       ensembl: true,
