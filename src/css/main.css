@@ -142,6 +142,46 @@
 
 /* --- Reusable Section Components --- */
 
+.gt-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+
+.gt-section-arrow::after {
+  content: '▼';
+  display: inline-block;
+  transition: transform 0.2s ease, color 0.2s ease;
+  color: var(--gt-text-color-secondary);
+  font-size: 0.8em;
+  margin-right: 0.3em;
+}
+
+.gt-section-arrow.collapsed::after {
+  transform: rotate(-90deg);
+}
+
+.gt-collapsible-content {
+  margin-top: 0.4em;
+  transition: max-height 0.2s ease, opacity 0.2s ease;
+}
+
+.gt-collapsible[data-collapsed="true"] .gt-collapsible-content {
+  display: none;
+}
+
+.gene-tooltip-section-container.collapsed .gene-tooltip-section-body {
+  display: none;
+}
+
+.gene-tooltip-section-header {
+  cursor: pointer;
+  user-select: none;
+}
+
 .gene-tooltip-section-container {
   /* Use a subtle border that adapts to theme, without dimming content */
   /* border-top: 1px solid var(--gt-border-color); */

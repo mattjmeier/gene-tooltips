@@ -25,6 +25,34 @@ interface RenderOptions {
 
 const loaderHTML = `<div class="gt-loader-container"><div class="gt-spinner"></div><span>Loading...</span></div>`;
 
+function renderCollapsibleSection(
+  title: string,
+  innerHTML: string,
+  uniqueId: string,
+  collapsible: boolean,
+  collapsedByDefault: boolean
+): string {
+  const isCollapsed = collapsible && collapsedByDefault;
+  const arrow = collapsible
+    ? `<span class="gt-section-arrow ${isCollapsed ? 'collapsed' : ''}" aria-hidden="true"></span>`
+    : '';
+
+  return `
+    <div class="gene-tooltip-section-container ${collapsible ? 'gt-collapsible' : ''}" 
+         data-collapsed="${isCollapsed ? 'true' : 'false'}"
+         data-section="${title.replace(/\s+/g, '-').toLowerCase()}">
+      <div class="gene-tooltip-section-header gt-collapsible-header" role="button" tabindex="0">
+        ${arrow}
+        <span class="gt-section-title">${title}</span>
+      </div>
+      <div class="gt-collapsible-content" style="display:${isCollapsed ? 'none' : 'block'};">
+        ${innerHTML}
+      </div>
+    </div>
+  `;
+}
+
+
 // Generate a unique ID for this tooltip instance
 function generateUniqueId(): string {
   // Use crypto.randomUUID() if available (modern browsers), fallback for older browsers
@@ -84,32 +112,13 @@ function renderGeneTrackContainer(uniqueId: string): string {
   `;
 }
 
-function renderSummary(summaryText: string | undefined, truncate: number, uniqueId: string): string {
+function renderSummary(summaryText: string | undefined, truncate: number, uniqueId: string, collapsible = false, collapsedByDefault = false): string {
   const summary = summaryText || "No summary available.";
-  
-  if (!summaryText || truncate <= 0) {
-    return `
-      <div class="gene-tooltip-section-container">
-        <div class="gene-tooltip-section-header">Summary</div>
-        <p class="gene-tooltip-summary-full">${summary}</p>
-      </div>
-    `;
-  }
-
-  const summaryClass = 'gene-tooltip-summary';
-  const summaryStyle = `style="--line-clamp: ${truncate};"`;
-  
-  const lessButtonId = `summary-less-${uniqueId}`;
-  
-  const lessButton = renderCollapseButton(lessButtonId, 'Show less');
-
-  return `
-    <div class="gene-tooltip-section-container">
-        <div class="gene-tooltip-section-header">Summary</div>
-        <p class="${summaryClass}" ${summaryStyle}>${summary}</p>
-        ${lessButton}
-    </div>
+  const summaryHTML = `
+    <p class="gene-tooltip-summary" style="--line-clamp:${truncate};">${summary}</p>
   `;
+
+  return renderCollapsibleSection('Summary', summaryHTML, uniqueId, collapsible, collapsedByDefault);
 }
 
 // Rendering external links
@@ -286,6 +295,9 @@ function renderGeneRIFs(data: MyGeneInfoResult, count: number, uniqueId: string)
   const moreButtonId = `generifs-more-${uniqueId}`;
   return renderListSection('GeneRIFs', generifs, count, moreButtonId);
 }
+
+const collapsible = display.collapsible ?? false;
+const collapsedByDefault = display.collapsedByDefault ?? false;
 
 export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,
