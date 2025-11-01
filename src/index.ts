@@ -3,6 +3,7 @@ import { type GeneTooltipConfig, mergeConfig, MyGeneInfoResult } from './config.
 import { findGeneElements } from './parser.js';
 import { runPrefetch } from './prefetch.js';
 import { enableSummaryExpand } from './ui/summaryExpand.js';
+import { sectionExpand } from './ui/sectionExpand.js';
 import { getIdeogram } from './ideogram.js';
 import { getD3 } from './gene-track.js';
 import { getEffectiveTheme, initializeThemeObserver } from './ui/theme.js';
@@ -53,6 +54,9 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   if (!isSummaryHandlerEnabled) {
     enableSummaryExpand();
     isSummaryHandlerEnabled = true;
+  }
+  if (config.display.collapsible) {
+    sectionExpand(config.display.collapsedByDefault);
   }
 
   // Return the master cleanup function

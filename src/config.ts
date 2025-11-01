@@ -62,6 +62,8 @@ export interface TooltipDisplayConfig {
   transcripts: boolean;
   structures: boolean;
   generifs: boolean;
+  collapsible?: boolean;
+  collapsedByDefault?: boolean;
   links: {
     ncbi?: boolean;
     ensembl?: boolean;
@@ -131,6 +133,8 @@ export const defaultConfig: GeneTooltipConfig = {
     transcripts: true,
     structures: true,
     generifs: true,
+    collapsible: false,
+    collapsedByDefault: false,
     links: {
       ncbi: true,
       ensembl: true,
