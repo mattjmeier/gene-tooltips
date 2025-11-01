@@ -193,9 +193,6 @@ export function createOnShowHandler(
         const renderContent = (data: MyGeneInfoResult | null) => {
           instance._geneData = data;
           instance.setContent(renderTooltipHTML(data, renderOptions));
-          if (instance._isFullyShown) {
-            renderVisualsAndNestedTippys(instance, config);
-          }
         };
 
         const cachedData = cache.get(symbol, taxid);

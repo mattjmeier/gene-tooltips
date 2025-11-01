@@ -29,8 +29,12 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
   const effectiveTheme = getEffectiveTheme(config.theme);
   const isAutoTheme = config.theme === 'auto' || typeof config.theme === 'undefined';
 
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   instances = tippy(geneElements, {
     ...config.tippyOptions,
+    animation: prefersReducedMotion ? 'shift-away' : config.tippyOptions.animation,
+    duration: prefersReducedMotion ? [0, 0] : config.tippyOptions.duration,
     theme: effectiveTheme,
     maxWidth: config.tooltipWidth ?? config.tippyOptions.maxWidth,
     onShow: createOnShowHandler(config, inFlightRequests),
