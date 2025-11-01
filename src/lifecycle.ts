@@ -235,6 +235,46 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
     if (instance._geneData !== undefined) {
       renderVisualsAndNestedTippys(instance, config);
     }
+    if (config.display.collapsible) {
+      const popper = instance.popper; // This is the tooltip element
+
+      // Define one handler for both click and keydown
+      const sectionToggleHandler = (event: Event) => {
+        const target = event.target as HTMLElement;
+        const header = target.closest<HTMLElement>(".gt-collapsible-header");
+
+        if (!header) return;
+
+        // Prevent default for keyboard 'Enter'/'Space'
+        if (event.type === 'keydown') {
+          event.preventDefault();
+        }
+
+        const section = header.closest(".gene-tooltip-section-container");
+        if (!section) return;
+
+        // Toggle the data-attribute
+        const isCollapsed = section.getAttribute('data-collapsed') === 'true';
+        const newCollapsedState = !isCollapsed;
+
+        section.setAttribute('data-collapsed', String(newCollapsedState));
+        header.setAttribute('aria-expanded', String(!newCollapsedState));
+
+        // Also toggle the arrow's class
+        const arrow = header.querySelector('.gt-section-arrow');
+        if (arrow) {
+          arrow.classList.toggle('collapsed', newCollapsedState);
+        }
+      };
+
+      // Attach one click and one keydown listener *per tooltip instance*
+      popper.addEventListener('click', sectionToggleHandler);
+      popper.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          sectionToggleHandler(e);
+        }
+      });
+    }
   };
 }
 

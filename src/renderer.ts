@@ -28,7 +28,7 @@ const loaderHTML = `<div class="gt-loader-container"><div class="gt-spinner"></d
 function renderCollapsibleSection(
   title: string,
   innerHTML: string,
-  uniqueId: string,
+  uniqueId: string, // uniqueId is good, but not strictly needed for the content
   collapsible: boolean,
   collapsedByDefault: boolean
 ): string {
@@ -37,15 +37,24 @@ function renderCollapsibleSection(
     ? `<span class="gt-section-arrow ${isCollapsed ? 'collapsed' : ''}" aria-hidden="true"></span>`
     : '';
 
+  // Add ARIA attributes for accessibility
+  const contentId = `gt-content-${uniqueId}-${title.replace(/\s+/g, '-').toLowerCase()}`;
+
   return `
     <div class="gene-tooltip-section-container ${collapsible ? 'gt-collapsible' : ''}" 
          data-collapsed="${isCollapsed ? 'true' : 'false'}"
          data-section="${title.replace(/\s+/g, '-').toLowerCase()}">
-      <div class="gene-tooltip-section-header gt-collapsible-header" role="button" tabindex="0">
+      
+      <div class="gene-tooltip-section-header gt-collapsible-header" 
+           role="button" 
+           tabindex="0" 
+           aria-expanded="${!isCollapsed}" 
+           aria-controls="${contentId}">
         ${arrow}
         <span class="gt-section-title">${title}</span>
       </div>
-      <div class="gt-collapsible-content" style="display:${isCollapsed ? 'none' : 'block'};">
+      
+      <div class="gt-collapsible-content" id="${contentId}">
         ${innerHTML}
       </div>
     </div>
@@ -74,51 +83,89 @@ function renderSpecies(taxid: number): string {
 }
 
 // Ideogram layout with unique ID
-function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined, showIdeogram: boolean = false, uniqueId: string = ''): string {
-    if (!genomic_pos) return '';
+// function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined, showIdeogram: boolean = false, uniqueId: string = ''): string {
+//     if (!genomic_pos) return '';
 
-    const pos = Array.isArray(genomic_pos) ? genomic_pos[0] : genomic_pos;
-    if (!pos) return '';
+//     const pos = Array.isArray(genomic_pos) ? genomic_pos[0] : genomic_pos;
+//     if (!pos) return '';
     
-    const start = pos.start.toLocaleString();
-    const end = pos.end.toLocaleString();
+//     const start = pos.start.toLocaleString();
+//     const end = pos.end.toLocaleString();
 
-    return `
-      <div class="gene-tooltip-section-container">
-        <div class="gene-tooltip-section-header">Location</div>
-        <div class="gene-tooltip-location">
-            <div class="gene-tooltip-location-coords">
-              <span class="gene-tooltip-location-chr">chr${pos.chr}</span>
-              <span class="gene-tooltip-location-pos">${start}-${end}</span>
-            </div>
-            ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${uniqueId}">${loaderHTML}</div>` : ""}
-        </div>
-      </div>
-    `;
-}
+//     return `
+//       <div class="gene-tooltip-section-container">
+//         <div class="gene-tooltip-section-header">Location</div>
+//         <div class="gene-tooltip-location">
+//             <div class="gene-tooltip-location-coords">
+//               <span class="gene-tooltip-location-chr">chr${pos.chr}</span>
+//               <span class="gene-tooltip-location-pos">${start}-${end}</span>
+//             </div>
+//             ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${uniqueId}">${loaderHTML}</div>` : ""}
+//         </div>
+//       </div>
+//     `;
+// }
 
-// Gene Track
-function renderGeneTrackContainer(uniqueId: string): string {
+function renderLocation(
+  genomic_pos: GenomicPosition | GenomicPosition[] | undefined, 
+  showIdeogram: boolean = false, 
+  uniqueId: string = ''
+): string {
+  if (!genomic_pos) return '';
+
+  const pos = Array.isArray(genomic_pos) ? genomic_pos[0] : genomic_pos;
+  if (!pos) return '';
+  
+  const start = pos.start.toLocaleString();
+  const end = pos.end.toLocaleString();
+
   return `
-    <div class="gene-tooltip-section-container">
-        <div class="gene-tooltip-section-header gene-track-header">
-            <span>Gene Model</span>
-            <div class="gene-tooltip-track-controls">
-                <select class="gt-transcript-selector form-select-sm" id="transcript-selector-${uniqueId}" ></select>
-            </div>
-        </div>
-        <div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}">${loaderHTML}</div>
+    <div class="gene-tooltip-location">
+      <div class="gene-tooltip-location-coords">
+        <span class="gene-tooltip-location-chr">chr${pos.chr}</span>
+        <span class="gene-tooltip-location-pos">${start}-${end}</span>
+      </div>
+      ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${uniqueId}">${loaderHTML}</div>` : ""}
     </div>
   `;
 }
 
-function renderSummary(summaryText: string | undefined, truncate: number, uniqueId: string, collapsible = false, collapsedByDefault = false): string {
-  const summary = summaryText || "No summary available.";
-  const summaryHTML = `
-    <p class="gene-tooltip-summary" style="--line-clamp:${truncate};">${summary}</p>
+// Gene Track
+function renderGeneTrackContent(uniqueId: string): string {
+  return `
+    <div class="gene-track-header-controls">
+      <select class="gt-transcript-selector form-select-sm" id="transcript-selector-${uniqueId}"></select>
+    </div>
+    <div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}">${loaderHTML}</div>
   `;
+}
 
-  return renderCollapsibleSection('Summary', summaryHTML, uniqueId, collapsible, collapsedByDefault);
+function renderSummary(summaryText: string | undefined, truncate: number, uniqueId: string): string {
+  const summary = summaryText || "No summary available.";
+  
+  if (!summaryText || truncate <= 0) {
+    return `
+      <div class="gene-tooltip-section-container">
+        <div class="gene-tooltip-section-header">Summary</div>
+        <p class="gene-tooltip-summary-full">${summary}</p>
+      </div>
+    `;
+  }
+
+  const summaryClass = 'gene-tooltip-summary';
+  const summaryStyle = `style="--line-clamp: ${truncate};"`;
+  
+  const lessButtonId = `summary-less-${uniqueId}`;
+  
+  const lessButton = renderCollapseButton(lessButtonId, 'Show less');
+
+  return `
+    <div class="gene-tooltip-section-container">
+        <div class="gene-tooltip-section-header">Summary</div>
+        <p class="${summaryClass}" ${summaryStyle}>${summary}</p>
+        ${lessButton}
+    </div>
+  `;
 }
 
 // Rendering external links
@@ -178,38 +225,33 @@ function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConf
     `;
 }
 
-function renderParagraphSection(
-  title: string,
+function renderParagraphContent(
   items: { name: string; url: string }[],
   initialCount: number,
   moreButtonId: string
 ): string {
   if (!items || items.length === 0) {
-    return '';
+    return '<p class="gt-no-data">Not available.</p>'; // Provide feedback
   }
 
   const visibleItems = items.slice(0, initialCount);
   const hiddenItemCount = items.length - initialCount;
 
-  // Create the comma-separated list of links for the paragraph
   const itemLinks = visibleItems
     .map(item => `<a href="${item.url}" target="_blank" rel="noopener noreferrer">${item.name}</a>`)
     .join(', ');
 
-  // Create the "more" button if there are hidden items
   const moreButton = hiddenItemCount > 0
     ? renderMoreButton(moreButtonId, `... and ${hiddenItemCount} more`)
     : '';
 
   return `
-    <div class="gene-tooltip-section-container">
-      <div class="gene-tooltip-section-header">${title}</div>
-      <p class="gene-tooltip-p-content">
-        ${itemLinks}${hiddenItemCount > 0 ? ',' : ''} ${moreButton}
-      </p>
-    </div>
+    <p class="gene-tooltip-p-content">
+      ${itemLinks}${hiddenItemCount > 0 ? ',' : ''} ${moreButton}
+    </p>
   `;
 }
+
 
 function renderMoreButton(id: string, text: string): string {
   // We can add accessibility attributes here too
@@ -228,25 +270,21 @@ function renderCollapseButton(id: string, text: string): string {
   `;
 }
 
-function renderListSection(
-  title: string,
+function renderListContent(
   items: FormattedItem[],
   initialCount: number,
   moreButtonId: string
 ): string {
   if (!items || items.length === 0) {
-    return '';
+    return '<p class="gt-no-data">Not available.</p>';
   }
 
   const visibleItems = items.slice(0, initialCount);
   const hiddenItemCount = items.length - initialCount;
 
-  const itemLinks = visibleItems.map(item => 
+  const itemLinks = visibleItems.map(item =>
     `<li>
-       <a href="${item.url}" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          title="${item.name}">
+       <a href="${item.url}" target="_blank" rel="noopener noreferrer" title="${item.name}">
           ${item.name}
        </a>
      </li>`
@@ -257,47 +295,40 @@ function renderListSection(
     : '';
 
   return `
-    <div class="gene-tooltip-section-container">
-      <div class="gene-tooltip-section-header">${title}</div>
-      <div class="gene-tooltip-list-wrapper">
-        <ul class="gene-tooltip-list-section">${itemLinks}</ul>
-        ${moreButton}
-      </div>
+    <div class="gene-tooltip-list-wrapper">
+      <ul class="gene-tooltip-list-section">${itemLinks}</ul>
+      ${moreButton}
     </div>
   `;
 }
 
 function renderPathways(data: MyGeneInfoResult, source: 'reactome' | 'kegg' | 'wikipathways', count: number, uniqueId: string): string {
     const pathways = formatPathways(data.pathway?.[source], source);
-    return renderParagraphSection('Pathways', pathways, count, `pathways-more-${uniqueId}`);
+    // Use the new content function
+    return renderParagraphContent(pathways, count, `pathways-more-${uniqueId}`);
 }
 
 function renderDomains(data: MyGeneInfoResult, count: number, uniqueId: string): string {
   const domains = formatDomains(data.interpro);
-  return renderParagraphSection('Protein Domains', domains, count, `domains-more-${uniqueId}`);
+  return renderParagraphContent(domains, count, `domains-more-${uniqueId}`);
 }
 
 function renderTranscripts(data: MyGeneInfoResult, count: number, uniqueId: string): string {
   const transcripts = formatTranscripts(data.ensembl?.transcript);
-  return renderParagraphSection('Transcripts', transcripts, count, `transcripts-more-${uniqueId}`);
+  return renderParagraphContent(transcripts, count, `transcripts-more-${uniqueId}`);
 }
 
 function renderStructures(data: MyGeneInfoResult, count: number, uniqueId: string): string {
   const structures = formatStructures(data.pdb);
-  return renderParagraphSection('PDB Structures', structures, count, `structures-more-${uniqueId}`);
+  return renderParagraphContent(structures, count, `structures-more-${uniqueId}`);
 }
 
 function renderGeneRIFs(data: MyGeneInfoResult, count: number, uniqueId: string): string {
-  // 1. Get the clean, formatted data
   const generifs = formatGeneRIFs(data.generif);
-  
-  // 2. Pass it to the appropriate generic renderer
   const moreButtonId = `generifs-more-${uniqueId}`;
-  return renderListSection('GeneRIFs', generifs, count, moreButtonId);
+  // Use the new content function
+  return renderListContent(generifs, count, moreButtonId);
 }
-
-const collapsible = display.collapsible ?? false;
-const collapsedByDefault = display.collapsedByDefault ?? false;
 
 export function renderTooltipHTML(
   data: MyGeneInfoResult | null | undefined,
@@ -305,11 +336,10 @@ export function renderTooltipHTML(
 ): string {
   if (!data) return '<p>Gene not found.</p>';
 
-  // Generate a unique ID for this specific tooltip instance
   const uniqueId = options.uniqueId || generateUniqueId();
-
-  const { 
-    truncate = 4, 
+  
+  const {
+    truncate = 4,
     display = {},
     pathwaySource = 'reactome',
     pathwayCount = 3,
@@ -318,14 +348,21 @@ export function renderTooltipHTML(
     structureCount = 3,
     generifCount = 3,
     tooltipWidth,
-    tooltipHeight 
+    tooltipHeight
   } = options;
 
+  // These flags will be passed to renderCollapsibleSection
+  const collapsible = display.collapsible ?? false;
+  const collapsedByDefault = display.collapsedByDefault ?? false;
+  
   const styleParts: string[] = [];
   if (tooltipWidth) styleParts.push(`max-width: ${tooltipWidth}px`);
   if (tooltipHeight) styleParts.push(`max-height: ${tooltipHeight}px`, `overflow-y: auto`);
   const inlineStyle = styleParts.length > 0 ? `style="${styleParts.join('; ')}"` : '';
   
+  // Helper to decide whether to render a section
+  const shouldRender = (key: keyof TooltipDisplayConfig) => display[key] !== false;
+
   return `
     <div class="gene-tooltip-content" ${inlineStyle} data-tooltip-id="${uniqueId}">
       <div class="gene-tooltip-header">
@@ -335,17 +372,80 @@ export function renderTooltipHTML(
         </div>
       </div>
 
-      ${display.species !== false && data.taxid ? renderSpecies(data.taxid) : ''}
+      ${shouldRender('species') && data.taxid ? renderSpecies(data.taxid) : ''}
       
+      ${/* Summary is special, it doesn't use the collapsible wrapper */ ''}
       ${renderSummary(data.summary, truncate, uniqueId)}
 
-      ${display.location !== false ? renderLocation(data.genomic_pos, display.ideogram, uniqueId) : ''}
-      ${display.geneTrack !== false && data.exons && data.exons.length > 0 ? renderGeneTrackContainer(uniqueId) : ''}
-      ${display.pathways !== false ? renderPathways(data, pathwaySource, pathwayCount, uniqueId) : ''}
-      ${display.domains !== false ? renderDomains(data, domainCount, uniqueId) : ''}
-      ${display.transcripts !== false ? renderTranscripts(data, transcriptCount, uniqueId) : ''}
-      ${display.structures !== false ? renderStructures(data, structureCount, uniqueId) : ''}
-      ${display.generifs !== false ? renderGeneRIFs(data, generifCount, uniqueId) : ''}
+      ${shouldRender('location') 
+        ? renderCollapsibleSection(
+            'Location',
+            renderLocation(data.genomic_pos, display.ideogram, uniqueId),
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          ) 
+        : ''}
+      
+      ${shouldRender('geneTrack') && data.exons && data.exons.length > 0
+        ? renderCollapsibleSection(
+            'Gene Model',
+            renderGeneTrackContent(uniqueId), // Use the new content function
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          )
+        : ''}
+
+      ${shouldRender('pathways')
+        ? renderCollapsibleSection(
+            'Pathways',
+            renderPathways(data, pathwaySource, pathwayCount, uniqueId),
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          ) 
+        : ''}
+
+      ${shouldRender('domains')
+        ? renderCollapsibleSection(
+            'Protein Domains',
+            renderDomains(data, domainCount, uniqueId),
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          ) 
+        : ''}
+        
+      ${shouldRender('transcripts')
+        ? renderCollapsibleSection(
+            'Transcripts',
+            renderTranscripts(data, transcriptCount, uniqueId),
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          )
+        : ''}
+
+      ${shouldRender('structures')
+        ? renderCollapsibleSection(
+            'PDB Structures',
+            renderStructures(data, structureCount, uniqueId),
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          )
+        : ''}
+
+      ${shouldRender('generifs')
+        ? renderCollapsibleSection(
+            'GeneRIFs',
+            renderGeneRIFs(data, generifCount, uniqueId),
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          )
+        : ''}
 
       ${renderLinks(data, display)}
     </div>

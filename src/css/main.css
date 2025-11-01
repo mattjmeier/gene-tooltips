@@ -166,15 +166,20 @@
 
 .gt-collapsible-content {
   margin-top: 0.4em;
-  transition: max-height 0.2s ease, opacity 0.2s ease;
+  
+  /* --- animation --- */
+  max-height: 500px; /* Set to a height larger than any content */
+  overflow: hidden;
+  transition: max-height 0.25s ease-out, opacity 0.2s ease-out, margin-top 0.25s ease-out;
+  opacity: 1;
 }
 
+/* collapsed state */
 .gt-collapsible[data-collapsed="true"] .gt-collapsible-content {
-  display: none;
-}
-
-.gene-tooltip-section-container.collapsed .gene-tooltip-section-body {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  /* No more display: none; */
 }
 
 .gene-tooltip-section-header {
@@ -215,6 +220,12 @@
 
 .gene-tooltip-species-icon {
   font-size: 1.2em;
+}
+
+.gene-track-header-controls {
+  margin-bottom: 0.5em;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* --- Nested Tooltip with Search --- */
