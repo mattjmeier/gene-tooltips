@@ -142,24 +142,88 @@
 
 /* --- Reusable Section Components --- */
 
+.gt-section-arrow::after {
+  content: '▼';
+  display: inline-block;
+  transition: transform 0.2s ease, color 0.2s ease;
+  color: var(--gt-text-color-secondary);
+  font-size: 0.8em;
+  margin-right: 0.3em;
+}
+
+.gt-section-arrow.collapsed::after {
+  transform: rotate(-90deg);
+}
+
+.gt-collapsible-content {
+  margin-top: 0.4em;
+  
+  /* --- animation --- */
+  max-height: 500px; /* Set to a height larger than any content */
+  overflow: hidden;
+  transition: max-height 0.25s ease-out, opacity 0.2s ease-out, margin-top 0.25s ease-out;
+  opacity: 1;
+}
+
+/* collapsed state */
+.gt-collapsible[data-collapsed="true"] .gt-collapsible-content {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  /* No more display: none; */
+}
+
+.gt-collapsible[data-collapsed="true"] .gene-tooltip-track-controls {
+  display: none;
+}
+
 .gene-tooltip-section-container {
-  /* Use a subtle border that adapts to theme, without dimming content */
-  /* border-top: 1px solid var(--gt-border-color); */
-  /* padding-top: 0.5em; */
   margin-top: 0.75em;
   background-color: var(--gt-background-color-subtle);
   border-radius: 6px;
   padding: 0.5em 0.75em;
+  /* overflow: visible; */
+  /* isolation: isolate; */
+}
+
+/*
+  Selectively create a stacking context for the section container
+  that has an active Tom Select dropdown inside it.
+*/
+.gene-tooltip-section-container:has(.ts-wrapper.dropdown-active) {
+  /* position: relative is needed to establish the context for z-index */
+  position: relative; 
+  
+  /* A z-index > 0 lifts this section above its siblings */
+  z-index: 2;
 }
 
 .gene-tooltip-section-header {
   font-weight: bold;
   font-size: 0.9em;
-  /* Inherit the main text color from the theme */
   color: var(--gt-text-color);
   margin-bottom: 0.3em;
-  /* Make it slightly less prominent than the main title */
   opacity: 0.9;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5em;
+  z-index: 1;
+}
+
+/* This rule ALSO applies to ALL headers, giving them the flexbox layout
+   needed to align the (optional) arrow and the title. */
+.gt-collapsible-header {
+  display: flex;
+  align-items: center;
+  gap: 0.25em;
+  position: relative;
+}
+
+/* And this rule ONLY applies to INTERACTIVE headers, adding the pointer. */
+.gt-collapsible-header.gt-is-collapsible {
+  cursor: pointer;
 }
 
 .gene-tooltip-section {
@@ -175,6 +239,12 @@
 
 .gene-tooltip-species-icon {
   font-size: 1.2em;
+}
+
+.gene-track-header-controls {
+  margin-bottom: 0.5em;
+  display: flex;
+  justify-content: flex-end;
 }
 
 /* --- Nested Tooltip with Search --- */
@@ -232,9 +302,7 @@ ul.gene-tooltip-nested-list {
 
 .gene-tooltip-location-pos {
   font-size: 0.9em;
-  /* Make secondary text subtle with opacity */
   color: var(--gt-text-color-secondary);
-  /* opacity: 0.7; */
 }
 
 .gene-tooltip-ideo {
@@ -353,15 +421,6 @@ ul.gene-tooltip-nested-list {
     opacity: 1;
 }
 
-/* Add a pipe separator between links */
-/* .gene-tooltip-links-container a:not(:last-child)::after {
-    content: '|';
-    margin-left: 0.75em;
-    color: currentColor;
-    opacity: 0.2;
-    font-weight: 100;
-} */
-
 .gene-tooltip-link-icon-wrapper {
   display: inline-flex;
   align-items: center;
@@ -425,16 +484,14 @@ ul.gene-tooltip-nested-list {
   width: 100%;
 }
 
-.gene-tooltip-track-controls {
-  display: flex;
-  align-items: center;
-}
-
 /* 
   Tom Select Overrides
   Scoped within the tippy-box to avoid affecting other Tom Select instances on the page.
 */
 .gene-tooltip-track-controls {
+  display: flex;
+  align-items: center;
+  z-index: 2;
   .ts-wrapper {
     font-size: 0.8em;
     
@@ -498,10 +555,12 @@ ul.gene-tooltip-nested-list {
       border-radius: 4px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       margin-top: 4px;
-      z-index: 10001;
+      position: absolute !important;
+      z-index: 10;
+      /* z-index: 10005 !important; */
 
       .ts-dropdown-content {
-        z-index: 10001;
+        /* z-index: 10001; */
         max-height: 300px;
         overflow-y: auto;
         
@@ -525,7 +584,7 @@ ul.gene-tooltip-nested-list {
       
       /* Option items */
       .option {
-        z-index: 10001;
+        /* z-index: 10001; */
         padding: 8px 12px;
         color: var(--gt-text-color);
         cursor: pointer;

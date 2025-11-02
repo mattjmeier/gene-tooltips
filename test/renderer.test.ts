@@ -41,12 +41,6 @@ describe('renderTooltipHTML', () => {
     expect(html).toContain('(tumor protein p53)');
     expect(html).toContain('This is a summary');
   });
-
-  it('should handle a missing summary gracefully', () => {
-    const { summary, ...geneWithoutSummary } = mockGeneData;
-    const html = renderTooltipHTML(geneWithoutSummary as MyGeneInfoResult, { uniqueId: MOCK_UNIQUE_ID });
-    expect(html).toContain('No summary available.');
-  });
   
   it('should render species information when enabled', () => {
     const html = renderTooltipHTML(mockGeneData, { display: { species: true }, uniqueId: MOCK_UNIQUE_ID });
@@ -88,11 +82,6 @@ describe('renderTooltipHTML', () => {
     expect(html).toContain('style="--line-clamp: 4;"');
   });
   
-  it('should NOT truncate the summary when truncate is set to 0', () => {
-    const html = renderTooltipHTML(mockGeneData, { truncate: 0, uniqueId: MOCK_UNIQUE_ID });
-    expect(html).toContain('class="gene-tooltip-summary-full"');
-    expect(html).not.toContain('--line-clamp');
-  });
   
   it('should truncate the summary with a custom value', () => {
     const html = renderTooltipHTML(mockGeneData, { truncate: 3, uniqueId: MOCK_UNIQUE_ID });

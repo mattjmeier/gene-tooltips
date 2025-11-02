@@ -20,6 +20,9 @@ export interface TippyInstanceWithCustoms extends Instance {
   _isChildTippyVisible?: boolean;
   _isFullyShown?: boolean;
   _tomselect?: TomSelect | null;
+  _sectionToggleHandler?: (event: Event) => void;
+  _sectionKeydownHandler?: (event: KeyboardEvent) => void;
+  _visualsRendered?: boolean;
 }
 
 /**
@@ -33,21 +36,27 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
 
         // Create promises for both rendering tasks
         const renderPromises = [];
-        if (config.display.geneTrack && data.exons) {
+        const locationSection = instance.popper.querySelector('[data-section="location"]');
+        const isLocationCollapsed = locationSection?.getAttribute('data-collapsed') === 'true';
+        
+        const geneModelSection = instance.popper.querySelector('[data-section="gene-model"]');
+        const isGeneModelCollapsed = geneModelSection?.getAttribute('data-collapsed') === 'true';
+        
+        if (config.display.geneTrack && data.exons && !isGeneModelCollapsed) {
           renderPromises.push(renderGeneTrack(instance, data, instance._uniqueId));
         }
         
-        if (config.ideogram?.enabled && data.genomic_pos) {
+        if (config.ideogram?.enabled && data.genomic_pos && !isLocationCollapsed) {
           renderPromises.push(renderIdeogram(instance, data, config.ideogram, instance._uniqueId));
         }
 
-        // Wait for both visualizations to finish rendering or fail
         await Promise.allSettled(renderPromises);
 
-        // If the tooltip was hidden while async tasks were running, abort
         if (!instance.state.isShown) {
           return;
         }
+        // Mark that we've attempted to render (even if sections were collapsed)
+        instance._visualsRendered = true;
 
         // --- All the nested tippy logic from your onShown goes here ---
         instance._nestedTippys = [];
@@ -235,6 +244,59 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
     if (instance._geneData !== undefined) {
       renderVisualsAndNestedTippys(instance, config);
     }
+    if (config.display.collapsible) {
+      const popper = instance.popper; // This is the tooltip element
+
+      // Define one handler for both click and keydown
+      instance._sectionToggleHandler = (event: Event) => {
+        const target = event.target as HTMLElement;
+        const header = target.closest<HTMLElement>(".gt-collapsible-header");
+        if (!header) return;
+
+        if (event.type === 'keydown') {
+          event.preventDefault();
+        }
+
+        const section = header.closest(".gene-tooltip-section-container");
+        if (!section) return;
+
+        const isCollapsed = section.getAttribute('data-collapsed') === 'true';
+        const newCollapsedState = !isCollapsed;
+
+        section.setAttribute('data-collapsed', String(newCollapsedState));
+        header.setAttribute('aria-expanded', String(!newCollapsedState));
+
+        const arrow = header.querySelector('.gt-section-arrow');
+        if (arrow) {
+          arrow.classList.toggle('collapsed', newCollapsedState);
+        }
+
+        // NEW: Trigger visualization rendering when expanding specific sections
+        if (!newCollapsedState && instance._geneData) { // Expanding and data is available
+          const sectionName = section.getAttribute('data-section');
+          
+          if (sectionName === 'location' && config.ideogram?.enabled && instance._geneData.genomic_pos) {
+            renderIdeogram(instance, instance._geneData, config.ideogram, instance._uniqueId!);
+          }
+          
+          if (sectionName === 'gene-model' && config.display.geneTrack && instance._geneData.exons) {
+            renderGeneTrack(instance, instance._geneData, instance._uniqueId!);
+          }
+        }
+      };
+
+      // 2. The keydown wrapper
+      instance._sectionKeydownHandler = (e: KeyboardEvent) => {
+        if ((e.key === 'Enter' || e.key === ' ') && instance._sectionToggleHandler) {
+          // Forward the event to the main handler
+          instance._sectionToggleHandler(e);
+        }
+      };
+
+      // --- Attach the stored handlers ---
+      popper.addEventListener('click', instance._sectionToggleHandler);
+      popper.addEventListener('keydown', instance._sectionKeydownHandler);
+    }
   };
 }
 
@@ -252,12 +314,19 @@ export function createOnHideHandler() {
 
     // maybe we should add considerations in onHide for ideogram and d3 too??
     if (instance._tomselect) {
-      // Destroy the TomSelect instance to clean up its DOM and event listeners
       instance._tomselect.destroy();
-      // Clear the reference to prevent memory leaks and confusion
       instance._tomselect = null; 
     }
 
+    if (instance._sectionToggleHandler) {
+      instance.popper.removeEventListener('click', instance._sectionToggleHandler);
+      instance._sectionToggleHandler = undefined; 
+    }
+    
+    if (instance._sectionKeydownHandler) {
+      instance.popper.removeEventListener('keydown', instance._sectionKeydownHandler);
+      instance._sectionKeydownHandler = undefined;
+    }
     
     // Cleanup viewport resize handler
     const resizeHandler = (instance as any)._visualViewportResizeHandler;
