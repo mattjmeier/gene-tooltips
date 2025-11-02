@@ -20,6 +20,8 @@ export interface TippyInstanceWithCustoms extends Instance {
   _isChildTippyVisible?: boolean;
   _isFullyShown?: boolean;
   _tomselect?: TomSelect | null;
+  _sectionToggleHandler?: (event: Event) => void;
+  _sectionKeydownHandler?: (event: KeyboardEvent) => void;
 }
 
 /**
@@ -239,10 +241,11 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
       const popper = instance.popper; // This is the tooltip element
 
       // Define one handler for both click and keydown
-      const sectionToggleHandler = (event: Event) => {
+      instance._sectionToggleHandler = (event: Event) => {
         const target = event.target as HTMLElement;
         const header = target.closest<HTMLElement>(".gt-collapsible-header");
-
+        console.log("value of target:", target); // Keep for debugging
+        console.log("value of header:", header); // Keep for debugging
         if (!header) return;
 
         // Prevent default for keyboard 'Enter'/'Space'
@@ -253,27 +256,29 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
         const section = header.closest(".gene-tooltip-section-container");
         if (!section) return;
 
-        // Toggle the data-attribute
         const isCollapsed = section.getAttribute('data-collapsed') === 'true';
         const newCollapsedState = !isCollapsed;
 
         section.setAttribute('data-collapsed', String(newCollapsedState));
         header.setAttribute('aria-expanded', String(!newCollapsedState));
 
-        // Also toggle the arrow's class
         const arrow = header.querySelector('.gt-section-arrow');
         if (arrow) {
           arrow.classList.toggle('collapsed', newCollapsedState);
         }
       };
 
-      // Attach one click and one keydown listener *per tooltip instance*
-      popper.addEventListener('click', sectionToggleHandler);
-      popper.addEventListener('keydown', (e: KeyboardEvent) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          sectionToggleHandler(e);
+      // 2. The keydown wrapper
+      instance._sectionKeydownHandler = (e: KeyboardEvent) => {
+        if ((e.key === 'Enter' || e.key === ' ') && instance._sectionToggleHandler) {
+          // Forward the event to the main handler
+          instance._sectionToggleHandler(e);
         }
-      });
+      };
+
+      // --- Attach the stored handlers ---
+      popper.addEventListener('click', instance._sectionToggleHandler);
+      popper.addEventListener('keydown', instance._sectionKeydownHandler);
     }
   };
 }
@@ -292,12 +297,19 @@ export function createOnHideHandler() {
 
     // maybe we should add considerations in onHide for ideogram and d3 too??
     if (instance._tomselect) {
-      // Destroy the TomSelect instance to clean up its DOM and event listeners
       instance._tomselect.destroy();
-      // Clear the reference to prevent memory leaks and confusion
       instance._tomselect = null; 
     }
 
+    if (instance._sectionToggleHandler) {
+      instance.popper.removeEventListener('click', instance._sectionToggleHandler);
+      instance._sectionToggleHandler = undefined; 
+    }
+    
+    if (instance._sectionKeydownHandler) {
+      instance.popper.removeEventListener('keydown', instance._sectionKeydownHandler);
+      instance._sectionKeydownHandler = undefined;
+    }
     
     // Cleanup viewport resize handler
     const resizeHandler = (instance as any)._visualViewportResizeHandler;

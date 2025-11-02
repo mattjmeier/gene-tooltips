@@ -53,6 +53,7 @@ export interface MyGeneInfoResult {
 
 // Define the components that can be shown or hidden
 export interface TooltipDisplayConfig {
+  summary: boolean;
   species: boolean;
   location: boolean;
   ideogram: boolean;
@@ -133,7 +134,7 @@ export const defaultConfig: GeneTooltipConfig = {
     transcripts: true,
     structures: true,
     generifs: true,
-    collapsible: false,
+    collapsible: true,
     collapsedByDefault: true,
     links: {
       ncbi: true,

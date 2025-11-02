@@ -86,30 +86,6 @@ function renderSpecies(taxid: number): string {
   `;
 }
 
-// Ideogram layout with unique ID
-// function renderLocation(genomic_pos: GenomicPosition | GenomicPosition[] | undefined, showIdeogram: boolean = false, uniqueId: string = ''): string {
-//     if (!genomic_pos) return '';
-
-//     const pos = Array.isArray(genomic_pos) ? genomic_pos[0] : genomic_pos;
-//     if (!pos) return '';
-    
-//     const start = pos.start.toLocaleString();
-//     const end = pos.end.toLocaleString();
-
-//     return `
-//       <div class="gene-tooltip-section-container">
-//         <div class="gene-tooltip-section-header">Location</div>
-//         <div class="gene-tooltip-location">
-//             <div class="gene-tooltip-location-coords">
-//               <span class="gene-tooltip-location-chr">chr${pos.chr}</span>
-//               <span class="gene-tooltip-location-pos">${start}-${end}</span>
-//             </div>
-//             ${showIdeogram ? `<div class="gene-tooltip-ideo" id="gene-tooltip-ideo-${uniqueId}">${loaderHTML}</div>` : ""}
-//         </div>
-//       </div>
-//     `;
-// }
-
 function renderLocation(
   genomic_pos: GenomicPosition | GenomicPosition[] | undefined, 
   showIdeogram: boolean = false, 
@@ -144,56 +120,49 @@ function renderGeneTrackContent(uniqueId: string): string {
   `;
 }
 
-function renderSummary(summaryText: string | undefined, truncate: number, uniqueId: string): string {
-  const summary = summaryText || "No summary available.";
-  
-  if (!summaryText || truncate <= 0) {
-    return `
-      <div class="gene-tooltip-section-container">
-        <div class="gene-tooltip-section-header">Summary</div>
-        <p class="gene-tooltip-summary-full">${summary}</p>
-      </div>
-    `;
+function renderSummaryContent(summaryText: string | undefined, truncate: number, uniqueId: string): string {
+  const summary = summaryText || "";
+
+  if (!summary) {
+    return '';
   }
 
+  // Case 2: Truncation is active
   const summaryClass = 'gene-tooltip-summary';
   const summaryStyle = `style="--line-clamp: ${truncate};"`;
   
   const lessButtonId = `summary-less-${uniqueId}`;
-  
   const lessButton = renderCollapseButton(lessButtonId, 'Show less');
 
+  // Return *only* the inner content
   return `
-    <div class="gene-tooltip-section-container">
-        <div class="gene-tooltip-section-header">Summary</div>
-        <p class="${summaryClass}" ${summaryStyle}>${summary}</p>
-        ${lessButton}
-    </div>
+    <p class="${summaryClass}" ${summaryStyle}>${summary}</p>
+    ${lessButton}
   `;
 }
 
 // Rendering external links
-function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConfig>): string {
+function renderLinksContent(data: MyGeneInfoResult, display: Partial<TooltipDisplayConfig>): string {
     const linksToShow = [];
     
     // Build NCBI links
     if (display.links?.ncbi !== false) {
-        linksToShow.push(`
-          <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}"
-            target="_blank" rel="noopener noreferrer" title="View on NCBI Gene">
-            <span class="gene-tooltip-link-icon-wrapper">
-              <img src="${NCBILogo}" alt="NCBI Gene link" class="gene-tooltip-link-icon" />
-            </span>
-            <span>NCBI</span>
-          </a>
-        `);
+      linksToShow.push(`
+        <a href="https://www.ncbi.nlm.nih.gov/gene/${data._id}"
+           target="_blank" rel="noopener noreferrer" title="View on NCBI Gene">
+          <span class="gene-tooltip-link-icon-wrapper">
+            <img src="${NCBILogo}" alt="NCBI Gene link" class="gene-tooltip-link-icon" />
+          </span>
+          <span>NCBI</span>
+        </a>
+      `);
     }
 
     // Build Ensembl ID links
     if (display.links?.ensembl !== false && data.ensembl?.gene) {
       linksToShow.push(`
         <a href="https://www.ensembl.org/id/${data.ensembl.gene}"
-          target="_blank" rel="noopener noreferrer" title="View on Ensembl">
+           target="_blank" rel="noopener noreferrer" title="View on Ensembl">
           <span class="gene-tooltip-link-icon-wrapper">
             <img src="${EnsemblLogo}" alt="Ensembl link" class="gene-tooltip-link-icon" />
           </span>
@@ -207,7 +176,7 @@ function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConf
       const wikiStub = data.wikipedia.url_stub.replace(/\s+/g, '_');
       linksToShow.push(`
         <a href="https://en.wikipedia.org/wiki/${wikiStub}"
-          target="_blank" rel="noopener noreferrer" title="View on Wikipedia">
+           target="_blank" rel="noopener noreferrer" title="View on Wikipedia">
           <span class="gene-tooltip-link-icon-wrapper">
             <img src="${WikiLogo}" alt="Wikipedia link" class="gene-tooltip-link-icon" />
           </span>
@@ -216,16 +185,16 @@ function renderLinks(data: MyGeneInfoResult, display: Partial<TooltipDisplayConf
       `);
     }
 
+    // If no links, return "Not available" for consistency
+    if (linksToShow.length === 0) {
+      return '';
+    }
 
-    if (linksToShow.length === 0) return '';
-
+    // Return *only* the inner content wrapper
     return `
-        <div class="gene-tooltip-section-container">
-            <div class="gene-tooltip-section-header">Links</div>
-            <div class="gene-tooltip-links-container">
-                ${linksToShow.join('')}
-            </div>
-        </div>
+      <div class="gene-tooltip-links-container">
+        ${linksToShow.join('')}
+      </div>
     `;
 }
 
@@ -235,7 +204,7 @@ function renderParagraphContent(
   moreButtonId: string
 ): string {
   if (!items || items.length === 0) {
-    return '<p class="gt-no-data">Not available.</p>'; // Provide feedback
+    return '';
   }
 
   const visibleItems = items.slice(0, initialCount);
@@ -280,7 +249,7 @@ function renderListContent(
   moreButtonId: string
 ): string {
   if (!items || items.length === 0) {
-    return '<p class="gt-no-data">Not available.</p>';
+    return '';
   }
 
   const visibleItems = items.slice(0, initialCount);
@@ -367,6 +336,42 @@ export function renderTooltipHTML(
   // Helper to decide whether to render a section
   const shouldRender = (key: keyof TooltipDisplayConfig) => display[key] !== false;
 
+  const summaryContent = shouldRender('summary') 
+    ? renderSummaryContent(data.summary, truncate, uniqueId) 
+    : '';
+
+  const locationContent = shouldRender('location')
+    ? renderLocation(data.genomic_pos, display.ideogram, uniqueId)
+    : '';
+  
+  const geneTrackContent = shouldRender('geneTrack') && data.exons && data.exons.length > 0
+    ? renderGeneTrackContent(uniqueId)
+    : '';
+
+  const pathwayContent = shouldRender('pathways')
+    ? renderPathways(data, pathwaySource, pathwayCount, uniqueId)
+    : '';
+
+  const domainContent = shouldRender('domains')
+    ? renderDomains(data, domainCount, uniqueId)
+    : '';
+    
+  const transcriptContent = shouldRender('transcripts')
+    ? renderTranscripts(data, transcriptCount, uniqueId)
+    : '';
+
+  const structureContent = shouldRender('structures')
+    ? renderStructures(data, structureCount, uniqueId)
+    : '';
+
+  const generifContent = shouldRender('generifs')
+    ? renderGeneRIFs(data, generifCount, uniqueId)
+    : '';
+
+  const linksContent = shouldRender('links')
+    ? renderLinksContent(data, display)
+    : '';
+
   return `
     <div class="gene-tooltip-content" ${inlineStyle} data-tooltip-id="${uniqueId}">
       <div class="gene-tooltip-header">
@@ -378,80 +383,81 @@ export function renderTooltipHTML(
 
       ${shouldRender('species') && data.taxid ? renderSpecies(data.taxid) : ''}
       
-      ${/* Summary is special, it doesn't use the collapsible wrapper */ ''}
-      ${renderSummary(data.summary, truncate, uniqueId)}
+      ${/* Summary: Only render section if content exists */ ''}
+      ${summaryContent ? renderCollapsibleSection(
+            'Summary',
+            summaryContent,
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          ) : ''}
 
-      ${shouldRender('location') 
-        ? renderCollapsibleSection(
+      ${/* Location: Only render section if content exists */ ''}
+      ${locationContent ? renderCollapsibleSection(
             'Location',
-            renderLocation(data.genomic_pos, display.ideogram, uniqueId),
+            locationContent,
             uniqueId,
             collapsible,
             collapsedByDefault
-          ) 
-        : ''}
+          ) : ''}
       
-      ${shouldRender('geneTrack') && data.exons && data.exons.length > 0
-        ? renderCollapsibleSection(
+      ${/* Gene Model: Only render section if content exists */ ''}
+      ${geneTrackContent ? renderCollapsibleSection(
             'Gene Model',
-            renderGeneTrackContent(uniqueId), // Use the new content function
+            geneTrackContent, 
             uniqueId,
             collapsible,
             collapsedByDefault
-          )
-        : ''}
+          ) : ''}
 
-      ${shouldRender('pathways')
-        ? renderCollapsibleSection(
+      ${/* Pathways: Only render section if content exists */ ''}
+      ${pathwayContent ? renderCollapsibleSection(
             'Pathways',
-            renderPathways(data, pathwaySource, pathwayCount, uniqueId),
+            pathwayContent,
             uniqueId,
             collapsible,
             collapsedByDefault
-          ) 
-        : ''}
+          ) : ''}
 
-      ${shouldRender('domains')
-        ? renderCollapsibleSection(
+      ${domainContent ? renderCollapsibleSection(
             'Protein Domains',
-            renderDomains(data, domainCount, uniqueId),
+            domainContent,
             uniqueId,
             collapsible,
             collapsedByDefault
-          ) 
-        : ''}
+          ) : ''}
         
-      ${shouldRender('transcripts')
-        ? renderCollapsibleSection(
+      ${transcriptContent ? renderCollapsibleSection(
             'Transcripts',
-            renderTranscripts(data, transcriptCount, uniqueId),
+            transcriptContent,
             uniqueId,
             collapsible,
             collapsedByDefault
-          )
-        : ''}
+          ) : ''}
 
-      ${shouldRender('structures')
-        ? renderCollapsibleSection(
+      ${structureContent ? renderCollapsibleSection(
             'PDB Structures',
-            renderStructures(data, structureCount, uniqueId),
+            structureContent,
             uniqueId,
             collapsible,
             collapsedByDefault
-          )
-        : ''}
+          ) : ''}
 
-      ${shouldRender('generifs')
-        ? renderCollapsibleSection(
+      ${generifContent ? renderCollapsibleSection(
             'GeneRIFs',
-            renderGeneRIFs(data, generifCount, uniqueId),
+            generifContent,
             uniqueId,
             collapsible,
             collapsedByDefault
-          )
-        : ''}
+          ) : ''}
 
-      ${renderLinks(data, display)}
+       ${linksContent ? renderCollapsibleSection(
+            'Links',
+            linksContent,
+            uniqueId,
+            collapsible,
+            collapsedByDefault
+          ) : ''}
     </div>
   `;
 }
