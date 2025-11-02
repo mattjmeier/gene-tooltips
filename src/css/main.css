@@ -302,9 +302,7 @@ ul.gene-tooltip-nested-list {
 
 .gene-tooltip-location-pos {
   font-size: 0.9em;
-  /* Make secondary text subtle with opacity */
   color: var(--gt-text-color-secondary);
-  /* opacity: 0.7; */
 }
 
 .gene-tooltip-ideo {
@@ -485,12 +483,6 @@ ul.gene-tooltip-nested-list {
   align-items: center;
   width: 100%;
 }
-
-/* .gene-tooltip-track-controls {
-  display: flex;
-  align-items: center;
-  z-index: 2;
-} */
 
 /* 
   Tom Select Overrides
