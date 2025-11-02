@@ -113,6 +113,22 @@ export async function renderGeneTrack(
 
     if (!container || !selectorEl ) return;
 
+    if (instance._tomselect) {
+        instance._tomselect.destroy();
+        instance._tomselect = null;
+    }
+
+    const existingSvg = container.querySelector('svg');
+    if (existingSvg) {
+        const exonRects = existingSvg.querySelectorAll('.exon-rect');
+        exonRects.forEach(rect => {
+            const tippyInstance = (rect as any)._tippy;
+            if (tippyInstance) {
+                tippyInstance.destroy();
+            }
+        });
+    }
+
     try {
         const d3 = await getD3();
         if (!d3) throw new Error("D3 library not loaded.");

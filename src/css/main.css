@@ -173,6 +173,10 @@
   /* No more display: none; */
 }
 
+.gt-collapsible[data-collapsed="true"] .gene-tooltip-track-controls {
+  display: none;
+}
+
 .gene-tooltip-section-container {
   /* Use a subtle border that adapts to theme, without dimming content */
   /* border-top: 1px solid var(--gt-border-color); */
@@ -181,6 +185,8 @@
   background-color: var(--gt-background-color-subtle);
   border-radius: 6px;
   padding: 0.5em 0.75em;
+  position: relative;
+  overflow: visible;
 }
 
 /* This rule now applies to ALL section headers, collapsible or not,
@@ -191,8 +197,11 @@
   color: var(--gt-text-color);
   margin-bottom: 0.3em;
   opacity: 0.9;
-  /* cursor: pointer; */ /* This was correctly removed before */
   user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5em;
 }
 
 /* This rule ALSO applies to ALL headers, giving them the flexbox layout
@@ -551,7 +560,8 @@ ul.gene-tooltip-nested-list {
       border-radius: 4px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       margin-top: 4px;
-      z-index: 10001;
+      position: absolute !important;
+      z-index: 10005 !important;
 
       .ts-dropdown-content {
         z-index: 10001;

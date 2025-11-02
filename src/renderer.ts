@@ -28,9 +28,10 @@ const loaderHTML = `<div class="gt-loader-container"><div class="gt-spinner"></d
 function renderCollapsibleSection(
   title: string,
   innerHTML: string,
-  uniqueId: string, // uniqueId is good, but not strictly needed for the content
+  uniqueId: string,
   collapsible: boolean,
-  collapsedByDefault: boolean
+  collapsedByDefault: boolean,
+  headerRightHTML: string = ''
 ): string {
   const isCollapsed = collapsible && collapsedByDefault;
   const arrow = collapsible
@@ -46,22 +47,25 @@ function renderCollapsibleSection(
 
   return `
     <div class="gene-tooltip-section-container ${collapsible ? 'gt-collapsible' : ''}" 
-         data-collapsed="${isCollapsed ? 'true' : 'false'}"
-         data-section="${title.replace(/\s+/g, '-').toLowerCase()}">
+        data-collapsed="${isCollapsed ? 'true' : 'false'}"
+        data-section="${title.replace(/\s+/g, '-').toLowerCase()}">
 
       <div class="${headerClasses}" 
-           role="${collapsible ? 'button' : 'heading'}"
-           tabindex="${collapsible ? '0' : '-1'}"
-           aria-expanded="${collapsible ? !isCollapsed : 'true'}"
-           aria-controls="${contentId}">
-        ${arrow}
-        <span class="gt-section-title">${title}</span>
+          role="${collapsible ? 'button' : 'heading'}"
+          tabindex="${collapsible ? '0' : '-1'}"
+          aria-expanded="${collapsible ? !isCollapsed : 'true'}"
+          aria-controls="${contentId}">
+        <div class="gt-section-left">
+          ${arrow}
+          <span class="gt-section-title">${title}</span>
+        </div>
+          ${headerRightHTML}
+        </div>
+
+        <div class="gt-collapsible-content" id="${contentId}">
+          ${innerHTML}
+        </div>
       </div>
-      
-      <div class="gt-collapsible-content" id="${contentId}">
-        ${innerHTML}
-      </div>
-    </div>
   `;
 }
 
@@ -113,7 +117,7 @@ function renderLocation(
 // Gene Track
 function renderGeneTrackContent(uniqueId: string): string {
   return `
-    <div class="gene-track-header-controls">
+    <div class="gene-tooltip-track-controls">
       <select class="gt-transcript-selector form-select-sm" id="transcript-selector-${uniqueId}"></select>
     </div>
     <div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}">${loaderHTML}</div>
@@ -382,8 +386,7 @@ export function renderTooltipHTML(
       </div>
 
       ${shouldRender('species') && data.taxid ? renderSpecies(data.taxid) : ''}
-      
-      ${/* Summary: Only render section if content exists */ ''}
+
       ${summaryContent ? renderCollapsibleSection(
             'Summary',
             summaryContent,
@@ -392,7 +395,6 @@ export function renderTooltipHTML(
             collapsedByDefault
           ) : ''}
 
-      ${/* Location: Only render section if content exists */ ''}
       ${locationContent ? renderCollapsibleSection(
             'Location',
             locationContent,
@@ -401,16 +403,17 @@ export function renderTooltipHTML(
             collapsedByDefault
           ) : ''}
       
-      ${/* Gene Model: Only render section if content exists */ ''}
       ${geneTrackContent ? renderCollapsibleSection(
-            'Gene Model',
-            geneTrackContent, 
-            uniqueId,
-            collapsible,
-            collapsedByDefault
-          ) : ''}
+        'Gene Model',
+        `<div class="gene-tooltip-track" id="gene-tooltip-track-${uniqueId}">${loaderHTML}</div>`,
+        uniqueId,
+        collapsible,
+        collapsedByDefault,
+        `<div class="gene-tooltip-track-controls">
+          <select class="gt-transcript-selector form-select-sm" id="transcript-selector-${uniqueId}"></select>
+        </div>`
+      ) : ''}
 
-      ${/* Pathways: Only render section if content exists */ ''}
       ${pathwayContent ? renderCollapsibleSection(
             'Pathways',
             pathwayContent,

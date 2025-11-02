@@ -22,6 +22,7 @@ export interface TippyInstanceWithCustoms extends Instance {
   _tomselect?: TomSelect | null;
   _sectionToggleHandler?: (event: Event) => void;
   _sectionKeydownHandler?: (event: KeyboardEvent) => void;
+  _visualsRendered?: boolean;
 }
 
 /**
@@ -35,21 +36,27 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
 
         // Create promises for both rendering tasks
         const renderPromises = [];
-        if (config.display.geneTrack && data.exons) {
+        const locationSection = instance.popper.querySelector('[data-section="location"]');
+        const isLocationCollapsed = locationSection?.getAttribute('data-collapsed') === 'true';
+        
+        const geneModelSection = instance.popper.querySelector('[data-section="gene-model"]');
+        const isGeneModelCollapsed = geneModelSection?.getAttribute('data-collapsed') === 'true';
+        
+        if (config.display.geneTrack && data.exons && !isGeneModelCollapsed) {
           renderPromises.push(renderGeneTrack(instance, data, instance._uniqueId));
         }
         
-        if (config.ideogram?.enabled && data.genomic_pos) {
+        if (config.ideogram?.enabled && data.genomic_pos && !isLocationCollapsed) {
           renderPromises.push(renderIdeogram(instance, data, config.ideogram, instance._uniqueId));
         }
 
-        // Wait for both visualizations to finish rendering or fail
         await Promise.allSettled(renderPromises);
 
-        // If the tooltip was hidden while async tasks were running, abort
         if (!instance.state.isShown) {
           return;
         }
+        // Mark that we've attempted to render (even if sections were collapsed)
+        instance._visualsRendered = true;
 
         // --- All the nested tippy logic from your onShown goes here ---
         instance._nestedTippys = [];
@@ -244,11 +251,8 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
       instance._sectionToggleHandler = (event: Event) => {
         const target = event.target as HTMLElement;
         const header = target.closest<HTMLElement>(".gt-collapsible-header");
-        console.log("value of target:", target); // Keep for debugging
-        console.log("value of header:", header); // Keep for debugging
         if (!header) return;
 
-        // Prevent default for keyboard 'Enter'/'Space'
         if (event.type === 'keydown') {
           event.preventDefault();
         }
@@ -265,6 +269,19 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
         const arrow = header.querySelector('.gt-section-arrow');
         if (arrow) {
           arrow.classList.toggle('collapsed', newCollapsedState);
+        }
+
+        // NEW: Trigger visualization rendering when expanding specific sections
+        if (!newCollapsedState && instance._geneData) { // Expanding and data is available
+          const sectionName = section.getAttribute('data-section');
+          
+          if (sectionName === 'location' && config.ideogram?.enabled && instance._geneData.genomic_pos) {
+            renderIdeogram(instance, instance._geneData, config.ideogram, instance._uniqueId!);
+          }
+          
+          if (sectionName === 'gene-model' && config.display.geneTrack && instance._geneData.exons) {
+            renderGeneTrack(instance, instance._geneData, instance._uniqueId!);
+          }
         }
       };
 
