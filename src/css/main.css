@@ -10,7 +10,7 @@
 /* Import Tom Select CSS classes */
 @import "tom-select/dist/css/tom-select.css";
 
-/* Import your own theme variables/styles (global) */
+/* Import gene-tooltip's theme variables/styles (global) */
 @import './theme.css';
 
 .tippy-content {
@@ -690,15 +690,34 @@ ul.gene-tooltip-nested-list {
 /* Pushpin */
 
 .gt-pin-button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.6rem;
-  background: transparent;
+  /* position: absolute; */ /* Let's use flexbox order instead */
+  /* top: 0.5rem; */
+  /* right: 0.6rem; */
+  background: none;
   border: none;
+  padding: 0.25rem; /* Add some clickable area */
   cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  opacity: 0.5;
+  transition: opacity 0.2s, color 0.2s;
+  color: var(--gt-text-color-secondary);
+  line-height: 1; /* Helps with alignment */
+  align-self: flex-start; /* Align to top of header */
 }
+
+/* Add this to your header to accommodate the prepended button */
+.gene-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em; /* reduce gap slightly */
+  flex-wrap: nowrap; /* Prevent title from wrapping under pin */
+}
+
+/* Let the title container grow */
+.gene-tooltip-title {
+  flex-grow: 1;
+}
+
 
 .gt-pin-button:hover {
   opacity: 1;
@@ -706,10 +725,11 @@ ul.gene-tooltip-nested-list {
 
 .gt-pin-icon {
   fill: currentColor;
-  color: var(--tippy-text-color, #666);
+  /* color property is inherited from button */
+  display: block; /* remove extra space below svg */
 }
 
-.gt-pin-active .gt-pin-icon {
-  color: var(--accent-color, #e67e22);
+.gt-pin-button.gt-pin-active {
   opacity: 1;
+  color: var(--gt-accent-color, #e67e22); /* Use consistent variable */
 }

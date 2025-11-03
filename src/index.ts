@@ -70,8 +70,7 @@ function init(userConfig: Partial<GeneTooltipConfig> = {}): () => void {
 
 /**
  * Preloads the optional heavy dependencies (d3, ideogram) so they
- * are ready when tooltips are first shown. This is useful to call
- * once in your application's entry point.
+ * are ready when tooltips are first shown.
  */
 function preload(): Promise<[PromiseSettledResult<any>, PromiseSettledResult<any>]> {
   return Promise.allSettled([
