@@ -9,6 +9,7 @@ import { generateUniqueTooltipId, createNestedContent } from './utils.js';
 import { renderIdeogram } from './ideogram.js';
 import { renderGeneTrack } from './gene-track.js';
 import { formatPathways, formatDomains, formatTranscripts, formatStructures, formatGeneRIFs } from './formatters.js';
+import { attachPushpin } from './ui/pushpin.js';
 import tippy from 'tippy.js';
 
 export interface TippyInstanceWithCustoms extends Instance {
@@ -23,6 +24,8 @@ export interface TippyInstanceWithCustoms extends Instance {
   _sectionToggleHandler?: (event: Event) => void;
   _sectionKeydownHandler?: (event: KeyboardEvent) => void;
   _visualsRendered?: boolean;
+  _isPinned?: boolean;
+  _pinButton?: HTMLElement | null;
 }
 
 /**
@@ -300,6 +303,7 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
       popper.addEventListener('click', instance._sectionToggleHandler);
       popper.addEventListener('keydown', instance._sectionKeydownHandler);
     }
+    attachPushpin(instance);
   };
 }
 
@@ -329,6 +333,11 @@ export function createOnHideHandler() {
     if (instance._sectionKeydownHandler) {
       instance.popper.removeEventListener('keydown', instance._sectionKeydownHandler);
       instance._sectionKeydownHandler = undefined;
+    }
+
+    if (instance._pinButton) {
+      instance._pinButton.remove();
+      instance._pinButton = null;
     }
     
     // Cleanup viewport resize handler

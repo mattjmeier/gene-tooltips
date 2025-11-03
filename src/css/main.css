@@ -686,3 +686,30 @@ ul.gene-tooltip-nested-list {
     content: '⏳';
   }
 }
+
+/* Pushpin */
+
+.gt-pin-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.gt-pin-button:hover {
+  opacity: 1;
+}
+
+.gt-pin-icon {
+  fill: currentColor;
+  color: var(--tippy-text-color, #666);
+}
+
+.gt-pin-active .gt-pin-icon {
+  color: var(--accent-color, #e67e22);
+  opacity: 1;
+}
