@@ -339,10 +339,6 @@ export function createOnHideHandler() {
       instance.popper.removeEventListener('keydown', instance._sectionKeydownHandler);
       instance._sectionKeydownHandler = undefined;
     }
-
-    // if (instance._pinButton) {
-    //   instance._pinButton = null;
-    // }
     
     // Cleanup viewport resize handler
     const resizeHandler = (instance as any)._visualViewportResizeHandler;

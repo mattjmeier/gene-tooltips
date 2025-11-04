@@ -123,6 +123,7 @@
 
 .gene-tooltip-title {
   display: flex;
+  flex-grow: 1;
   align-items: center;
   gap: 0.5em;
   flex-wrap: wrap;
@@ -702,11 +703,6 @@ ul.gene-tooltip-nested-list {
   color: var(--gt-text-color-secondary);
   line-height: 1; /* Helps with alignment */
   align-self: flex-start; /* Align to top of header */
-}
-
-/* Let the title container grow */
-.gene-tooltip-title {
-  flex-grow: 1;
 }
 
 .gt-pin-button:hover {
