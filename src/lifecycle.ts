@@ -340,10 +340,9 @@ export function createOnHideHandler() {
       instance._sectionKeydownHandler = undefined;
     }
 
-    if (instance._pinButton) {
-      instance._pinButton.remove();
-      instance._pinButton = null;
-    }
+    // if (instance._pinButton) {
+    //   instance._pinButton = null;
+    // }
     
     // Cleanup viewport resize handler
     const resizeHandler = (instance as any)._visualViewportResizeHandler;

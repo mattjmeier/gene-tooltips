@@ -1,32 +1,24 @@
 import { TippyInstanceWithCustoms } from '../lifecycle.js';
 
 export function attachPushpin(instance: TippyInstanceWithCustoms) {
+  // This guard is now the key. If we've already found and initialized the button, do nothing.
+  if (instance._pinButton) return;
+
   const popper = instance.popper;
-  if (!popper || instance._pinButton) return;
+  const btn = popper?.querySelector<HTMLButtonElement>('.gt-pin-button');
 
-  // Attach to the header, fallback to the main content area
-  const header = popper.querySelector('.gene-tooltip-header') || popper.querySelector('.tippy-content');
-  if (!header) return;
-
-  const btn = document.createElement('button');
-  btn.className = 'gt-pin-button';
-  btn.setAttribute('aria-label', 'Pin tooltip');
-  // Using a more standard pushpin icon SVG
-  btn.innerHTML = `
-    <svg class="gt-pin-icon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
-      <path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224.5-.5.5s-.5-.224-.5-.5V10H4a.5.5 0 0 1 0-1h1.5V5.274a3.5 3.5 0 0 1-.354-.298C4.842 4.674 4.5 4.18 4.5 3.5a.5.5 0 0 1 .5-.5h2V.5a.5.5 0 0 1-.5-.5z"/>
-    </svg>
-  `;
+  if (!popper || !btn) return;
 
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     togglePin(instance, btn);
   });
 
+  // Store the button element. This persists across hide/show cycles.
   instance._pinButton = btn;
-  // Use prepend to put it before the title, often looks better
-  header.prepend(btn);
 }
+
+
 
 function togglePin(instance: TippyInstanceWithCustoms, btn: HTMLElement) {
   instance._isPinned = !instance._isPinned;
