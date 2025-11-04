@@ -160,6 +160,7 @@ export const defaultConfig: GeneTooltipConfig = {
     appendTo: () => document.body,
     interactiveDebounce: 75,
     hideOnClick: false,
+    trigger: 'mouseenter focus',
     zIndex: 9999,
     popperOptions: {
       strategy: 'absolute', 

@@ -9,6 +9,7 @@ import { generateUniqueTooltipId, createNestedContent } from './utils.js';
 import { renderIdeogram } from './ideogram.js';
 import { renderGeneTrack } from './gene-track.js';
 import { formatPathways, formatDomains, formatTranscripts, formatStructures, formatGeneRIFs } from './formatters.js';
+import { attachPushpin } from './ui/pushpin.js';
 import tippy from 'tippy.js';
 
 export interface TippyInstanceWithCustoms extends Instance {
@@ -23,6 +24,9 @@ export interface TippyInstanceWithCustoms extends Instance {
   _sectionToggleHandler?: (event: Event) => void;
   _sectionKeydownHandler?: (event: KeyboardEvent) => void;
   _visualsRendered?: boolean;
+  _isPinned?: boolean;
+  _originalTrigger?: string;
+  _pinButton?: HTMLElement | null;
 }
 
 /**
@@ -58,7 +62,6 @@ async function renderVisualsAndNestedTippys(instance: TippyInstanceWithCustoms, 
         // Mark that we've attempted to render (even if sections were collapsed)
         instance._visualsRendered = true;
 
-        // --- All the nested tippy logic from your onShown goes here ---
         instance._nestedTippys = [];
         const baseNestedOptions = { ...config.nestedTippyOptions };
 
@@ -300,6 +303,7 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
       popper.addEventListener('click', instance._sectionToggleHandler);
       popper.addEventListener('keydown', instance._sectionKeydownHandler);
     }
+    attachPushpin(instance);
   };
 }
 
@@ -308,6 +312,11 @@ export function createOnShownHandler(config: GeneTooltipConfig) {
  */
 export function createOnHideHandler() {
   return function onHide(instance: TippyInstanceWithCustoms) {
+    
+    if (instance._isPinned) {
+      return false;
+    }
+
     instance._isFullyShown = false; // Reset flag
     
     // If a child tippy is visible, prevent the parent from hiding.
@@ -360,7 +369,7 @@ function constrainTooltipHeight(instance: TippyInstanceWithCustoms, config: Gene
   const content = instance.popper.querySelector('.tippy-content');
   if (!content) return;
 
-  // Use the padding value from your popperOptions for accurate calculation
+  // Use the padding value from popperOptions for accurate calculation
   const padding = config.tippyOptions?.popperOptions?.modifiers?.find(
     m => m.name === 'preventOverflow'
   )?.options?.padding ?? 8;

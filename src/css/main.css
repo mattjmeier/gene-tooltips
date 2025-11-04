@@ -10,7 +10,7 @@
 /* Import Tom Select CSS classes */
 @import "tom-select/dist/css/tom-select.css";
 
-/* Import your own theme variables/styles (global) */
+/* Import gene-tooltip's theme variables/styles (global) */
 @import './theme.css';
 
 .tippy-content {
@@ -117,12 +117,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1em;
-  flex-wrap: wrap;
+  gap: 0.5em;
+  flex-wrap: nowrap;
 }
 
 .gene-tooltip-title {
   display: flex;
+  flex-grow: 1;
   align-items: center;
   gap: 0.5em;
   flex-wrap: wrap;
@@ -685,4 +686,36 @@ ul.gene-tooltip-nested-list {
     animation: none;
     content: '⏳';
   }
+}
+
+/* Pushpin */
+
+.gt-pin-button {
+  /* position: absolute; */
+  /* top: 0.5rem; */
+  /* right: 0.6rem; */
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s, color 0.2s;
+  color: var(--gt-text-color-secondary);
+  line-height: 1; /* Helps with alignment */
+  align-self: flex-start; /* Align to top of header */
+}
+
+.gt-pin-button:hover {
+  opacity: 1;
+}
+
+.gt-pin-icon {
+  fill: currentColor;
+  /* color property is inherited from button */
+  display: block; /* remove extra space below svg */
+}
+
+.gt-pin-button.gt-pin-active {
+  opacity: 1;
+  color: var(--gt-accent-color, #007bff); /* Use consistent variable */
 }
